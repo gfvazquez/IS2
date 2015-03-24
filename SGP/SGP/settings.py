@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Usuario',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,15 +59,19 @@ WSGI_APPLICATION = 'SGP.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'is2',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-PY '
 
 TIME_ZONE = 'UTC'
 
@@ -85,4 +89,9 @@ STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'templates'),
+)
+ADMINS = (
+    ('Mauricio Allegretti', 'mauriallegretti@gmail.com'),
+    ('Gabriela Vazquez', 'gabyvazquez92@gmail.com'),
+    ('Andrea Benitez', 'andy.benitez09@gmail.com'),
 )
