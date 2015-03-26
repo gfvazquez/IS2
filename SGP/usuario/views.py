@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, render
 from usuario.forms import UserForm
 from django.http import HttpResponse
@@ -45,3 +46,11 @@ def crear_usuario(request):
         './crearUsuario.html',
             {'user_form': user_form,  'registered': registered},
             context)
+
+
+def usuario_eliminar(request):
+
+            userDelLogic = User..objects.get(pk=id_usuario)
+            userDelLogic.is_active = False
+            userDelLogic.save()
+            return HttpResponseRedirect('/adm_usuarios/')
