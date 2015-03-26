@@ -1,49 +1,55 @@
 from django.shortcuts import render_to_response, render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
 def user_login(request):
-    # Like before, obtain the context for the user's request.
-    context = RequestContext(request)
+    """ La funcion user_login se encarga del inicio de sesion de un usuario dentro del sistema.
+        Si los datos username y password son correctos, se informa sobre el ingreso exitoso,
+        en caso contrario se informa el error.
 
-    # If the request is a HTTP POST, try to pull out the relevant information.
+        @type request: django.http.HttpRequest
+        @param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+        @rtype: django.http.HttpResponseRedirect
+        @rtype: django.shortcuts.render_to_response
+        @return: Se retorna al inicio o se manda a la pagina de login
+        @author: Gabriela Vazquez
+
+    """
     if request.method == 'POST':
-        # Gather the username and password provided by the user.
-        # This information is obtained from the login form.
-        username = request.POST['username']
-        password = request.POST['password']
+        formulario = AuthenticationForm(request.POST)
+        if formulario.is_valid:
+            usuario = request.POST['username']
+            clave = request.POST['password']
+            acceso = authenticate(username=usuario, password=clave)
+            if acceso is not None:
+                if acceso.is_active:
+                    login(request, acceso)
+                    return HttpResponse("Inicio Sesion Correctamente")
 
-        # Use Django's machinery to attempt to see if the username/password
-        # combination is valid - a User object is returned if it is.
-        user = authenticate(username=username, password=password)
-
-        # If we have a User object, the details are correct.
-        # If None (Python's way of representing the absence of a value), no user
-        # with matching credentials was found.
-        if user:
-            # Is the account active? It could have been disabled.
-            if user.is_active:
-                # If the account is valid and active, we can log the user in.
-                # We'll send the user back to the homepage.
-                login(request, user)
-                return HttpResponseRedirect('/usuario/')
+                else:
+                    return HttpResponse("El usuario no esta activo")
+                    ##return render_to_response('noactivo.html', context_instance=RequestContext(request))
             else:
-                # An inactive account was used - no logging in!
-                return HttpResponse("Your Rango account is disabled.")
-        else:
-            # Bad login details were provided. So we can't log the user in.
-            print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid login details supplied.")
-
-    # The request is not a HTTP POST, so display the login form.
-    # This scenario would most likely be a HTTP GET.
+                return HttpResponse("El usuario y la contrasenha no coinciden o no existen")
+                #return render_to_response('nousuario.html', context_instance=RequestContext(request))
     else:
-        # No context variables to pass to the template system, hence the
-        # blank dictionary object...
-        return render_to_response('./login.html', {}, context)
+        formulario = AuthenticationForm()
+    return render_to_response('./login.html',{'formulario':formulario}, context_instance=RequestContext(request))
+
 
 @login_required
-def restricted(request):
-    return HttpResponse("Since you're logged in, you can see this text!")
+def cerrar(request):
+    """ La funcion cerrar se encarga de cerrar la sesion actual de un usuario.
+
+    @type request: django.http.HttpRequest
+    @param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+    @rtype: django.http.HttpResponseRedirect
+    @return: Se retorna a la pagina de login
+    @author: Gabriela Vazquez
+    """
+    logout(request)
+    return HttpResponse("Cerro Sesion Correctamente")
+    #return HttpResponseRedirect('/usuario')
