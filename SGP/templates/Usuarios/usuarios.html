@@ -1,0 +1,35 @@
+
+{% block contenido %}
+<div class="content-secondary">
+<!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
+	<div class="panel-group" id="accordion">
+
+	<br>
+		{% if lista_usuarios %}
+			{% for user in lista_usuarios %}
+				{% if user.is_active %}
+	<div class="panel panel-default">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
+				          	{{ user.username }}
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapse{{ user.id }}" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      		<a href="consultar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+				      		<a href="modificar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
+                            <a href="eliminar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
+
+
+				      </div>
+				    </div>
+	</div>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+
+	</div>
+	</div>
+{% endblock %}

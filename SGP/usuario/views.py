@@ -1,11 +1,16 @@
-from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, render
-from usuario.forms import UserForm
+from usuario.forms import UsuarioForm
 from django.http import HttpResponse
 from django.template.context import RequestContext
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
+from forms import  UsuarioModificadoForm
+from django.contrib.auth.hashers import check_password, make_password
 
-def index(request):
-    return HttpResponse("Listado Aca")
+
+
+#def index(request):
+#    return HttpResponse("Listado Aca")
 
 def crear_usuario(request):
     context = RequestContext(request)
@@ -14,12 +19,12 @@ def crear_usuario(request):
     registered = False
 
     if request.method == 'POST':
-        user_form = UserForm(data=request.POST)
+        user_form = UsuarioForm(data=request.POST)
 
 
         # If the two forms are valid...
         if user_form.is_valid():
-            # Guarda el usuario en la bd
+            # Guarda el Usuarios en la bd
             user = user_form.save()
 
             # Hash de la contrasenha con el metodo set_password.
@@ -38,19 +43,83 @@ def crear_usuario(request):
     # Not a HTTP POST, so we render our form using two ModelForm instances.
     # These forms will be blank, ready for user input.
     else:
-        user_form = UserForm()
+        user_form = UsuarioForm()
 
 
     # Render the template depending on the context.
     return render_to_response(
-        './crearUsuario.html',
+        './Usuarios/crearUsuario.html',
             {'user_form': user_form,  'registered': registered},
             context)
 
 
-def usuario_eliminar(request):
+def consultarUsuario(request, id_usuario):
+    template_name = './Usuarios/consultar_usuario.html'
+    usuario = User.objects.get(pk=id_usuario)
 
-            userDelLogic = User..objects.get(pk=id_usuario)
-            userDelLogic.is_active = False
-            userDelLogic.save()
-            return HttpResponseRedirect('/adm_usuarios/')
+    return render(request, template_name, {'perfil': usuario, 'id_usuario': id_usuario})
+
+
+
+def usuario_eliminar(request, id_usuario):
+    userDelLogic = User.objects.get(pk=id_usuario)
+    userDelLogic.is_active = False
+    userDelLogic.save()
+    return HttpResponseRedirect('/Usuarios/')
+
+
+def modificarUsuario(request, id_usuario):
+
+        usuario = User.objects.get(id=id_usuario)
+
+        if request.method == 'POST':
+            form = UsuarioModificadoForm(request.POST)
+            if form.is_valid():
+                form.clean()
+                username = form.cleaned_data['Nombre_de_Usuario']
+                password = form.cleaned_data['Contrasenha']
+                nuevo_password = form.cleaned_data['Nueva_contrasenha']
+                email = form.cleaned_data['Email']
+                first_name = form.cleaned_data['Nombre']
+                last_name = form.cleaned_data['Apellido']
+
+
+                if password:
+                    if check_password(password, usuario.password):
+                        password = make_password(nuevo_password)
+                    else:
+                        template_name = './Usuarios/modificar_usuario.html'
+                        return render(request, template_name, {'form': form})
+                else:
+                    password = usuario.password
+
+                usuario.username = username
+                usuario.password = password
+                usuario.email = email
+                usuario.first_name = first_name
+                usuario.last_name = last_name
+                usuario.save()
+
+
+                template_name = './Usuarios/usuario_modificado.html'
+                return render(request, template_name)
+        else:
+            data = {'Nombre_de_Usuario': usuario.username, 'Contrasenha': '', 'Nueva_contrasenha': '',
+                    'Email': usuario.email, 'Nombre': usuario.first_name, 'Apellido': usuario.last_name,
+                   }
+            form = UsuarioModificadoForm(data)
+        template_name = './Usuarios/modificar_usuario.html'
+        return render(request, template_name, {'form': form, 'id_usuario': id_usuario})
+
+
+def usuarios(request): #administrarUsuarios en el de ysa
+    usuarios = User.objects.all()
+    return render_to_response('./Usuarios/usuarios.html',{'lista_usuarios':usuarios}, context_instance=RequestContext(request))
+
+
+#    template_name = './Usuarios/usuarios.html'
+#    return render(request, template_name, {'lista_usuarios': u, 'mi_perfil': mi_perfil})
+
+
+
+
