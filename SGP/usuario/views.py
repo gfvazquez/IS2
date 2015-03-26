@@ -53,6 +53,7 @@ def crear_usuario(request):
             context)
 
 
+
 def consultarUsuario(request, id_usuario):
     template_name = './Usuarios/consultar_usuario.html'
     usuario = User.objects.get(pk=id_usuario)
@@ -65,7 +66,7 @@ def usuario_eliminar(request, id_usuario):
     userDelLogic = User.objects.get(pk=id_usuario)
     userDelLogic.is_active = False
     userDelLogic.save()
-    return HttpResponseRedirect('/Usuarios/')
+    return HttpResponseRedirect('/usuarios/')
 
 
 def modificarUsuario(request, id_usuario):
