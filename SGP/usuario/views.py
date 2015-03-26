@@ -21,7 +21,7 @@ def crear_usuario(request):
             # Guarda el usuario en la bd
             user = user_form.save()
 
-            # Hash de la contraseña con el metodo set_password.
+            # Hash de la contrasenha con el metodo set_password.
             user.set_password(user.password)
             user.save()
 

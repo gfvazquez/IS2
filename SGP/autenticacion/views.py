@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, render
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
+from django.contrib.auth.decorators import login_required
 
 def user_login(request):
     # Like before, obtain the context for the user's request.
@@ -27,7 +28,7 @@ def user_login(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/usuario/')
             else:
                 # An inactive account was used - no logging in!
                 return HttpResponse("Your Rango account is disabled.")
@@ -43,3 +44,6 @@ def user_login(request):
         # blank dictionary object...
         return render_to_response('./login.html', {}, context)
 
+@login_required
+def restricted(request):
+    return HttpResponse("Since you're logged in, you can see this text!")

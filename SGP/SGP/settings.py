@@ -54,6 +54,8 @@ ROOT_URLCONF = 'SGP.urls'
 
 WSGI_APPLICATION = 'SGP.wsgi.application'
 
+LOGIN_URL = '/autenticacion/user_login'
+
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
