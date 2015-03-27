@@ -1,0 +1,30 @@
+
+
+
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ usuario.username }}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<p><h4>Id: <span class="label label-default">{{ perfil.id }}</span></h4></p>
+	<p><h4>Nombre_de_Usuario: <span class="label label-default">{{ perfil.username }}</span></h4></p>
+	<p><h4>Nombre: <span class="label label-default">{{ perfil.first_name }}</span></h4></p>
+	<p><h4>Apellido: <span class="label label-default">{{ perfil.last_name }}</span></h4></p>
+	<p><h4>Email: <span class="label label-default">{{ perfil.email }}</span></h4></p>
+
+</div>
+<br>
+<div align="center">
+		<a href="/usuarios/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+	
+{% endblock %}
+
+

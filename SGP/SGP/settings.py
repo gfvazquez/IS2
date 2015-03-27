@@ -36,6 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrapform',
+    'usuario',
 
 )
 
@@ -52,6 +54,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'SGP.urls'
 
 WSGI_APPLICATION = 'SGP.wsgi.application'
+
+LOGIN_URL = '/autenticacion/user_login'
 
 
 # Database
