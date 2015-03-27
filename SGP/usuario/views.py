@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response, render
-from usuario.forms import UsuarioForm
+from forms import UsuarioForm
 from django.http import HttpResponse
 from django.template.context import RequestContext
 from django.contrib.auth.models import User
