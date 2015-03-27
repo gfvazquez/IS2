@@ -15,22 +15,13 @@
 </nav>
 {% endblock %}
 
-{% block menu %}		
-<div class="menu">
-	<ul>
-		<li id="option1" class="active">
-			<a href="#">Usuario</a>
-		</li>
-	</ul>
-</div>
-{% endblock %}
-
 {% block contenido %}
-<div class="content-secondary">
-	<h2>Los datos del usuario se han modificado con exito </h2>
-	<a href="/usuarios/"><button type="button" class="btn btn-default">OK</button></a>
-		<div class="form-group">
-		</div>
+<div class="jumbotron">
+	<div class="bs-example" align="center">
+		<h2>Notificacion</h2>
+			<p class="text-warning"><small>{{ mensaje }}</small></p>
 
+		<a type="button" class="btn btn-default" href="usuarios/">Volver</a>
+	</div>
 </div>
 {% endblock %}

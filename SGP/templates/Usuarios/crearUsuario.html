@@ -1,26 +1,35 @@
-{% load bootstrap %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-        <title>Bootstrap form example</title>
-        <style type="text/css">
-            .multiple-checkbox ul { /* Used to hide <li> elements in multiple checkbox forms */
-              padding-left: 0px;
-              list-style: none;
-            }
-        </style>
+{% extends "base_general.html" %}
 
-    </head>
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/" class="navbar-brand">SGP</a>
+	</div>
 
-    <body>
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/usuarios/">Usuarios</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Usuario</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+
+{% block contenido %}
         <h1>Crear Usuario</h1>
 
-        <div class="container">
-        <div class="row">
-            <div class="span12">
+        <div class="content-secondary">
                 {% if registered %}
                 <h2>Usuario Registrado Exitosamente</h2>
                 <a href="/usuarios">Return to the homepage.</a><br />
@@ -29,7 +38,7 @@
                 <h2>Complete los campos</h2><br />
 
                 <form id="user_form" method="post" action="/usuarios/crear_usuario/"
-                        enctype="multipart/form-data" class="form-horizontal">
+                        enctype="multipart/form-data">
 
                     {% csrf_token %}
 
@@ -39,14 +48,14 @@
                     {{ user_form.as_p }}
 
                     <!-- Provide a button to click to submit the form. -->
-                    <input type="submit" name="submit"  class="btn btn-primary" value="Register" />
-                    <a href="/usuarios"><button type="button" class="btn btn-default">Cancelar</button></a>
+
+                    <div align="center">
+		                <input class="btn btn-default" type="submit" value="Crear"/>
+		                <a href="/usuarios/"><button type="button" class="btn btn-default">Cancelar</button></a>
+	                </div>
                 </form>
                 {% endif %}
-            </div>
         </div>
-        </div>
-     <script src="http://code.jquery.com/jquery.js"></script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
-    </body>
-</html>
+
+{% endblock %}
+

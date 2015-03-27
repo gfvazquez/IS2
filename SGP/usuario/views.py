@@ -60,13 +60,20 @@ def consultarUsuario(request, id_usuario):
 
     return render(request, template_name, {'perfil': usuario, 'id_usuario': id_usuario})
 
-
+#def usuario_eliminar_previo(request, id_usuario):
+#    return HttpResponseRedirect('/usuarios/eliminar/id_usuario')
 
 def usuario_eliminar(request, id_usuario):
-    userDelLogic = User.objects.get(pk=id_usuario)
-    userDelLogic.is_active = False
-    userDelLogic.save()
-    return HttpResponseRedirect('/usuarios/')
+    if id_usuario != '1':
+        userDelLogic = User.objects.get(pk=id_usuario)
+        userDelLogic.is_active = False
+        userDelLogic.save()
+        return HttpResponseRedirect('/usuarios/')
+    else:
+        #elif id_usuario == '1':
+        mensaje = "Imposible eliminar usuario, el usuario es el Administrador"
+        ctx = {'mensaje': mensaje}
+        return render_to_response('Usuarios/usuarioalerta.html', ctx, context_instance=RequestContext(request))
 
 
 def modificarUsuario(request, id_usuario):

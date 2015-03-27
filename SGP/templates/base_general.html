@@ -1,0 +1,71 @@
+{% load bootstrap %}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<!-- Inicio de la cabecera -->
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+        <title>crear usuario</title>
+        <style type="text/css">
+            .multiple-checkbox ul { /* Used to hide <li> elements in multiple checkbox forms */
+              padding-left: 0px;
+              list-style: none;
+            }
+        </style>
+
+    </head>
+	<!-- Fin de la cabecera -->
+	
+	<body>
+		<!-- Comienzo del banner -->
+		<div class="container-fluid">
+			<div class="row">
+			  <div class="col-md-8"><h3>{{ user.username | capfirst }}</h3></div>
+			  <div class="col-md-4"><a href="/cerrar/"><button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-log-out"></span> Cerrar Sesion</button></a></div>
+			</div>
+			<div class="row">
+			  <div class="col-md-9 col-md-offset-1">
+				<h1>Sistema de Administracion de Proyectos</h1>
+				</div>
+				</div>
+				<div class="row">
+				  <div class="col-md-6">
+					<br>
+					  <a href="/"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-home"></span> Inicio</button></a><!-- Boton de Inicio -->
+					  <div class="btn-group">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><!-- Boton de Configuracion -->
+						  <span class="glyphicon glyphicon-cog"></span> Configuracion
+						</button>
+						<ul class="dropdown-menu">
+						  <li><a href="/usuarios">Administrar Usuarios</a></li>
+
+						</ul>
+					  </div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		</div>
+		
+		<!-- Fin del banner -->
+		<div class="wrapper">
+		{% block navegacion %}{% endblock %}
+		{% block menu %}{% endblock %}
+		{% block botones %}{% endblock %}
+		{% block contenido  %}{% endblock %}
+		</div>
+		
+		<!-- Comienzo del pie de pagina -->
+		<footer class='centrar'>
+		<br><span>Grupo R01</span><br>
+			<span>Facultad Politecnica - Universidad Nacional de Asuncion</span><br>
+			<span>2015</span>
+		</footer>
+	</body>
+</html>
+
+
+
+
