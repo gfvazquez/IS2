@@ -12,7 +12,7 @@ class UsuarioForm(forms.ModelForm):
         @author: Mauricio Allegretti - Andrea Benitez - Gabriela Vazquez
 
     """
-    password = forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput(), max_length=14, min_length=5, required=False, error_messages={'required': 'Ingrese contrasenha', 'max_length': 'Longitud maxima: 14', 'min_length': 'Longitu minima: 5 caracteres',})
 
     class Meta:
         model = User

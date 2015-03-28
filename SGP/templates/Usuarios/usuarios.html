@@ -3,7 +3,7 @@
 {% block navegacion %}
 <nav class="navbar navbar-default">
 	<div class="navbar-header">
-		<a href="/" class="navbar-brand">SGP</a>
+		<a href="/usuarios" class="navbar-brand">SGP</a>
 	</div>
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
@@ -45,7 +45,6 @@
 	<div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
-<<<<<<< HEAD
 				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
 				          	{{ user.username }}
 				          </a>
@@ -54,27 +53,10 @@
                           <a href="eliminar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
 				      </h4>
 				    </div>
-=======
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
-				          	{{ user.username }}
-				        </a>
-				      </h4>
-				    </div>
-				    <div id="collapse{{ user.id }}" class="panel-collapse collapse">
-				      <div class="panel-body">
-				      		<a href="consultar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
-				      		<a href="modificar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
-                            <a href="eliminar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
-
-
-				      </div>
-				    </div>
->>>>>>> master
 	</div>
 				{% endif %}
 			{% endfor %}
 		{% endif %}
-        <a href="cerrar/"><button type="button" class="btn btn-default btn-sm">Cerrar Sesion</button></a>
 	</div>
 	</div>
 {% endblock %}

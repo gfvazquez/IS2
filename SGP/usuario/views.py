@@ -6,20 +6,12 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from forms import  UsuarioModificadoForm
 from django.contrib.auth.hashers import check_password, make_password
-<<<<<<< HEAD
 
-
-
-#def index(request):
-#    return HttpResponse("Listado Aca")
-
-def crear_usuario(request):
-=======
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
 
-
+@login_required
 def crear_usuario(request):
     """ Recibe un request, obtiene el formulario con los datos del usuario a crear.
      Luego verifica los datos recibidos y registra al nuevo usuario.
@@ -33,7 +25,6 @@ def crear_usuario(request):
 	@author: Mauricio Allegretti - Andrea Benitez - Gabriela Vazquez
 
 	"""
->>>>>>> master
     context = RequestContext(request)
 
     #valor booleano para llamar al template cuando el registro fue correcto
@@ -74,7 +65,7 @@ def crear_usuario(request):
             context)
 
 
-
+@login_required
 def consultarUsuario(request, id_usuario):
      """ Recibe un request y un id, luego busca en la base de datos al usuario
     cuyos datos se quieren consultar.
@@ -95,7 +86,7 @@ def consultarUsuario(request, id_usuario):
      return render(request, template_name, {'perfil': usuario, 'id_usuario': id_usuario})
 
 
-
+@login_required
 def usuario_eliminar(request, id_usuario):
     """ Recibe un request y un id, luego busca en la base de datos al usuario
         que se va a eliminar. Luego se elimina este usuario.
@@ -123,7 +114,7 @@ def usuario_eliminar(request, id_usuario):
         return render_to_response('Usuarios/usuarioalerta.html', ctx, context_instance=RequestContext(request))
 
 
-
+@login_required
 def modificarUsuario(request, id_usuario):
     """ Recibe un request y un id, luego busca en la base de datos al usuario
     cuyos datos se quieren modificar. Se muestra un formulario con estos
@@ -179,7 +170,7 @@ def modificarUsuario(request, id_usuario):
     template_name = './Usuarios/modificar_usuario.html'
     return render(request, template_name, {'form': form, 'id_usuario': id_usuario})
 
-
+@login_required
 def usuarios(request):
     """ Recibe un request, y lista todos los usuarios registrados.
 
@@ -196,11 +187,6 @@ def usuarios(request):
     return render_to_response('./Usuarios/usuarios.html',{'lista_usuarios':usuarios}, context_instance=RequestContext(request))
 
 
-<<<<<<< HEAD
-#    template_name = './Usuarios/usuarios.html'
-#    return render(request, template_name, {'lista_usuarios': u, 'mi_perfil': mi_perfil})
-
-#mientras
 @login_required
 def cerrar(request):
     """ La funcion cerrar se encarga de cerrar la sesion actual de un usuario.
