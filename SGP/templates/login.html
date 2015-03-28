@@ -1,5 +1,4 @@
 {% load bootstrap %}
-<!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -14,19 +13,36 @@
         </style>
     </head>
 
+
+
+
+
     <body>
-        <h1>Login SGP</h1>
+        <div align="center">
+            <h1>Sistema de Administracion de Proyectos</h1>
 
-        <div class="container">
-        <div class="row">
-            <form id='formulario' method='post' action=''>{% csrf_token %}
-		        <table>{{formulario}}</table>
-		        <p><input type='submit' value='Iniciar Sesion'/></p>
-	        </form>
+            <h2>Login SGP</h2>
 
-        </div>
+
+            <div class="container">
+            <div class="row">
+                <form id='formulario' method='post' action=''>{% csrf_token %}
+                    <table>{{formulario}}</table>
+                    <br>
+                    <p><input type='submit' value='Iniciar Sesion'/></p>
+                </form>
+
+            </div>
+            </div>
+            <img src="sgp_logo.png" >
         </div>
      <script src="http://code.jquery.com/jquery.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+
+    <footer class='centrar'>
+		<br><span>Grupo R01</span><br>
+			<span>Facultad Politecnica - Universidad Nacional de Asuncion</span><br>
+			<span>2015</span>
+		</footer>
     </body>
 </html>
