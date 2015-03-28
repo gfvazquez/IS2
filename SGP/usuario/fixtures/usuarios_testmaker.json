@@ -1,0 +1,17 @@
+[{
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "admin", 
+        "first_name": "Admi", 
+        "last_name": "Nistrador", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_staff": true, 
+        "last_login": "2014-04-20T02:20:07.100Z", 
+        "password": "pbkdf2_sha256$12000$5QZf5QNSEimt$V6H1nbxfjqwfE5pxCPDnlNEdKH9qk/OqYrcj6naR140=", 
+        "email": "admin@admin.com", 
+        "date_joined": "2014-04-20T02:19:13.458Z"
+    }
+}
+]
