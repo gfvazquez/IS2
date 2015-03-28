@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from forms import  UsuarioModificadoForm
 from django.contrib.auth.hashers import check_password, make_password
+<<<<<<< HEAD
 
 
 
@@ -13,6 +14,26 @@ from django.contrib.auth.hashers import check_password, make_password
 #    return HttpResponse("Listado Aca")
 
 def crear_usuario(request):
+=======
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+
+
+
+def crear_usuario(request):
+    """ Recibe un request, obtiene el formulario con los datos del usuario a crear.
+     Luego verifica los datos recibidos y registra al nuevo usuario.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@rtype: django.http.HttpResponse
+	@return: mensaje de exito
+
+	@author: Mauricio Allegretti - Andrea Benitez - Gabriela Vazquez
+
+	"""
+>>>>>>> master
     context = RequestContext(request)
 
     #valor booleano para llamar al template cuando el registro fue correcto
@@ -55,15 +76,41 @@ def crear_usuario(request):
 
 
 def consultarUsuario(request, id_usuario):
-    template_name = './Usuarios/consultar_usuario.html'
-    usuario = User.objects.get(pk=id_usuario)
+     """ Recibe un request y un id, luego busca en la base de datos al usuario
+    cuyos datos se quieren consultar.
 
-    return render(request, template_name, {'perfil': usuario, 'id_usuario': id_usuario})
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
 
-#def usuario_eliminar_previo(request, id_usuario):
-#    return HttpResponseRedirect('/usuarios/eliminar/id_usuario')
+	@type id_usuario: Integer
+	@param id_usuario: identificador unico del usuario
+
+	@rtype: django.HttpResponse
+	@return: consultar_usuario.html, donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
+     template_name = './Usuarios/consultar_usuario.html'
+     usuario = User.objects.get(pk=id_usuario)
+     return render(request, template_name, {'perfil': usuario, 'id_usuario': id_usuario})
+
+
 
 def usuario_eliminar(request, id_usuario):
+    """ Recibe un request y un id, luego busca en la base de datos al usuario
+        que se va a eliminar. Luego se elimina este usuario.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_usuario: Integer
+	@param id_usuario: identificador unico del usuario
+
+	@rtype: django.HttpResponse
+	@return: pagina de Administrar Usuarios
+
+	@author: Andrea Benitez
+	"""
     if id_usuario != '1':
         userDelLogic = User.objects.get(pk=id_usuario)
         userDelLogic.is_active = False
@@ -76,11 +123,24 @@ def usuario_eliminar(request, id_usuario):
         return render_to_response('Usuarios/usuarioalerta.html', ctx, context_instance=RequestContext(request))
 
 
+
 def modificarUsuario(request, id_usuario):
+    """ Recibe un request y un id, luego busca en la base de datos al usuario
+    cuyos datos se quieren modificar. Se muestra un formulario con estos
+    campos y luego se guardan los cambios realizados.
 
-        usuario = User.objects.get(id=id_usuario)
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
 
-        if request.method == 'POST':
+	@type id_usuario: Integer
+	@param id_usuario: identificador unico del usuario
+
+	@rtype: django.HttpResponse
+	@return: modificar_usuario.html, formulario donde se muestran los datos que el usuario puede modificar
+
+	@author: Andrea Benitez """
+    usuario = User.objects.get(id=id_usuario)
+    if request.method == 'POST':
             form = UsuarioModificadoForm(request.POST)
             if form.is_valid():
                 form.clean()
@@ -111,23 +171,47 @@ def modificarUsuario(request, id_usuario):
 
                 template_name = './Usuarios/usuario_modificado.html'
                 return render(request, template_name)
-        else:
-            data = {'Nombre_de_Usuario': usuario.username, 'Contrasenha': '', 'Nueva_contrasenha': '',
-                    'Email': usuario.email, 'Nombre': usuario.first_name, 'Apellido': usuario.last_name,
-                   }
-            form = UsuarioModificadoForm(data)
-        template_name = './Usuarios/modificar_usuario.html'
-        return render(request, template_name, {'form': form, 'id_usuario': id_usuario})
+    else:
+        data = {'Nombre_de_Usuario': usuario.username, 'Contrasenha': '', 'Nueva_contrasenha': '',
+                'Email': usuario.email, 'Nombre': usuario.first_name, 'Apellido': usuario.last_name,
+                }
+        form = UsuarioModificadoForm(data)
+    template_name = './Usuarios/modificar_usuario.html'
+    return render(request, template_name, {'form': form, 'id_usuario': id_usuario})
 
 
-def usuarios(request): #administrarUsuarios en el de ysa
+def usuarios(request):
+    """ Recibe un request, y lista todos los usuarios registrados.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@rtype: django.http.HttpResponse
+	@return: usuarios.html,
+
+	@author: Andrea Benitez
+
+	"""
     usuarios = User.objects.all()
     return render_to_response('./Usuarios/usuarios.html',{'lista_usuarios':usuarios}, context_instance=RequestContext(request))
 
 
+<<<<<<< HEAD
 #    template_name = './Usuarios/usuarios.html'
 #    return render(request, template_name, {'lista_usuarios': u, 'mi_perfil': mi_perfil})
 
+#mientras
+@login_required
+def cerrar(request):
+    """ La funcion cerrar se encarga de cerrar la sesion actual de un usuario.
 
+    @type request: django.http.HttpRequest
+    @param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+    @rtype: django.http.HttpResponseRedirect
+    @return: Se retorna a la pagina de login
+    @author: Gabriela Vazquez
+    """
+    logout(request)
+    return HttpResponseRedirect('/autenticacion/')
 
 
