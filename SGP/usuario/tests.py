@@ -93,3 +93,14 @@ class SGPTestCase(TestCase):
         c.login(username='testuser3', password='testpw')
         resp = self.client.post('/usuarios/modificar/1?')
         self.assertEqual(resp.status_code, 301)
+
+    def test_logout(self):
+        '''
+        Test para el logout
+        '''
+        usuario = User.objects.create_user('testuser', 'test@example.com', 'testpw')
+        c = Client()
+        c.login(username='testuser', password='testpw')
+        response = c.get('/autenticacion/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(SESSION_KEY not in self.client.session)
