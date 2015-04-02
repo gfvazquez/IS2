@@ -1,0 +1,36 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/roles" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/roles/">Roles</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Roles</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<h2>Los datos del rol se han modificado con exito </h2>
+	<a href="/roles/"><button type="button" class="btn btn-default">OK</button></a>
+		<div class="form-group">
+		</div>
+
+</div>
+{% endblock %}
