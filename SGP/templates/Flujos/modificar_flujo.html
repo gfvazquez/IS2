@@ -1,0 +1,48 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/flujos" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/flujos/">Flujos</a></li>
+			<li class="active"><a href="/flujos/modificar/{{ id_flow }}/">Modificación de usuario</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Modificar Flujo</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	{% if form.errors %}
+		Por favor verifique: 
+	{% endif %}
+	
+	<form action="" method="post">
+		<table>
+			{{ form.as_table }}
+		</table>
+		{% csrf_token %}
+	<div align="center">
+		<input class="btn btn-default" type="submit" value="Guardar"/>
+		<a href="/flujos/"><button type="button" class="btn btn-default">Cancelar</button></a>
+	</div>
+	<br>
+	</form>
+
+</div>
+{% endblock %}

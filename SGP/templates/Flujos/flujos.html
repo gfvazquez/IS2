@@ -1,0 +1,62 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/usuarios" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="/usuarios/">Usuarios</a></li>
+        </ul>
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Usuarios</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block botones %}
+<div class="row">
+	<form class="navbar-form navbar-left">
+
+		<a href="crear_usuario/"><button type="button" class="btn btn-default">Crear Usuario</button></a>
+
+	</form>
+</div>
+{% endblock %}
+{% block contenido %}
+<div class="content-secondary">
+<!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
+	<div class="panel-group" id="accordion">
+
+	<br>
+		{% if lista_usuarios %}
+			{% for user in lista_usuarios %}
+				{% if user.is_active %}
+	<div class="panel panel-default">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
+				          	{{ user.username }}
+				          </a>
+                          <a href="consultar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+                          <a href="modificar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
+                          <a href="eliminar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
+				      </h4>
+				    </div>
+	</div>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+	</div>
+	</div>
+{% endblock %}
