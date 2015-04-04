@@ -69,7 +69,7 @@ def consultarFlujo(request, id_flujo):
 	@rtype: django.HttpResponse
 	@return: consultar_flujo.html, donde se le despliega al usuario los datos
 
-	@author: Andrea Benitez
+	@author: Mauricio Allegretti
 	"""
      template_name = './Flujos/consultar_flujo.html'
      flow = Flujo.objects.get(pk=id_flujo)
@@ -90,7 +90,7 @@ def flujo_eliminar(request, id_flujo):
 	@rtype: django.HttpResponse
 	@return: pagina de Administrar Usuarios
 
-	@author: Andrea Benitez
+	@author: Mauricio Allegretti
 	"""
 
     flowDelLogic = Flujo.objects.get(pk=id_flujo)
@@ -114,24 +114,36 @@ def modificarFlujo(request, id_flujo):
 	@rtype: django.HttpResponse
 	@return: modificar_flujo.html, formulario donde se muestran los datos que el usuario puede modificar
 
-	@author: Andrea Benitez """
+	@author: Mauricio Allegretti """
     flow = Flujo.objects.get(id=id_flujo)
     if request.method == 'POST':
             form = FlujoModificadoForm(request.POST)
             if form.is_valid():
                 form.clean()
-                estado = form.cleaned_data['estado']
-                nombre = form.cleaned_date['Nombre_de_Flujo']
-                descripcion = form.cleaned_data['Descripcion_de_Flujo']
-                flow.estado=estado
-                flow.nombre=nombre
-                flow.descripcion=descripcion
+                nombre = form.cleaned_data['Nombre_de_Flujo']
+                descripcion =  form.cleaned_data['Descripcion_de_Flujo']
+                flow.nombre = nombre
+                flow.descripcion = descripcion
                 flow.save()
                 template_name = './Flujos/flujo_modificado.html'
                 return render(request, template_name)
     else:
-        data = {'Nombre_de_Flujo': flow.nombre, 'Descripcion_de_Flujo': flow.descripcion , 'estado': flow.estado, }
+        data = {'Nombre_de_Flujo': flow.nombre, 'Descripcion_de_Flujo': flow.descripcion }
         form = FlujoModificadoForm(data)
-    template_name = './Flujo/modificar_flujo.html'
+    template_name = './Flujos/modificar_flujo.html'
     return render(request, template_name, {'form': form, 'id_flujo': id_flujo})
 
+def flujos(request):
+    """ Recibe un request, y lista todos los usuarios registrados.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@rtype: django.http.HttpResponse
+	@return: usuarios.html,
+
+	@author: Mauricio Allegretti
+
+	"""
+    flujos = Flujo.objects.all()
+    return render_to_response('./Flujos/flujos.html',{'lista_flujos':flujos}, context_instance=RequestContext(request))

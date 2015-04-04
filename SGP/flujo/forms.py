@@ -17,7 +17,7 @@ class FlujoForm(forms.ModelForm):
     """
     class Meta:
         model = Flujo
-        fields = ('nombre', 'descripcion', 'estado')
+        fields = ('id','nombre', 'descripcion', 'estado')
 
 
 class FlujoModificadoForm (forms.Form):
@@ -33,6 +33,4 @@ class FlujoModificadoForm (forms.Form):
     Descripcion_de_Flujo = forms.CharField(widget=forms.TextInput(), max_length=150, required=True, error_messages={'required': 'Ingrese descripcion de Flujo', 'max_length': 'Longitud maxima: 150', 'min_length': 'Longitud minima: 5 caracteres'})
 
 
-    def clean(self):
-        super(forms.Form,self).clean()
-        return self.cleaned_data
+
