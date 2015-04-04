@@ -8,7 +8,7 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/usuarios/">Usuarios</a></li>
+			<li><a href="/proyectos/">Proyectos</a></li>
         </ul>
 
 	</div>
@@ -19,9 +19,10 @@
 <div class="jumbotron">
 	<div class="bs-example" align="center">
 		<h2>Notificacion</h2>
-			<p class="text-warning"><small>{{ mensaje }}</small></p>
+			<p class="text-warning"><small>Seguro que desea eliminar el proyecto?</small></p>
 
-		<a type="button" class="btn btn-default" href="usuarios/">Volver</a>
+        <a href="eliminar/{{ user.id }}/"><button type="button" class="btn btn-default btn-sm">Si</button></a>
+		<a type="button" class="btn btn-default" href="usuarios/">No</a>
 	</div>
 </div>
 {% endblock %}

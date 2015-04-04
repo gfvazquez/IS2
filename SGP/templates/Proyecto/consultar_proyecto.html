@@ -1,0 +1,45 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/proyectos" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/">Proyectos</a></li>
+			<li class="active"><a href="/proyectos/consultar/{{ id_proyecto }}/">Consulta de proyecto</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ proyecto.nombre }}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<p><h4>Id: <span class="label label-default">{{ proyecto.auto_increment_id }}</span></h4></p>
+	<p><h4>Nombre de Proyecto: <span class="label label-default">{{ proyecto.nombre }}</span></h4></p>
+	<p><h4>Estado: <span class="label label-default">{{ proyecto.estado }}</span></h4></p>
+	<p><h4>Descripcion: <span class="label label-default">{{ proyecto.descripcion }}</span></h4></p>
+	<p><h4>Duracion: <span class="label label-default">{{ proyecto.duracion_estimada }}</span></h4></p>
+    <p><h4>Fecha de inicio: <span class="label label-default">{{ proyecto.fecha_inicio }}</span></h4></p>
+
+</div>
+<br>
+<div align="center">
+		<a href="/proyectos/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+	
+{% endblock %}
+
+

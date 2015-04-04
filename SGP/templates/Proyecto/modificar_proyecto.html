@@ -8,8 +8,8 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/usuarios/">Usuarios</a></li>
-			<li class="active"><a href="/usuarios/modificar/{{ id_usuario }}/">Modificación de usuario</a></li>
+			<li><a href="/proyectos/">Proyectos</a></li>
+			<li class="active"><a href="/proyectos/modificar/{{ id_proyecto }}/">Modificación de proyecto</a></li>
         </ul>
 
 	</div>
@@ -20,7 +20,7 @@
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
-			<a href="#">Modificar Usuario</a>
+			<a href="#">Modificar Proyecto</a>
 		</li>
 	</ul>
 </div>
@@ -39,7 +39,7 @@
 		{% csrf_token %}
 	<div align="center">
 		<input class="btn btn-default" type="submit" value="Guardar"/>
-		<a href="/usuarios/"><button type="button" class="btn btn-default">Cancelar</button></a>
+		<a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	</div>
 	<br>
 	</form>
