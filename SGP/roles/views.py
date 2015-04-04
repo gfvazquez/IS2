@@ -103,6 +103,7 @@ def eliminar_rol (request , id_rol):
     """
     #editar de acuerdo a nuevas necesidades
     rol = get_object_or_404(Group, pk=id_rol)
+    rol.delete()
     if rol.name == 'Admin':
         messages.add_message(request, settings.DELETE, "El rol administrador no puede ser eliminado")
 
