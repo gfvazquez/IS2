@@ -5,4 +5,6 @@ urlpatterns = patterns('',
     url(r'^', include('proyecto.urls')),
     url(r'^', include('flujo.urls')),
     url(r'^autenticacion/', include('autenticacion.urls')),
+    url(r'^roles', include('roles.urls')),
+
 )

@@ -1,0 +1,49 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/roles" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/roles/">Roles</a></li>
+			<li class="active"><a href="/roles/consultar/{{ id_rol }}/">Consulta de rol</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ rol.name }}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<p><h4>Id: <span class="label label-default">{{ rol.id }}</span></h4></p>
+	<p><h4>Nombre_de_Usuario: <span class="label label-default">{{ rol.name }}</span></h4></p>
+    <br>
+    <h4> Permisos: </h4>
+    {% for permiso in permisos %}
+
+            <li> {{ permiso.name }} </li>
+    {% endfor %}
+
+
+
+</div>
+<br>
+<div align="center">
+		<a href="/roles/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+	
+{% endblock %}
+
+

@@ -53,6 +53,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+DELETE = 50
+
 ROOT_URLCONF = 'SGP.urls'
 
 WSGI_APPLICATION = 'SGP.wsgi.application'
