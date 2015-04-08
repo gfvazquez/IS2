@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from models import Proyecto, Equipo
+from models import Proyecto, Equipo, FlujoProyecto
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
-from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm
+from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm
 from django.contrib.auth.models import User
 # Create your views here.
 
@@ -129,4 +129,27 @@ def asignarEquipo(request, id_proyecto):
         form = AsignarUsuariosForm();
 
     template_name=  './Proyecto/asignar_usuarios_proyecto.html'
-    return render(request, template_name, {'asignar_usuarios_form': form, 'id_proyecto': id_proyecto,'registered': registered})
+    return render(request, template_name, {'asignar_usuarios_form': form, 'id_proyecto': id_proyecto, 'registered': registered})
+
+@login_required
+def asignarFlujo(request, id_proyecto):
+    registered = False
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+    if request.method == 'POST':
+            form = AsignarFlujoForm(request.POST)
+            if form.is_valid():
+
+                form.clean()
+                flujos = form.cleaned_data['flujos']
+
+                for flujo in flujos:
+                    m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo)
+                    m1.save()
+
+                registered = True
+
+    else:
+        form = AsignarFlujoForm();
+
+    template_name= './Proyecto/asignar_flujos_proyecto.html'
+    return render(request, template_name, {'asignar_flujos_form': form, 'id_proyecto': id_proyecto, 'registered': registered})

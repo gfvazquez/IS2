@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from flujo.models import Flujo
+
+
 
 class Proyecto(models.Model):
 
@@ -20,6 +23,9 @@ class Proyecto(models.Model):
     usuarios_proyecto = models.ManyToManyField(User, through='Equipo')
     #flujo
 
+    def __unicode__ (self):
+        return self.nombre
+
     #class Meta:
     #    ordering = ["nombre"]
     #    permissions = (
@@ -34,3 +40,9 @@ class Equipo(models.Model):
     proyecto = models.ForeignKey(Proyecto)
     def __unicode__(self):
         return '%s | %s' % (self.usuario, self.proyecto)
+
+class FlujoProyecto(models.Model):
+    flujo = models.ForeignKey(Flujo)
+    proyecto = models.ForeignKey(Proyecto)
+    def __unicode__(self):
+        return '%s | %s' % (self.flujo, self.proyecto)

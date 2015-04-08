@@ -1,4 +1,4 @@
-from flujo.models import Flujo
+from models import Flujo
 
 __author__ = 'mauricio'
 from django.contrib.auth.models import User

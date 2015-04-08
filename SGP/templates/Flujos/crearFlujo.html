@@ -29,6 +29,11 @@
 {% block contenido %}
 <h1>Crear Flujo</h1>
 <div class="content-secondary">
+     {% if registered %}
+        <h2>Flujo Registrado Exitosamente</h2>
+        <a href="/flujos">Return to the homepage.</a><br />
+        <hr />
+     {% else %}
      <h2>Complete los campos</h2><br />
           <form id="flujo_form" method="post" action="/flujos/crearflujo/" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -44,6 +49,7 @@
 		                <a href="/flujos/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	                </div>
                 </form>
+     {% endif %}
         </div>
 {% endblock %}
 

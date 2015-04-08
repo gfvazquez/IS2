@@ -1,4 +1,5 @@
 from django import forms
+from flujo.models import Flujo
 from models import Proyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
@@ -49,6 +50,11 @@ class AsignarUsuariosForm(forms.Form):
     usuarios = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         queryset=User.objects.filter(is_active=True))
+
+class AsignarFlujoForm(forms.Form):
+    flujos = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        queryset=Flujo.objects.filter(estado=True))
 
 
 
