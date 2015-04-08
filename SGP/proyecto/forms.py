@@ -2,6 +2,7 @@ from django import forms
 from models import Proyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
+from django.contrib.auth.models import User
 
 
 def validate_nombreproyecto_unique(value):
@@ -40,6 +41,14 @@ class ProyectoModificadoForm(forms.Form):
     #   self.fields['Nuevo_Lider']= forms.ChoiceField(widget=forms.Select(), choices= (self.Nuevo_Lider), required=False)
 
 
+
+#class AsignarUsuariosForm(forms.Form):
+#    usuarios = forms.ModelMultipleChoiceField(queryset=User.objects.all())
+
+class AsignarUsuariosForm(forms.Form):
+    usuarios = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        queryset=User.objects.filter(is_active=True))
 
 
 

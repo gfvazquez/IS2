@@ -17,17 +17,20 @@ class Proyecto(models.Model):
     duracion_estimada = models.IntegerField()
     descripcion = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
+    usuarios_proyecto = models.ManyToManyField(User, through='Equipo')
     #flujo
 
+    #class Meta:
+    #    ordering = ["nombre"]
+    #    permissions = (
+    #                      ("listar_miembros", "Puede listar los miembros de un proyecto"),
+    #                      ("importar_proyectos", "Puede importar proyectos"),
+    #                      ("consultar_proyectos", "Puede consultar proyectos"),
+    #                      ("consultar_proyectosfinalizados", "Puede consultar proyectos finalizados"),
+    #                  )
 
-    def __unicode__ (self):
-        return self.nombre
-
-    class Meta:
-        ordering = ["nombre"]
-        permissions = (
-                          ("listar_miembros", "Puede listar los miembros de un proyecto"),
-                          ("importar_proyectos", "Puede importar proyectos"),
-                          ("consultar_proyectos", "Puede consultar proyectos"),
-                          ("consultar_proyectosfinalizados", "Puede consultar proyectos finalizados"),
-                      )
+class Equipo(models.Model):
+    usuario = models.ForeignKey(User)
+    proyecto = models.ForeignKey(Proyecto)
+    def __unicode__(self):
+        return '%s | %s' % (self.usuario, self.proyecto)

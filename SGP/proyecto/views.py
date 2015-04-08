@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from models import Proyecto
+from models import Proyecto, Equipo
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
-from forms import ProyectoForm, ProyectoModificadoForm
-
+from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm
+from django.contrib.auth.models import User
 # Create your views here.
 
 
@@ -107,3 +107,26 @@ def consultarProyecto(request, id_proyecto):
      template_name = './Proyecto/consultar_proyecto.html'
      proyecto = Proyecto.objects.get(pk=id_proyecto)
      return render(request, template_name, {'proyecto': proyecto, 'id_proyecto': id_proyecto})
+
+@login_required
+def asignarEquipo(request, id_proyecto):
+    registered = False
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+    if request.method == 'POST':
+            form = AsignarUsuariosForm(request.POST)
+            if form.is_valid():
+
+                form.clean()
+                usuarios = form.cleaned_data['usuarios']
+
+                for usuario in usuarios:
+                    m1 = Equipo(proyecto=proyecto, usuario=usuario)
+                    m1.save()
+
+                registered = True
+
+    else:
+        form = AsignarUsuariosForm();
+
+    template_name=  './Proyecto/asignar_usuarios_proyecto.html'
+    return render(request, template_name, {'asignar_usuarios_form': form, 'id_proyecto': id_proyecto,'registered': registered})
