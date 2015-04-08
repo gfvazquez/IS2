@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'bootstrapform',
     'usuario',
     'proyecto',
+    'flujo',
 
 )
 

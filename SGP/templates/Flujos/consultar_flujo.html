@@ -1,0 +1,43 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/flujos" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/flujos/">Flujos</a></li>
+			<li class="active"><a href="/flujos/consultarFlujo/{{ id }}/">Consulta de flujo</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ flujo.nombre}}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<p><h4>Id: <span class="label label-default">{{ perfil.id }}</span></h4></p>
+	<p><h4>Nombre del Flujo: <span class="label label-default">{{ perfil.nombre }}</span></h4></p>
+	<p><h4>Descripcion del Flujo: <span class="label label-default">{{ perfil.descripcion }}</span></h4></p>
+	<p><h4>Estado: <span class="label label-default">{{ perfil.estado }}</span></h4></p>
+
+</div>
+<br>
+<div align="center">
+		<a href="/usuarios/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+	
+{% endblock %}
+
+

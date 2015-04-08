@@ -1,0 +1,27 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/usuarios" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/usuarios/">Usuarios</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="jumbotron">
+	<div class="bs-example" align="center">
+		<h2>Notificacion</h2>
+			<p class="text-warning"><small>{{ mensaje }}</small></p>
+
+		<a type="button" class="btn btn-default" href="usuarios/">Volver</a>
+	</div>
+</div>
+{% endblock %}
