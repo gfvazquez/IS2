@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     url(r'^usuarios/modificar/(?P<id_usuario>\d+)/$', modificarUsuario),
     url(r'^usuarios/consultar/(?P<id_usuario>\d+)/$', consultarUsuario),
     url(r'^usuarios/eliminar/(?P<id_usuario>.*)/$', usuario_eliminar),
-    url(r'^usuarios/cerrar/$', views.cerrar, name='cerrar'),
+    url(r'^cerrar/$', views.cerrar, name='cerrar'),
 )
 

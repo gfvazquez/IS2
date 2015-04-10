@@ -27,7 +27,9 @@ def user_login(request):
             if acceso is not None:
                 if acceso.is_active:
                     login(request, acceso)
-                    return HttpResponseRedirect('/usuarios/')
+                    template_name = './principal.html'
+                    return render(request, template_name)
+                    #return HttpResponseRedirect('/usuarios/')
 
                 else:
                     return HttpResponse("El usuario no esta activo")

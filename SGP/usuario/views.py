@@ -198,6 +198,6 @@ def cerrar(request):
     @author: Gabriela Vazquez
     """
     logout(request)
-    return HttpResponseRedirect('/autenticacion/')
+    return HttpResponseRedirect('/')
 
 

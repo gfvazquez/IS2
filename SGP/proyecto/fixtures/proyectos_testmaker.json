@@ -16,6 +16,17 @@
       }
    },
    {
+    "pk": 1,
+    "model": "cliente.cliente",
+    "fields": {
+        "nombre": "pruebaClientehola",
+        "ruc": 123,
+        "numeroTelefono":123456,
+        "representante_id":1,
+        "estado": true
+      }
+   },
+   {
         "pk": 1,
         "model": "proyecto.proyecto",
         "fields": {
@@ -24,7 +35,8 @@
           "fecha_inicio": "2015-04-08",
           "duracion_estimada": 10,
           "descripcion": "Proyecto test",
-          "is_active": true
+          "is_active": true,
+          "cliente_id": 1
         }
    }
 

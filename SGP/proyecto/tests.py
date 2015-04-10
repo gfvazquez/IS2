@@ -18,7 +18,7 @@ class SGPTestCase(TestCase):
         c = Client()
         c.login(username='admin', password='admin1')
 
-        resp = c.post('/proyectos/crear_proyecto/',{"Nombre_del_Proyecto": "proyectoTest", "Fecha_de_Inicio": "2015-04-08", "Duracion": 10, "Descripcion": "Proyecto test"})
+        resp = c.post('/proyectos/crear_proyecto/',{"Nombre_del_Proyecto": "proyectoTest", "Fecha_de_Inicio": "2015-04-08", "Duracion": 10, "Descripcion": "Proyecto test", "Cliente":1})
         self.assertTrue(resp.status_code, 200)
         print ('\n Se crea correctamente el proyecto')
 
@@ -37,7 +37,7 @@ class SGPTestCase(TestCase):
         '''
         f = Client()
         f.login(username='admin', password='admin1')
-        resp = f.post('/proyectos/crear_proyecto/', {"Nombre_del_Proyecto": "proyectoTest2", "Fecha_de_Inicio": "2015-04-08", "Duracion": 10, "Descripcion": "Proyecto test"})
+        resp = f.post('/proyectos/crear_proyecto/', {"Nombre_del_Proyecto": "proyectoTest2", "Fecha_de_Inicio": "2015-04-08", "Duracion": 10, "Descripcion": "Proyecto test", "Cliente":1})
         self.assertTrue(resp.status_code,200)
 
         resp = f.get('/proyectos/')
@@ -73,7 +73,7 @@ class SGPTestCase(TestCase):
         '''
         f = Client()
         f.login(username='admin', password='admin1')
-        resp = f.post('/proyectos/crear_proyecto/',{"Nombre_del_Proyecto": "proyectoTest3", "Fecha_de_Inicio": "2015-04-08", "Duracion": 10, "Descripcion": "Proyecto test"})
+        resp = f.post('/proyectos/crear_proyecto/',{"Nombre_del_Proyecto": "proyectoTest3", "Fecha_de_Inicio": "2015-04-08", "Duracion": 10, "Descripcion": "Proyecto test", "Cliente":1})
 
         resp = f.get('/proyectos/consultar/2/')
         self.assertEqual(resp.status_code, 200)

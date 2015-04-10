@@ -5,7 +5,7 @@ urlpatterns = patterns('',
     url(r'^', include('proyecto.urls')),
     url(r'^', include('flujo.urls')),
     url(r'^', include('cliente.urls')),
-    url(r'^autenticacion/', include('autenticacion.urls')),
+    url(r'^', include('autenticacion.urls')),
     url(r'^roles', include('roles.urls')),
 
 )
