@@ -5,6 +5,7 @@ from django.template.context import RequestContext
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
+
 def user_login(request):
     """ La funcion user_login se encarga del inicio de sesion de un usuario dentro del sistema.
         Si los datos username y password son correctos, se informa sobre el ingreso exitoso,
@@ -29,7 +30,7 @@ def user_login(request):
                     login(request, acceso)
                     template_name = './principal.html'
                     return render(request, template_name)
-                    #return HttpResponseRedirect('/usuarios/')
+                    # return HttpResponseRedirect('/usuarios/')
 
                 else:
                     return HttpResponse("El usuario no esta activo")
@@ -39,7 +40,10 @@ def user_login(request):
 
     else:
         formulario = AuthenticationForm()
-    return render_to_response('./login.html',{'formulario':formulario}, context_instance=RequestContext(request))
+    return render_to_response('./login.html', {'formulario': formulario}, context_instance=RequestContext(request))
 
 
+def irprincipal(request):
+    template_name = './principal.html'
+    return render(request, template_name)
 

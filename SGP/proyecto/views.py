@@ -7,7 +7,7 @@ from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, Asi
 from django.contrib.auth.models import User
 # Create your views here.
 
-
+@login_required
 def proyectos (request):
     proyectos = Proyecto.objects.all()
     return render_to_response('./Proyecto/proyectos.html',{'lista_proyectos':proyectos}, context_instance=RequestContext(request))
