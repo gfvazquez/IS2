@@ -1,0 +1,28 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/clientes" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/clientes/">Clientes</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="jumbotron">
+	<div class="bs-example" align="center">
+		<h2>Notificacion</h2>
+			<p class="text-warning"><small>Seguro que desea eliminar el cliente?</small></p>
+
+        <a href="eliminar/{{ cliente.id }}/"><button type="button" class="btn btn-default btn-sm">Si</button></a>
+		<a type="button" class="btn btn-default" href="clientes/">No</a>
+	</div>
+</div>
+{% endblock %}

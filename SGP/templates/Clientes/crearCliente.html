@@ -3,12 +3,12 @@
 {% block navegacion %}
 <nav class="navbar navbar-default">
 	<div class="navbar-header">
-		<a href="/flujos" class="navbar-brand">SGP</a>
+		<a href="/clientes" class="navbar-brand">SGP</a>
 	</div>
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/flujos/">Flujos</a></li>
+			<li><a href="/clientes/">Clientes</a></li>
         </ul>
 
 	</div>
@@ -19,7 +19,7 @@
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
-			<a href="#">Flujo</a>
+			<a href="#">Cliente</a>
 		</li>
 	</ul>
 </div>
@@ -27,15 +27,15 @@
 
 
 {% block contenido %}
-<h1>Crear Flujo</h1>
+<h1>Crear Cliente</h1>
 <div class="content-secondary">
- {% if registered %}
-                <h2>Flujo Creado Exitosamente</h2>
-                <a href="/flujos">Volver a la lista de Flujos.</a><br />
+    {% if registered %}
+                <h2>Cliente Registrado Exitosamente</h2>
+                <a href="/clientes">Volver a la lista de Clientes.</a><br />
                     <hr />
     {% else %}
      <h2>Complete los campos</h2><br />
-          <form id="flujo_form" method="post" action="/flujos/crearflujo/" enctype="multipart/form-data">
+          <form id="cliente_form" method="post" action="/clientes/crearcliente/" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     <!-- Display each form. The as_p method wraps each element in a paragraph
@@ -46,10 +46,10 @@
                     <!-- Provide a button to click to submit the form. -->
                     <div align="center">
 		                <input class="btn btn-default" type="submit" value="Crear"/>
-		                <a href="/flujos/"><button type="button" class="btn btn-default">Cancelar</button></a>
+		                <a href="/clientes/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	                </div>
                 </form>
-    {% endif %}
+ {% endif %}
         </div>
 {% endblock %}
 
