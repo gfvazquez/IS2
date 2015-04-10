@@ -1,0 +1,31 @@
+[
+  {
+    "pk": 1,
+    "model": "auth.group",
+    "fields": {
+        "name": "Administrador de Proyecto",
+        "permissions": [
+            1,
+            2,
+            3
+        ]
+    }
+},
+  {
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+        "username": "admin",
+        "first_name": "Admin",
+        "last_name": "Admin",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2015-04-08T02:20:07.100Z",
+        "password": "pbkdf2_sha256$12000$5QZf5QNSEimt$V6H1nbxfjqwfE5pxCPDnlNEdKH9qk/OqYrcj6naR140=",
+        "email": "admin@admin.com",
+        "date_joined": "2015-04-01 19:17:11.445412-04"
+    }
+}
+
+]
