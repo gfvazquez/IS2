@@ -36,6 +36,7 @@ def crear_proyecto(request):
             fecha_inicio = proyecto_form.cleaned_data['Fecha_de_Inicio']
             duracion =  proyecto_form.cleaned_data['Duracion']
             descripcion =  proyecto_form.cleaned_data['Descripcion']
+            cliente = proyecto_form.cleaned_data['Cliente']
 
             proyecto = Proyecto()
             proyecto.nombre=nombre
@@ -44,6 +45,7 @@ def crear_proyecto(request):
             proyecto.duracion_estimada=duracion
             proyecto.is_active='True'
             proyecto.descripcion = descripcion
+            proyecto.cliente = cliente
             proyecto.save()
 
             #Actualiza la variable para llamar al template cuando el registro fue correcto

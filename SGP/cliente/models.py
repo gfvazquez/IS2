@@ -8,3 +8,6 @@ class Cliente(models.Model):
     numeroTelefono = models.IntegerField(max_length= 30, verbose_name='Telefono')
     representante = models.ForeignKey(User)
     estado = models.BooleanField(default = True)
+
+    def __unicode__ (self):
+        return self.nombre

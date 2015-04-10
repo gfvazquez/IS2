@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from flujo.models import Flujo
+from cliente.models import Cliente
 
 
 
@@ -21,6 +22,8 @@ class Proyecto(models.Model):
     descripcion = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     usuarios_proyecto = models.ManyToManyField(User, through='Equipo')
+    cliente = models.ForeignKey(Cliente)
+
     #flujo
 
     def __unicode__ (self):
