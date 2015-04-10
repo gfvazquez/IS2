@@ -17,6 +17,18 @@ def proyectos (request):
 
 @login_required
 def crear_proyecto(request):
+    """ Recibe un request, obtiene el formulario con los datos del proyecto a crear.
+     Luego verifica los datos recibidos y registra el nuevo proyectos.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@rtype: django.http.HttpResponse
+	@return: mensaje de exito
+
+	@author: Andrea Benitez
+
+	"""
 
     context = RequestContext(request)
 
@@ -71,7 +83,20 @@ def crear_proyecto(request):
 
 @login_required
 def modificarProyecto(request, id_proyecto):
+    """ Recibe un request y un id, luego busca en la base de datos el proyecto
+    cuyos datos se quieren modificar. Se muestra un formulario con estos
+    campos y luego se guardan los cambios realizados.
 
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@param id_proyecto: identificador unico del usuario
+
+	@rtype: django.HttpResponse
+	@return: modificar_proyecto.html, formulario donde se muestran los datos que el usuario puede modificar
+
+	@author: Andrea Benitez """
     proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
     if request.method == 'POST':
             form = ProyectoModificadoForm(request.POST)
@@ -106,12 +131,42 @@ def modificarProyecto(request, id_proyecto):
 
 @login_required
 def consultarProyecto(request, id_proyecto):
-     template_name = './Proyecto/consultar_proyecto.html'
-     proyecto = Proyecto.objects.get(pk=id_proyecto)
-     return render(request, template_name, {'proyecto': proyecto, 'id_proyecto': id_proyecto})
+    """ Recibe un request y un id, luego busca en la base de datos al proyecto
+    cuyos datos se quieren consultar, el proyecto se busca mediante el id en cuestion.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@param id_proyecto: identificador unico del proyecto
+
+	@rtype: django.HttpResponse
+	@return: consultar_proyecto.html, donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
+
+    template_name = './Proyecto/consultar_proyecto.html'
+    proyecto = Proyecto.objects.get(pk=id_proyecto)
+    return render(request, template_name, {'proyecto': proyecto, 'id_proyecto': id_proyecto})
 
 @login_required
 def asignarEquipo(request, id_proyecto):
+    """ Recibe un request y un id, luego busca en la base de datos al proyecto
+    que se desea asignar un conjunto de usuarios, es decir un Equipo de trabajo
+    para el proyecto en cuestion
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@param id_proyecto: identificador unico del proyecto
+
+	@rtype: django.HttpResponse
+	@return: asignar_usuarios_form.html donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
     registered = False
     proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
     if request.method == 'POST':
@@ -135,6 +190,20 @@ def asignarEquipo(request, id_proyecto):
 
 @login_required
 def asignarFlujo(request, id_proyecto):
+    """ Recibe un request y un id, luego busca en la base de datos al proyecto
+    que se desea asignar un o unos flujos
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@param id_proyecto: identificador unico del proyecto
+
+	@rtype: django.HttpResponse
+	@return: asignar_flujos_proyecto.html, donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
     registered = False
     proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
     if request.method == 'POST':

@@ -23,6 +23,16 @@ ESTADOS_PROYECTO=(
 )
 
 class ProyectoForm(forms.Form):
+    """ Atributos de Proyecto necesarios para el registro en la base de datos
+        de un nuevo proyecto. Los atributos son: Nombre_del_Proyecto, Fecha_de_Inicio,
+        Duracion, Descripcion, Cliente
+        @type forms.Form: django.forms
+        @param forms.Form: Heredamos la clase forms.ModelForm para hacer uso de sus
+        funcionalidades
+
+        @author: Andrea Benitez
+
+    """
     Nombre_del_Proyecto = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese un nombre para el proyecto', 'max_length': 'Longitud maxima: 15', 'min_length': 'Longitud minima: 2 caracteres'})
     Fecha_de_Inicio =  forms.DateField(input_formats=['%Y-%m-%d'], widget=widgets.AdminDateWidget, required=True, help_text='* Ingrese en formato anho-mes-dia', error_messages={'required': 'Ingrese una fecha de inicio de proyecto'} )
     Duracion = forms.IntegerField(required=True, help_text='* En semanas', validators=[validate_duracion_proyecto], error_messages={'required': 'Ingrese la duracion del proyecto',})
@@ -32,6 +42,16 @@ class ProyectoForm(forms.Form):
 
 
 class ProyectoModificadoForm(forms.Form):
+    """ Atributos de Proyecto necesarios para la modificacion de un proyecto y
+        registrar dicho cambio en la base de datos.
+        Los atributos son: Nombre_del_Proyecto, Nuevo_Estado, Duracion, Descripcion
+        @type forms.Form: django.forms
+        @param forms.Form: Heredamos la clase forms.ModelForm para hacer uso de sus
+        funcionalidades
+
+        @author: Andrea Benitez
+
+    """
     Nombre_del_Proyecto = forms.CharField(widget=forms.TextInput(), max_length=30, min_length=2, required=True, error_messages={'required': 'Ingrese un nombre para el proyecto', 'max_length': 'Longitud maxima: 15', 'min_length': 'Longitud minima: 2 caracteres'})
     #Nuevo_Lider =  forms.ChoiceField(widget=forms.Select(), choices= (opcionLider()), required=False)
     Nuevo_Estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS_PROYECTO), required=False)
@@ -45,15 +65,30 @@ class ProyectoModificadoForm(forms.Form):
 
 
 
-#class AsignarUsuariosForm(forms.Form):
-#    usuarios = forms.ModelMultipleChoiceField(queryset=User.objects.all())
-
 class AsignarUsuariosForm(forms.Form):
+    """ Obtiene los usuarios de la base de datos que se encuentren activos, asi se pueden
+        asignar dichos usuarios a un proyecto
+        @type forms.Form: django.forms
+        @param forms.Form: Heredamos la clase forms.ModelForm para hacer uso de sus
+        funcionalidades
+
+        @author: Andrea Benitez
+
+    """
     usuarios = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         queryset=User.objects.filter(is_active=True))
 
 class AsignarFlujoForm(forms.Form):
+    """ Obtiene los Flujos de la base de datos que se encuentren activos, asi se pueden
+        asignar dichos flujos a un proyecto
+        @type forms.Form: django.forms
+        @param forms.Form: Heredamos la clase forms.ModelForm para hacer uso de sus
+        funcionalidades
+
+        @author: Andrea Benitez
+
+    """
     flujos = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         queryset=Flujo.objects.filter(estado=True))
