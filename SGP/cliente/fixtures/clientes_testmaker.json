@@ -1,22 +1,52 @@
 [{
     "pk": 1,
-    "representante_id":1,
-    "model": "cliente.cliente",
+   "model": "cliente.cliente",
     "fields": {
         "nombre": "pruebaClientehola",
         "ruc": 123,
         "numeroTelefono":123456,
-
+        "representante":1,
         "estado": true
       }
 },{
     "pk": 2,
-    "model": "cliente.cliente",
+   "model": "cliente.cliente",
     "fields": {
-        "nombre": "PC",
-        "ruc": 555,
-        "numeroTelefono":456777,
+        "nombre": "testcliente2",
+        "ruc": 1234,
+        "numeroTelefono":123456,
+        "representante":2,
         "estado": true
       }
+},{
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+        "username": "admin",
+        "first_name": "Admi",
+        "last_name": "Nistrador",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-04-20T02:20:07.100Z",
+        "password": "pbkdf2_sha256$12000$5QZf5QNSEimt$V6H1nbxfjqwfE5pxCPDnlNEdKH9qk/OqYrcj6naR140=",
+        "email": "admin@admin.com",
+        "date_joined": "2014-04-20T02:19:13.458Z"
+    }
+},{
+    "pk": 2,
+    "model": "auth.user",
+    "fields": {
+        "username": "p",
+        "first_name": "P",
+        "last_name": "pe",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-04-20T02:20:07.100Z",
+        "password": "pbkdf2_sha256$12000$5QZf5QNSEimt$V6H1nbxfjqwfE5pxCPDnlNEdKH9qk/OqYrcj6naR140=",
+        "email": "admin@admin.com",
+        "date_joined": "2014-04-20T02:19:13.458Z"
+    }
 }
 ]
