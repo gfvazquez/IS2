@@ -1,0 +1,62 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/clientes" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="/clientes/">Clientes</a></li>
+        </ul>
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Clientes</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block botones %}
+<div class="row">
+	<form class="navbar-form navbar-left">
+
+		<a href="crearcliente/"><button type="button" class="btn btn-default">Crear Cliente</button></a>
+
+	</form>
+</div>
+{% endblock %}
+{% block contenido %}
+<div class="content-secondary">
+<!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
+	<div class="panel-group" id="accordion">
+
+	<br>
+		{% if lista_clientes %}
+			{% for Cliente in lista_clientes %}
+				{% if Cliente.estado %}
+	<div class="panel panel-default">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ Flujo.id }}">
+				          	{{ Cliente.nombre }}
+				          </a>
+                          <a href="consultar/{{ Cliente.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+                          <a href="modificarcliente/{{ Cliente.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
+                          <a href="eliminarcliente/{{ Cliente.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
+				      </h4>
+				    </div>
+	</div>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+	</div>
+	</div>
+{% endblock %}

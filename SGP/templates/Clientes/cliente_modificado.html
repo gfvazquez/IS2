@@ -1,0 +1,36 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/clientes" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/clientes/">Clientes</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Cliente</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<h2>Los datos del cliente se han modificado con exito </h2>
+	<a href="/clientes/"><button type="button" class="btn btn-default">OK</button></a>
+		<div class="form-group">
+		</div>
+
+</div>
+{% endblock %}

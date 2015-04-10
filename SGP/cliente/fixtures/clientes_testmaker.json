@@ -1,0 +1,22 @@
+[{
+    "pk": 1,
+    "representante_id":1,
+    "model": "cliente.cliente",
+    "fields": {
+        "nombre": "pruebaClientehola",
+        "ruc": 123,
+        "numeroTelefono":123456,
+
+        "estado": true
+      }
+},{
+    "pk": 2,
+    "model": "cliente.cliente",
+    "fields": {
+        "nombre": "PC",
+        "ruc": 555,
+        "numeroTelefono":456777,
+        "estado": true
+      }
+}
+]
