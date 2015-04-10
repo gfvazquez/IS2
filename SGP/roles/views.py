@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib import messages
+from django.shortcuts import render_to_response, render
 from SGP import settings
 
 @login_required
@@ -32,13 +33,11 @@ def crearRol(request):
             group_form.save()
              #Actualiza la variable para llamar al template cuando el registro fue correcto
             registered = True
-            return HttpResponse("Rol registrado correctamente")
-            #return HttpResponseRedirect('/roles/creacion')
 
     else:
         # formulario inicial
         group_form = GroupForm()
-    return render_to_response('roles/creacionRol.html', { 'group_form': group_form}, context_instance=RequestContext(request))
+    return render_to_response('roles/creacionRol.html', { 'group_form': group_form, 'registered': registered}, context_instance=RequestContext(request))
 
 @login_required
 @permission_required('group')
@@ -136,7 +135,9 @@ def modificar_rol (request , id_rol):
 
         if rol_form.is_valid():
             rol_form.save()
-            return HttpResponse("Rol registrado correctamente")
+            #return HttpResponse("Rol registrado correctamente")
+            template_name = './roles/rol_modificado.html'
+            return render(request, template_name)
     else:
         rol_form = GroupForm(instance=rol)
 
