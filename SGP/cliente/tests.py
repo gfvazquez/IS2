@@ -53,7 +53,7 @@ class SGPTestCase(TestCase):
         self.assertEqual([cli.pk for cli in resp.context['lista_clientes']], [1,2])
         cliente1 = resp.context['lista_clientes'][1]
         self.assertEqual(cliente1.nombre, 'testcliente2')
-        self.assertEqual(cliente1.ruc, 1234)
+        self.assertEqual(cliente1.ruc, '1234')
         self.assertEqual(cliente1.numeroTelefono, 123456)
         self.assertEqual(cliente1.representante.id, 2)
 
@@ -62,7 +62,7 @@ class SGPTestCase(TestCase):
         self.assertEqual([cli.pk for cli in resp.context['lista_clientes']], [1,2])
         cliente1 = resp.context['lista_clientes'][0]
         self.assertEqual(cliente1.nombre, 'pruebaClientehola')
-        self.assertEqual(cliente1.ruc, 123)
+        self.assertEqual(cliente1.ruc, '123')
         self.assertEqual(cliente1.numeroTelefono, 123456)
         self.assertEqual(cliente1.representante.id, 1)
 

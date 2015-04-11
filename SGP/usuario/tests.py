@@ -33,7 +33,7 @@ class SGPTestCase(TestCase):
 
     def test_inicio(self):
         '''Test para ver si puede entrar a la pagina de inicio'''
-        resp = self.client.get('/autenticacion/')
+        resp = self.client.get('/')
         self.assertEqual(resp.status_code, 200)
 
     def login(self, password='testpw'):
@@ -101,6 +101,6 @@ class SGPTestCase(TestCase):
         usuario = User.objects.create_user('testuser', 'test@example.com', 'testpw')
         c = Client()
         c.login(username='testuser', password='testpw')
-        response = c.get('/autenticacion/')
+        response = c.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertTrue(SESSION_KEY not in self.client.session)
