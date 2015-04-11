@@ -22,7 +22,7 @@
         "nombre": "pruebaClientehola",
         "ruc": 123,
         "numeroTelefono":123456,
-        "representante_id":1,
+        "representante":1,
         "estado": true
       }
    },
@@ -36,7 +36,7 @@
           "duracion_estimada": 10,
           "descripcion": "Proyecto test",
           "is_active": true,
-          "cliente_id": 1
+          "cliente": 1
         }
    }
 

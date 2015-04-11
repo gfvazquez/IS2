@@ -25,9 +25,12 @@ class SGPTestCase(TestCase):
 
     def test_inicio(self):
         '''Test para ver si puede entrar a la pagina de inicio'''
-        resp = self.client.get('/proyectos/')
-        self.assertEqual(resp.status_code, 200)
+        c = Client()
+        c.login(username='admin', password='admin1')
+        resp = c.get('/proyectos/')
+        self.assertTrue(resp.status_code, 200)
         print ('\n Se ingresa correctamente al modulo de proyectos')
+
 
 
     def test_listar_proyecto(self):
@@ -78,5 +81,20 @@ class SGPTestCase(TestCase):
         resp = f.get('/proyectos/consultar/2/')
         self.assertEqual(resp.status_code, 200)
 
+
+    def test_modificar_proyecto(self):
+        """
+            Test para probar el correcto funcionamiento de la modificacion de un proyecto.
+            @author: Andrea Benitez
+
+        """
+        c = Client()
+        c.login(username='admin', password='admin1')
+        #creamos un Rol para luego modificar
+        self.test_crear_proyecto()
+        #modificacion correcta del rol, redirige a la pagina correspondiente
+        resp = c.post('/roles/modificar/1',{"Nombre_del_Proyecto":"nombre cambiado", "Nuevo_Estado":"Cancelado", "Duracion": 10, "Descripcion": "descripcion modificada" })
+        self.assertTrue(resp.status_code, 200)
+        print ('\n Correcta modificacion del Proyecto')
 
 
