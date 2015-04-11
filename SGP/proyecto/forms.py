@@ -36,7 +36,7 @@ class ProyectoForm(forms.Form):
     Nombre_del_Proyecto = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese un nombre para el proyecto', 'max_length': 'Longitud maxima: 15', 'min_length': 'Longitud minima: 2 caracteres'})
     Fecha_de_Inicio =  forms.DateField(input_formats=['%Y-%m-%d'], widget=widgets.AdminDateWidget, required=True, help_text='* Ingrese en formato anho-mes-dia', error_messages={'required': 'Ingrese una fecha de inicio de proyecto'} )
     Duracion = forms.IntegerField(required=True, help_text='* En semanas', validators=[validate_duracion_proyecto], error_messages={'required': 'Ingrese la duracion del proyecto',})
-    Descripcion = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el proyecto', 'max_length': 'Longitud maxima: 100', 'min_length': 'Longitud minima: 2 caracteres'})
+    Descripcion = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el proyecto', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
     Cliente = forms.ModelChoiceField(queryset= Cliente.objects.filter(estado=True))
 
 
@@ -56,7 +56,7 @@ class ProyectoModificadoForm(forms.Form):
     #Nuevo_Lider =  forms.ChoiceField(widget=forms.Select(), choices= (opcionLider()), required=False)
     Nuevo_Estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS_PROYECTO), required=False)
     Duracion = forms.IntegerField(required=True, help_text='En semanas', validators=[validate_duracion_proyecto], error_messages={'required': 'Ingrese la duracion del proyecto',})
-    Descripcion = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el proyecto', 'max_length': 'Longitud maxima: 100', 'min_length': 'Longitud minima: 2 caracteres'})
+    Descripcion = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el proyecto', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
 
     #def __init__(self, *args, **kwargs):
     #    self.Nuevo_Lider = opcionLider()

@@ -19,7 +19,7 @@ class Proyecto(models.Model):
     estado = models.CharField(max_length=15, choices=ESTADOS_PROYECTO, default='Iniciado')
     fecha_inicio = models.DateField()
     duracion_estimada = models.IntegerField()
-    descripcion = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)
     usuarios_proyecto = models.ManyToManyField(User, through='Equipo')
     cliente = models.ForeignKey(Cliente)
