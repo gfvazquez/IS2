@@ -35,6 +35,18 @@
     <p><h4>Fecha de inicio: <span class="label label-default">{{ proyecto.fecha_inicio }}</span></h4></p>
     <p><h4>Cliente: <span class="label label-default">{{ proyecto.cliente.nombre }}</span></h4></p>
 
+    <p><h4>Flujos asignados:</h4></p>
+   {% for flujo in flujos %}
+    <li >{{ flujo }}</li>
+       <br>
+    {% endfor %}
+
+    <p><h4>Usuarios asignados:</h4></p>
+    {% for usuario in usuarios %}
+    <li >{{ usuario }}</li>
+        <br>
+    {% endfor %}
+
 </div>
 
 

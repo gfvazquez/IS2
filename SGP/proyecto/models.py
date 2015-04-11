@@ -42,10 +42,11 @@ class Equipo(models.Model):
     usuario = models.ForeignKey(User)
     proyecto = models.ForeignKey(Proyecto)
     def __unicode__(self):
-        return '%s | %s' % (self.usuario, self.proyecto)
+        return self.usuario.username
 
 class FlujoProyecto(models.Model):
     flujo = models.ForeignKey(Flujo)
     proyecto = models.ForeignKey(Proyecto)
     def __unicode__(self):
-        return '%s | %s' % (self.flujo, self.proyecto)
+        return self.flujo.nombre
+

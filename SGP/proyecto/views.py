@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from models import Proyecto, Equipo, FlujoProyecto
+from flujo.models import Flujo
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -148,7 +149,11 @@ def consultarProyecto(request, id_proyecto):
 
     template_name = './Proyecto/consultar_proyecto.html'
     proyecto = Proyecto.objects.get(pk=id_proyecto)
-    return render(request, template_name, {'proyecto': proyecto, 'id_proyecto': id_proyecto})
+    flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+    usuarios = Equipo.objects.filter(proyecto_id=id_proyecto)
+
+
+    return render(request, template_name, {'proyecto': proyecto, 'flujos':flujos, 'usuarios':usuarios, 'id_proyecto': id_proyecto})
 
 @login_required
 def asignarEquipo(request, id_proyecto):
