@@ -4,6 +4,7 @@ from forms import FlujoForm, FlujoModificadoForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 
 
@@ -21,39 +22,48 @@ def crear_flujo(request):
 	@author: Mauricio Allegretti
 
 	"""
-    context = RequestContext(request)
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+    # user_permissions = request.user.user_permissions.all()
+    for p in user_permissions_groups:
+        if (p == 'flujo.add_flujo'):
+            band = True
 
-    #valor booleano para llamar al template cuando el registro fue correcto
-    registered = False
+    if (band == True):
+        context = RequestContext(request)
 
-    if request.method == 'POST':
-        flujo_form = FlujoForm(data=request.POST)
+        #valor booleano para llamar al template cuando el registro fue correcto
+        registered = False
+
+        if request.method == 'POST':
+            flujo_form = FlujoForm(data=request.POST)
 
 
-        # If the two forms are valid...
-        if flujo_form.is_valid():
-            # Guarda el Usuarios en la bd
-            flow = flujo_form.save()
-            flow.save()
+            # If the two forms are valid...
+            if flujo_form.is_valid():
+                # Guarda el Usuarios en la bd
+                flow = flujo_form.save()
+                flow.save()
 
-            #Actualiza la variable para llamar al template cuando el registro fue correcto
-            registered = True
+                #Actualiza la variable para llamar al template cuando el registro fue correcto
+                registered = True
 
-        # Invalid form or forms - mistakes or something else?
-        # Print problems to the terminal.
-        # They'll also be shown to the user.
+            # Invalid form or forms - mistakes or something else?
+            # Print problems to the terminal.
+            # They'll also be shown to the user.
+            else:
+                print flujo_form.errors
+
+        # Not a HTTP POST, so we render our form using two ModelForm instances.
+        # These forms will be blank, ready for user input.
         else:
-            print flujo_form.errors
+            flujo_form = FlujoForm()
 
-    # Not a HTTP POST, so we render our form using two ModelForm instances.
-    # These forms will be blank, ready for user input.
+
+        # Render the template depending on the context.
+        return render_to_response('./Flujos/crearFlujo.html', {'user_form': flujo_form, 'registered': registered}, context)
     else:
-        flujo_form = FlujoForm()
-
-
-    # Render the template depending on the context.
-    return render_to_response('./Flujos/crearFlujo.html', {'user_form': flujo_form, 'registered': registered}, context)
-
+        raise Http404("No cuenta con los permisos necesarios")
 
 @login_required
 def consultarFlujo(request, id_flujo):
@@ -92,11 +102,21 @@ def flujo_eliminar(request, id_flujo):
 
 	@author: Mauricio Allegretti
 	"""
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+    # user_permissions = request.user.user_permissions.all()
+    for p in user_permissions_groups:
+        if (p == 'flujo.delete_flujo'):
+            band = True
 
-    flowDelLogic = Flujo.objects.get(pk=id_flujo)
-    flowDelLogic.estado=False
-    flowDelLogic.save()
-    return HttpResponseRedirect('/flujos/')
+    if (band == True):
+
+        flowDelLogic = Flujo.objects.get(pk=id_flujo)
+        flowDelLogic.estado=False
+        flowDelLogic.save()
+        return HttpResponseRedirect('/flujos/')
+    else:
+        raise Http404("No cuenta con los permisos necesarios")
 
 
 @login_required
@@ -115,23 +135,33 @@ def modificarFlujo(request, id_flujo):
 	@return: modificar_flujo.html, formulario donde se muestran los datos que el usuario puede modificar
 
 	@author: Mauricio Allegretti """
-    flow = Flujo.objects.get(id=id_flujo)
-    if request.method == 'POST':
-            form = FlujoModificadoForm(request.POST)
-            if form.is_valid():
-                form.clean()
-                nombre = form.cleaned_data['Nombre_de_Flujo']
-                descripcion =  form.cleaned_data['Descripcion_de_Flujo']
-                flow.nombre = nombre
-                flow.descripcion = descripcion
-                flow.save()
-                template_name = './Flujos/flujo_modificado.html'
-                return render(request, template_name)
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+    # user_permissions = request.user.user_permissions.all()
+    for p in user_permissions_groups:
+        if (p == 'flujo.change_flujo'):
+            band = True
+
+    if (band == True):
+        flow = Flujo.objects.get(id=id_flujo)
+        if request.method == 'POST':
+                form = FlujoModificadoForm(request.POST)
+                if form.is_valid():
+                    form.clean()
+                    nombre = form.cleaned_data['Nombre_de_Flujo']
+                    descripcion =  form.cleaned_data['Descripcion_de_Flujo']
+                    flow.nombre = nombre
+                    flow.descripcion = descripcion
+                    flow.save()
+                    template_name = './Flujos/flujo_modificado.html'
+                    return render(request, template_name)
+        else:
+            data = {'Nombre_de_Flujo': flow.nombre, 'Descripcion_de_Flujo': flow.descripcion }
+            form = FlujoModificadoForm(data)
+        template_name = './Flujos/modificar_flujo.html'
+        return render(request, template_name, {'form': form, 'id_flujo': id_flujo})
     else:
-        data = {'Nombre_de_Flujo': flow.nombre, 'Descripcion_de_Flujo': flow.descripcion }
-        form = FlujoModificadoForm(data)
-    template_name = './Flujos/modificar_flujo.html'
-    return render(request, template_name, {'form': form, 'id_flujo': id_flujo})
+        raise Http404("No cuenta con los permisos necesarios")
 
 def flujos(request):
     """ Recibe un request, y lista todos los usuarios registrados.

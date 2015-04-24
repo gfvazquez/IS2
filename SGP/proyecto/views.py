@@ -1,19 +1,21 @@
 from django.shortcuts import render
 from models import Proyecto, Equipo, FlujoProyecto
 from flujo.models import Flujo
+from django.db import models
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm
-from django.contrib.auth.models import User
+from django.http import Http404
+from django.contrib.auth.models import Group, Permission, User
 # Create your views here.
 
 @login_required
-def proyectos (request):
+def proyectos(request):
     proyectos = Proyecto.objects.all()
-    return render_to_response('./Proyecto/proyectos.html',{'lista_proyectos':proyectos}, context_instance=RequestContext(request))
-
-
+    return render_to_response('./Proyecto/proyectos.html', {'lista_proyectos': proyectos},
+                              context_instance=RequestContext(request))
 
 
 @login_required
@@ -32,55 +34,65 @@ def crear_proyecto(request):
 	"""
 
     context = RequestContext(request)
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+   # user_permissions = request.user.user_permissions.all()
+    for p in user_permissions_groups:
+        if (p == 'proyecto.add_proyecto'):
+            band = True
 
-    #valor booleano para llamar al template cuando el registro fue correcto
-    registered = False
 
-    if request.method == 'POST':
-        proyecto_form = ProyectoForm(data=request.POST)
+    if (band == True):
+        # valor booleano para llamar al template cuando el registro fue correcto
+        registered = False
+
+        if request.method == 'POST':
+            proyecto_form = ProyectoForm(data=request.POST)
 
 
-        # If the two forms are valid...
-        if proyecto_form.is_valid():
-            # Guarda el Usuarios en la bd
-            proyecto_form.clean()
-            nombre = proyecto_form.cleaned_data['Nombre_del_Proyecto']
-            #lider =  proyecto_form.cleaned_data['Lider']
-            fecha_inicio = proyecto_form.cleaned_data['Fecha_de_Inicio']
-            duracion =  proyecto_form.cleaned_data['Duracion']
-            descripcion =  proyecto_form.cleaned_data['Descripcion']
-            cliente = proyecto_form.cleaned_data['Cliente']
+            # If the two forms are valid...
+            if proyecto_form.is_valid():
+                # Guarda el Usuarios en la bd
+                proyecto_form.clean()
+                nombre = proyecto_form.cleaned_data['Nombre_del_Proyecto']
+                # lider =  proyecto_form.cleaned_data['Lider']
+                fecha_inicio = proyecto_form.cleaned_data['Fecha_de_Inicio']
+                duracion = proyecto_form.cleaned_data['Duracion']
+                descripcion = proyecto_form.cleaned_data['Descripcion']
+                cliente = proyecto_form.cleaned_data['Cliente']
 
-            proyecto = Proyecto()
-            proyecto.nombre=nombre
-            #proyecto.lider=request.user
-            proyecto.fecha_inicio=fecha_inicio
-            proyecto.duracion_estimada=duracion
-            proyecto.is_active='True'
-            proyecto.descripcion = descripcion
-            proyecto.cliente = cliente
-            proyecto.save()
+                proyecto = Proyecto()
+                proyecto.nombre = nombre
+                # proyecto.lider=request.user
+                proyecto.fecha_inicio = fecha_inicio
+                proyecto.duracion_estimada = duracion
+                proyecto.is_active = 'True'
+                proyecto.descripcion = descripcion
+                proyecto.cliente = cliente
+                proyecto.save()
 
-            #Actualiza la variable para llamar al template cuando el registro fue correcto
-            registered = True
+                #Actualiza la variable para llamar al template cuando el registro fue correcto
+                registered = True
 
-        # Invalid form or forms - mistakes or something else?
-        # Print problems to the terminal.
-        # They'll also be shown to the user.
+                # Invalid form or forms - mistakes or something else?
+                # Print problems to the terminal.
+                # They'll also be shown to the user.
+
+            else:
+                print proyecto_form.errors  # Not a HTTP POST, so we render our form using two ModelForm instances.
+        # These forms will be blank, ready for user input.
         else:
-            print proyecto_form.errors
+            proyecto_form = ProyectoForm()  # Render the template depending on the context.
 
-    # Not a HTTP POST, so we render our form using two ModelForm instances.
-    # These forms will be blank, ready for user input.
-    else:
-        proyecto_form = ProyectoForm()
-
-
-    # Render the template depending on the context.
-    return render_to_response(
+        return render_to_response(
         './Proyecto/crearProyecto.html',
-            {'proyecto_form': proyecto_form,  'registered': registered},
-            context)
+        {'proyecto_form': proyecto_form, 'registered': registered},
+    context)
+
+    else:
+        raise Http404("No cuenta con los permisos necesarios")
+
+
 
 @login_required
 def modificarProyecto(request, id_proyecto):
@@ -98,19 +110,24 @@ def modificarProyecto(request, id_proyecto):
 	@return: modificar_proyecto.html, formulario donde se muestran los datos que el usuario puede modificar
 
 	@author: Andrea Benitez """
-    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
-    if request.method == 'POST':
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+   # user_permissions = request.user.user_permissions.all()
+    for p in user_permissions_groups:
+        if (p == 'proyecto.change_proyecto'):
+            band = True
+
+    if (band == True):
+        proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+        if request.method == 'POST':
             form = ProyectoModificadoForm(request.POST)
             if form.is_valid():
-
                 form.clean()
                 nombre = form.cleaned_data['Nombre_del_Proyecto']
-                #lider =  form.cleaned_data['Nuevo_Lider']
+                # lider =  form.cleaned_data['Nuevo_Lider']
                 estado = form.cleaned_data['Nuevo_Estado']
-                duracion =  form.cleaned_data['Duracion']
+                duracion = form.cleaned_data['Duracion']
                 descripcion = form.cleaned_data['Descripcion']
-
-
 
                 proyecto.nombre = nombre
                 proyecto.duracion_estimada = duracion
@@ -118,16 +135,19 @@ def modificarProyecto(request, id_proyecto):
                 proyecto.estado = estado
                 proyecto.save();
 
-
                 template_name = './Proyecto/proyecto_modificado.html'
                 return render(request, template_name)
+        else:
+            data = {'Nombre_de_Proyecto': proyecto.nombre, 'Nuevo_estado': proyecto.estado,
+                    'Duracion': proyecto.duracion_estimada,
+                    'Descripcion': proyecto.descripcion,
+            }
+            form = ProyectoModificadoForm(data)
+        template_name = './Proyecto/modificar_proyecto.html'
+        return render(request, template_name, {'form': form, 'id_proyecto': id_proyecto})
+
     else:
-        data = {'Nombre_de_Proyecto': proyecto.nombre, 'Nuevo_estado': proyecto.estado, 'Duracion': proyecto.duracion_estimada,
-                'Descripcion': proyecto.descripcion,
-                }
-        form = ProyectoModificadoForm(data)
-    template_name = './Proyecto/modificar_proyecto.html'
-    return render(request, template_name, {'form': form, 'id_proyecto': id_proyecto})
+        raise Http404("No cuenta con los permisos necesarios")
 
 
 @login_required
@@ -152,8 +172,10 @@ def consultarProyecto(request, id_proyecto):
     flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
     usuarios = Equipo.objects.filter(proyecto_id=id_proyecto)
 
+    return render(request, template_name,
+                  {'proyecto': proyecto, 'flujos': flujos, 'usuarios': usuarios, 'id_proyecto': id_proyecto})
 
-    return render(request, template_name, {'proyecto': proyecto, 'flujos':flujos, 'usuarios':usuarios, 'id_proyecto': id_proyecto})
+
 
 @login_required
 def asignarEquipo(request, id_proyecto):
@@ -172,26 +194,37 @@ def asignarEquipo(request, id_proyecto):
 
 	@author: Andrea Benitez
 	"""
-    registered = False
-    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
-    if request.method == 'POST':
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+
+    for p in user_permissions_groups:
+        if (p == 'proyecto.add_equipo'):
+            band = True
+
+    if (band == True):
+        registered = False
+        proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+        if request.method == 'POST':
             form = AsignarUsuariosForm(request.POST)
             if form.is_valid():
-
                 form.clean()
-                usuarios = form.cleaned_data['usuarios']
+                usuario = form.cleaned_data['usuarios']
+                rol = form.cleaned_data['roles']
 
-                for usuario in usuarios:
-                    m1 = Equipo(proyecto=proyecto, usuario=usuario)
-                    m1.save()
+                m1 = Equipo(proyecto=proyecto, usuario=usuario, rol=rol)
+                m1.save()
 
                 registered = True
 
-    else:
-        form = AsignarUsuariosForm();
+        else:
+            form = AsignarUsuariosForm();
 
-    template_name=  './Proyecto/asignar_usuarios_proyecto.html'
-    return render(request, template_name, {'asignar_usuarios_form': form, 'id_proyecto': id_proyecto, 'registered': registered})
+        template_name = './Proyecto/asignar_usuarios_proyecto.html'
+        return render(request, template_name,
+                      {'asignar_usuarios_form': form, 'id_proyecto': id_proyecto, 'registered': registered})
+
+    else:
+        raise Http404("No cuenta con los permisos necesarios")
 
 @login_required
 def asignarFlujo(request, id_proyecto):
@@ -209,9 +242,17 @@ def asignarFlujo(request, id_proyecto):
 
 	@author: Andrea Benitez
 	"""
-    registered = False
-    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
-    if request.method == 'POST':
+    band=False
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+    # user_permissions = request.user.user_permissions.all()
+    for p in user_permissions_groups:
+        if (p == 'proyecto.add_flujoproyecto'):
+            band = True
+
+    if (band == True):
+        registered = False
+        proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+        if request.method == 'POST':
             form = AsignarFlujoForm(request.POST)
             if form.is_valid():
 
@@ -224,8 +265,12 @@ def asignarFlujo(request, id_proyecto):
 
                 registered = True
 
-    else:
-        form = AsignarFlujoForm();
+        else:
+            form = AsignarFlujoForm();
 
-    template_name= './Proyecto/asignar_flujos_proyecto.html'
-    return render(request, template_name, {'asignar_flujos_form': form, 'id_proyecto': id_proyecto, 'registered': registered})
+        template_name = './Proyecto/asignar_flujos_proyecto.html'
+        return render(request, template_name,
+                      {'asignar_flujos_form': form, 'id_proyecto': id_proyecto, 'registered': registered})
+
+    else:
+        raise Http404("No cuenta con los permisos necesarios")

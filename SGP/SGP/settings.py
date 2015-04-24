@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'proyecto',
     'flujo',
     'cliente',
+    'autenticacion',
 
 )
 
@@ -60,7 +61,7 @@ ROOT_URLCONF = 'SGP.urls'
 
 WSGI_APPLICATION = 'SGP.wsgi.application'
 
-LOGIN_URL = '/autenticacion/user_login'
+LOGIN_URL = '/'
 
 
 # Database

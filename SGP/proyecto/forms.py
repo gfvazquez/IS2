@@ -4,7 +4,8 @@ from cliente.models import Cliente
 from models import Proyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+
 
 
 def validate_nombreproyecto_unique(value):
@@ -76,9 +77,14 @@ class AsignarUsuariosForm(forms.Form):
         @author: Andrea Benitez
 
     """
-    usuarios = forms.ModelMultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        queryset=User.objects.filter(is_active=True))
+    usuarios = forms.ModelChoiceField(
+        widget=forms.Select,
+        queryset=User.objects.filter(is_active=True),
+        )
+    roles = forms.ModelChoiceField(
+        widget=forms.Select,
+        queryset=Group.objects.all(),
+    )
 
 class AsignarFlujoForm(forms.Form):
     """ Obtiene los Flujos de la base de datos que se encuentren activos, asi se pueden
@@ -90,6 +96,7 @@ class AsignarFlujoForm(forms.Form):
         @author: Andrea Benitez
 
     """
+
     flujos = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         queryset=Flujo.objects.filter(estado=True))

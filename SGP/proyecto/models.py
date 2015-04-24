@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from flujo.models import Flujo
 from cliente.models import Cliente
+from django.contrib.auth.models import Group, Permission, User
 
 
 
@@ -41,6 +42,7 @@ class Proyecto(models.Model):
 class Equipo(models.Model):
     usuario = models.ForeignKey(User)
     proyecto = models.ForeignKey(Proyecto)
+    rol = models.ForeignKey(Group)
     def __unicode__(self):
         return self.usuario.username
 
