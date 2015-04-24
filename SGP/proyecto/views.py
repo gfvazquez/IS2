@@ -210,6 +210,8 @@ def asignarEquipo(request, id_proyecto):
                 form.clean()
                 usuario = form.cleaned_data['usuarios']
                 rol = form.cleaned_data['roles']
+                user = User.objects.get(pk=usuario.id)
+                user.groups.add(rol)
 
                 m1 = Equipo(proyecto=proyecto, usuario=usuario, rol=rol)
                 m1.save()
