@@ -1,0 +1,62 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="/sprints/">Sprints</a></li>
+        </ul>
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Sprints</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block botones %}
+<div class="row">
+	<form class="navbar-form navbar-left">
+
+		<a href="crearsprint/"><button type="button" class="btn btn-default">Crear Sprint</button></a>
+
+	</form>
+</div>
+{% endblock %}
+{% block contenido %}
+<div class="content-secondary">
+<!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
+	<div class="panel-group" id="accordion">
+
+	<br>
+		{% if lista_sprints %}
+			{% for Sprint in lista_sprints %}
+				{% if Sprint.estado %}
+	<div class="panel panel-default">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ Sprint.id }}">
+				          	{{ Sprint.nombre }}
+				          </a>
+                          <a href="consultar/{{ Sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+                          <a href="modificarsprint/{{ Sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
+                          <a href="eliminarsprint/{{ Sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
+				      </h4>
+				    </div>
+	</div>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+	</div>
+	</div>
+{% endblock %}

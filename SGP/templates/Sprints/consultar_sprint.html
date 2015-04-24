@@ -1,0 +1,46 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/sprints/">Sprints</a></li>
+			<li class="active"><a href="/sprints/consultarSprint/{{ id }}/">Consulta de sprint</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}		
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ sprint.nombre}}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	<p><h4>Id: <span class="label label-default">{{ perfil.id }}</span></h4></p>
+	<p><h4>Nombre del Sprint: <span class="label label-default">{{ perfil.nombre }}</span></h4></p>
+	<p><h4>Estado: <span class="label label-default">{{ perfil.estado }}</span></h4></p>
+    <p><h4>Duracion: <span class="label label-default">{{ perfil.duracion }}</span></h4></p>
+    <p><h4>Fecha de inicio: <span class="label label-default">{{ perfil.fechainicio }}</span></h4></p>
+    <p><h4>Fecha de fin: <span class="label label-default">{{ perfil.fechafin }}</span></h4></p>
+
+
+</div>
+<br>
+<div align="center">
+		<a href="/sprints/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+	
+{% endblock %}
+
+
