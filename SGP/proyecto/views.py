@@ -254,21 +254,37 @@ def asignarFlujo(request, id_proyecto):
     if (band == True):
         registered = False
         proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+        flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+        flujosAsignados = []
+        for flujoProyecto in flujoProyectos:
+            flujosAsignados.append(Flujo.objects.get(id=flujoProyecto.flujo.pk))
+
+        flujos = Flujo.objects.filter(estado=True)
+        flujosNoAsignados = []
+        for flujo in flujos:
+            if flujo not in flujosAsignados:
+                flujosNoAsignados.append(flujo)
+
+
         if request.method == 'POST':
-            form = AsignarFlujoForm(request.POST)
+            form = AsignarFlujoForm(request.POST, flujos_no_asignados=flujosNoAsignados)
             if form.is_valid():
 
                 form.clean()
                 flujos = form.cleaned_data['flujos']
+
 
                 for flujo in flujos:
                     m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo)
                     m1.save()
 
                 registered = True
-
+                pass
         else:
-            form = AsignarFlujoForm();
+            form = AsignarFlujoForm(flujos_no_asignados=flujosNoAsignados)
+
+        #else:
+        #   form = AsignarFlujoForm();
 
         template_name = './Proyecto/asignar_flujos_proyecto.html'
         return render(request, template_name,

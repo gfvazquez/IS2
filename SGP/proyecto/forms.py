@@ -1,10 +1,11 @@
 from django import forms
 from flujo.models import Flujo
 from cliente.models import Cliente
-from models import Proyecto
+from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User, Group
+from django.forms.models import BaseModelFormSet
 
 
 
@@ -81,10 +82,27 @@ class AsignarUsuariosForm(forms.Form):
         widget=forms.Select,
         queryset=User.objects.filter(is_active=True),
         )
+
     roles = forms.ModelChoiceField(
         widget=forms.Select,
         queryset=Group.objects.all(),
     )
+    #def __init__(self, *args, **kwargs):
+    #    self.usuarios_no_asignados = kwargs.pop('usuarios_no_asignados', None)
+    #    super(AsignarUsuariosForm, self).__init__(*args, **kwargs)
+    #    list_of_ids = []
+    #    for usuario in self.usuarios_no_asignados:
+    #        list_of_ids.append(usuario.pk)
+    #   self.fields['usuarios'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+    #                                                           queryset=User.objects.filter(pk__in=list_of_ids),
+    #                                                           required=False)
+    #    self.fields['roles'] = forms.ModelChoiceField(
+    #        widget=forms.Select,
+    #        queryset=Group.objects.all(),
+    #    )
+
+
+
 
 class AsignarFlujoForm(forms.Form):
     """ Obtiene los Flujos de la base de datos que se encuentren activos, asi se pueden
@@ -96,10 +114,17 @@ class AsignarFlujoForm(forms.Form):
         @author: Andrea Benitez
 
     """
+    def __init__(self, *args, **kwargs):
+        self.flujos_no_asignados = kwargs.pop('flujos_no_asignados', None)
+        super(AsignarFlujoForm, self).__init__(*args, **kwargs)
+        list_of_ids = []
+        for flujo in self.flujos_no_asignados:
+            list_of_ids.append(flujo.pk)
+        self.fields['flujos'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                                               queryset=Flujo.objects.filter(pk__in=list_of_ids),
+                                                               required=False)
 
-    flujos = forms.ModelMultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        queryset=Flujo.objects.filter(estado=True))
+
 
 
 
