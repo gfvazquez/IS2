@@ -8,8 +8,8 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/userstories/">Userstories</a></li>
-			<li class="active"><a href="/userstories/consultarUserstory/{{ id }}/">Consulta de user story</a></li>
+			<li><a href="/userstories/">User Stories</a></li>
+			<li class="active"><a href="/userstories/consultar/{{ id }}/">Consulta de User Story</a></li>
         </ul>
 
 	</div>
@@ -30,17 +30,13 @@
 	<p><h4>Id: <span class="label label-default">{{ perfil.id }}</span></h4></p>
 	<p><h4>Nombre del User Story: <span class="label label-default">{{ perfil.nombre }}</span></h4></p>
 	<p><h4>Descripcion del User Story: <span class="label label-default">{{ perfil.descripcion }}</span></h4></p>
-	<p><h4>Estado: <span class="label label-default">{{ perfil.estado }}</span></h4></p>
-    <p><h4>Prioridad: <span class="label label-default">{{ perfil.prioridad }}</span></h4></p>
     <p><h4>Tiempo Estimado: <span class="label label-default">{{ perfil.tiempoestimado }}</span></h4></p>
     <p><h4>Tiempo Trabajado: <span class="label label-default">{{ perfil.tiempotrabajado }}</span></h4></p>
-    <p><h4>Porcentaje Realizado: <span class="label label-default">{{ perfil.porcentajerealizado }}</span></h4></p>
-    <p><h4>Historial: <span class="label label-default">{{ perfil.historial }}</span></h4></p>
+    <p><h4>Comentarios: <span class="label label-default">{{ perfil.comentarios }}</span></h4></p>
     <p><h4>Usuario Asignado: <span class="label label-default">{{ perfil.usuarioasignado }}</span></h4></p>
-    <p><h4>Flujo Asociado: <span class="label label-default">{{ perfil.flujoasociado }}</span></h4></p>
-    <p><h4>Sprint Asociado: <span class="label label-default">{{ perfil.sprintasociado}}</span></h4></p>
-
-
+	<p><h4>Estado: <span class="label label-default">{{ perfil.estado }}</span></h4></p>
+    <p><h4>Prioridad: <span class="label label-default">{{ perfil.prioridad }}</span></h4></p>
+    <p><h4>Porcentaje Realizado: <span class="label label-default">{{ perfil.porcentajerealizado }}</span></h4></p>
 </div>
 <br>
 <div align="center">
