@@ -16,11 +16,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(unique=True, max_length=50, verbose_name=b'Nombre')),
-                ('estado', models.BooleanField(default=True)),
+                ('estado', models.TextField(default=b'Iniciado', max_length=10)),
+                ('activo', models.BooleanField(default=True)),
                 ('fechainicio', models.DateField(default=datetime.date.today)),
                 ('tiempoacumulado', models.IntegerField()),
-                ('duracion', models.IntegerField()),
-                ('fechafin', models.DateField()),
+                ('fechafin', models.DateField(default=datetime.date(2015, 4, 25))),
+                ('duracion', models.PositiveIntegerField(default=0)),
             ],
             options={
             },

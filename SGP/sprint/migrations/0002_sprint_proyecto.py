@@ -7,15 +7,15 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0001_initial'),
-        ('proyecto', '0005_auto_20150410_2352'),
+        ('proyecto', '0001_initial'),
+        ('sprint', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='equipo',
-            name='rol',
-            field=models.ForeignKey(default=3, to='auth.Group'),
+            model_name='sprint',
+            name='proyecto',
+            field=models.ForeignKey(default=1, to='proyecto.Proyecto'),
             preserve_default=False,
         ),
     ]

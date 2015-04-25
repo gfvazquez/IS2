@@ -1,6 +1,7 @@
 from models import Userstory
 from django.contrib.auth.models import User
 from django import forms
+from sprint.models import Sprint
 
 
 ESTADOS = (
@@ -45,7 +46,8 @@ class UserstoryForm(forms.ModelForm):
     """
     class Meta:
         model = Userstory
-        fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'estado', 'prioridad', 'porcentajerealizado', 'activo')
+        fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'estado', 'prioridad', 'porcentajerealizado', 'activo', 'sprint')
+
 
 
 class UserstoryModificadoForm (forms.Form):
@@ -65,7 +67,7 @@ class UserstoryModificadoForm (forms.Form):
     estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
     prioridad = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
     porcentajerealizado = forms.ChoiceField(widget=forms.Select(), choices= (PORCENTAJEREALIZADO), required=False)
-
+    sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True))
 
 
 

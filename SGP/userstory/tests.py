@@ -12,11 +12,11 @@ class SGPTestCase(TestCase):
         c = Client()
         c.login(username='admin', password='admin1')
         #creacion correcta del us, se mete un nombre nuevo
-        resp = c.post('/userstories/crearuserstory/',{"nombre": "USPrueba", "descripcion": "HOLA", "tiempoestimado":3, "tiempotrabajado":1, "comentarios": "LOLO", "usuarioasignado":1, "estado": "Nueva", "prioridad":"Alta", "porcentajerealizado": "20%"})
+        resp = c.post('/userstories/crearuserstory/',{"nombre": "USPrueba", "descripcion": "HOLA", "tiempoestimado":3, "tiempotrabajado":1, "comentarios": "LOLO", "usuarioasignado":1, "estado": "Nueva", "prioridad":"Alta", "porcentajerealizado": "20%", "sprint": 1})
         self.assertTrue(resp.status_code,200)
         print ('\n Crea el us si esta correctamente completado\n')
         #creacion incorrecta: nombre repetido, no redirige
-        resp = c.post('/userstories/crearuserstory/',{"nombre": "USPrueba", "descripcion": "HOLA", "tiempoestimado":3, "tiempotrabajado":1, "comentarios": "LOLO", "usuarioasignado":1, "estado": "Nueva", "prioridad":"Alta", "porcentajerealizado": "20%"})
+        resp = c.post('/userstories/crearuserstory/',{"nombre": "USPrueba", "descripcion": "HOLA", "tiempoestimado":3, "tiempotrabajado":1, "comentarios": "LOLO", "usuarioasignado":1, "estado": "Nueva", "prioridad":"Alta", "porcentajerealizado": "20%","sprint": 1})
         self.assertTrue(resp.status_code,302)
         print ('\n No crea el us si tiene un nombre duplicado')
 

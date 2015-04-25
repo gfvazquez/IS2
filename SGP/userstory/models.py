@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from sprint.models import Sprint
 
 ESTADOS = (
 
@@ -44,6 +45,7 @@ class Userstory(models.Model):
     porcentajerealizado=models.CharField(max_length=10, choices=PORCENTAJEREALIZADO, default="<0%>", verbose_name= 'Porcentaje Realizado: ')
     #historial=models.TextField() poner en otro lado, no es algo que el usuario crea
     activo = models.BooleanField(default = True) #para la eliminacion
+    sprint = models.ForeignKey(Sprint)
 
     def __unicode__ (self):
         return self.nombre
