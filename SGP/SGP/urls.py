@@ -8,5 +8,6 @@ urlpatterns = patterns('',
     url(r'^', include('autenticacion.urls')),
     url(r'^roles', include('roles.urls')),
     url(r'^', include('userstory.urls')),
+    url(r'^', include('sprint.urls')),
 
 )
