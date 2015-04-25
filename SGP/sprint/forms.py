@@ -1,8 +1,10 @@
+from datetime import datetime
+from django.forms import widgets
 from models import Sprint
-
-__author__ = 'mauricio'
 from django.contrib.auth.models import User
 from django import forms
+
+formato = "%d/%m/%Y"
 
 
 class SprintForm(forms.ModelForm):
@@ -15,11 +17,20 @@ class SprintForm(forms.ModelForm):
         @author: Mauricio Allegretti,
 
     """
+
+    #Fecha_de_Inicio =  forms.DateField(input_formats=['%d-%m-%Y'], required=True, help_text='* Ingrese en formato anho-mes-dia', error_messages={'required': 'Ingrese una fecha de inicio de sprint'} )
+    #Fecha_de_Fin =  forms.DateField(input_formats=['%d-%m-%Y'], required=True, help_text='* Ingrese en formato anho-mes-dia', error_messages={'required': 'Ingrese una fecha de fin de sprint'} )
+    #fecha_desde= Fecha_de_Inicio
+    #fecha_desde = datetime.strptime(fecha_desde, formato)
+    #fecha_hasta= Fecha_de_Fin
+    #fecha_hasta = datetime.strptime(fecha_hasta, formato)
+    #Sprint.duracion= fecha_hasta.day - fecha_desde.day
+    #Sprint.duracion= Fecha_de_Fin - Fecha_de_Inicio
     class Meta:
        # SprintForm.fields['status'].widget.attrs['readonly'] = True
       #  estado = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'True'}))
         model = Sprint
-        fields = ('id', 'nombre', 'estado', 'activo', 'fechainicio', 'tiempoacumulado', 'duracion', 'fechafin')
+        fields = ('id', 'nombre', 'fechainicio', 'tiempoacumulado', 'duracion')
 
 
 class SprintModificadoForm (forms.Form):

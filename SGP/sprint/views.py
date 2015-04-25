@@ -25,8 +25,8 @@ def crear_sprint(request):
 
     #valor booleano para llamar al template cuando el registro fue correcto
     registered = False
-    myform = Sprint(initial = {'estado': requested_status})
-    myform.fields['estado'].editable = False
+    #myform = Sprint(initial = {'estado': requested_status})
+    #myform.fields['estado'].editable = False
     if request.method == 'POST':
         sprint_form = SprintForm(data=request.POST)
         #sprint_form.fields['estado'].widget.attrs['readonly'] = True
@@ -72,6 +72,7 @@ def consultarSprint(request, id_sprint):
 
 	@author: Mauricio Allegretti
 	"""
+
      template_name = './Sprints/consultar_sprint.html'
      sp = Sprint.objects.get(pk=id_sprint)
      return render(request, template_name, {'perfil': sp, 'id_sprint': id_sprint})

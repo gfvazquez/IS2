@@ -1,5 +1,6 @@
 __author__ = 'mauricio'
 import datetime
+from datetime import timedelta
 from django.db import models
 
 ESTADOS = (
@@ -14,8 +15,9 @@ class Sprint(models.Model):
     activo = models.BooleanField(default = True)
     fechainicio=models.DateField(default=datetime.date.today)
     tiempoacumulado=models.IntegerField()
-    duracion=models.IntegerField()
-    fechafin=models.DateField()
+    fechafin=models.DateField(default= datetime.date.today())
+    duracion=models.PositiveIntegerField(default=0)
+    #userstory=models.ManyToOneRel(Userstory)
 
     def __unicode__ (self):
         return self.nombre
