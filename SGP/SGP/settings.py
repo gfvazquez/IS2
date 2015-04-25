@@ -42,6 +42,8 @@ INSTALLED_APPS = (
     'flujo',
     'cliente',
     'autenticacion',
+    'sprint',
+    'userstory',
 
 )
 
