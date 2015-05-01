@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
-from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo
+from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint
 
 urlpatterns = patterns('',
     url(r'^proyectos/$', views.proyectos, name='proyectos'),
@@ -9,5 +9,7 @@ urlpatterns = patterns('',
     url(r'^proyectos/consultar/(?P<id_proyecto>\d+)/$', consultarProyecto),
     url(r'^proyectos/asignar_usuarios_proyecto/(?P<id_proyecto>\d+)/$', asignarEquipo),
     url(r'^proyectos/asignar_flujos_proyecto/(?P<id_proyecto>\d+)/$', asignarFlujo),
+    url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/$', consultarFlujoProyecto),
+    url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/asignar_sprints/(?P<id_flujo>\d+)/$', asignarSprint),
     #url(r'^proyectos/eliminar/(?P<id_usuario>.*)/$', usuario_eliminar),
 )

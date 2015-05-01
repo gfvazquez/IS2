@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm
+from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm
 from django.http import Http404
 from django.contrib.auth.models import Group, Permission, User
 # Create your views here.
@@ -259,7 +259,7 @@ def asignarFlujo(request, id_proyecto):
         for flujoProyecto in flujoProyectos:
             flujosAsignados.append(Flujo.objects.get(id=flujoProyecto.flujo.pk))
 
-        flujos = Flujo.objects.filter(estado=True)
+        flujos = Flujo.objects.filter(is_active=True)
         flujosNoAsignados = []
         for flujo in flujos:
             if flujo not in flujosAsignados:
@@ -272,7 +272,6 @@ def asignarFlujo(request, id_proyecto):
 
                 form.clean()
                 flujos = form.cleaned_data['flujos']
-
 
                 for flujo in flujos:
                     m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo)
@@ -292,3 +291,45 @@ def asignarFlujo(request, id_proyecto):
 
     else:
         raise Http404("No cuenta con los permisos necesarios")
+
+
+@login_required
+def consultarFlujoProyecto(request, id_proyecto):
+
+    template_name = './Proyecto/consultar_flujo_proyecto.html'
+    proyecto = Proyecto.objects.get(pk=id_proyecto)
+    flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
+
+
+
+    return render(request, template_name,
+                  {'proyecto': proyecto, 'flujos': flujos, 'id_proyecto': id_proyecto})
+
+
+@login_required
+def asignarSprint(request, id_proyecto, id_flujo):
+    flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+
+    registered = False
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+    flujo = Flujo.objects.get(id=id_flujo)
+
+    if request.method == 'POST':
+        form = AsignarSprintFlujoForm(request.POST)
+        if form.is_valid():
+
+            form.clean()
+            sprint = form.cleaned_data['sprint']
+
+            m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
+            m1.save()
+            registered = True
+
+    else:
+            form = AsignarSprintFlujoForm()
+
+
+    template_name = './Proyecto/asignar_sprints.html'
+    return render(request, template_name,
+                      {'asignar_sprint_form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'id_flujo':id_flujo})
+
