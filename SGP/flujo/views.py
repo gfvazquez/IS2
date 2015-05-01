@@ -1,13 +1,11 @@
 from django.shortcuts import render_to_response, render
-from flujo.models import Flujo
-from forms import FlujoForm, FlujoModificadoForm
+from flujo.models import Flujo, FlujoActividad
+from forms import FlujoForm, FlujoModificadoForm,AsignarActividadForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-
-
-
+from actividades.models import Actividades
 
 def crear_flujo(request):
     """ Recibe un request, obtiene el formulario con los datos del usuario a crear.
@@ -83,7 +81,9 @@ def consultarFlujo(request, id_flujo):
 	"""
      template_name = './Flujos/consultar_flujo.html'
      flow = Flujo.objects.get(pk=id_flujo)
-     return render(request, template_name, {'perfil': flow, 'id_usuario': id_flujo})
+     actividades = FlujoActividad.objects.filter(flujo_id=id_flujo)
+
+     return render(request, template_name, {'perfil': flow,'actividades': actividades, 'id_flujo': id_flujo})
 
 
 @login_required
@@ -112,7 +112,7 @@ def flujo_eliminar(request, id_flujo):
     if (band == True):
 
         flowDelLogic = Flujo.objects.get(pk=id_flujo)
-        flowDelLogic.estado=False
+        flowDelLogic.is_active=False
         flowDelLogic.save()
         return HttpResponseRedirect('/flujos/')
     else:
@@ -150,8 +150,10 @@ def modificarFlujo(request, id_flujo):
                     form.clean()
                     nombre = form.cleaned_data['Nombre_de_Flujo']
                     descripcion =  form.cleaned_data['Descripcion_de_Flujo']
+                    estado= form.cleaned_data['Nuevo_Estado']
                     flow.nombre = nombre
                     flow.descripcion = descripcion
+                    flow.estado=estado
                     flow.save()
                     template_name = './Flujos/flujo_modificado.html'
                     return render(request, template_name)
@@ -177,3 +179,66 @@ def flujos(request):
 	"""
     flujos = Flujo.objects.all()
     return render_to_response('./Flujos/flujos.html',{'lista_flujos':flujos}, context_instance=RequestContext(request))
+
+@login_required
+def asignarActividad(request, id_flujo):
+    """ Recibe un request y un id, luego busca en la base de datos al flujo
+    que se desea asignar un o unas actividades
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_flujo: Integer
+	@param id_flujo: identificador unico de la actividad
+
+	@rtype: django.HttpResponse
+	@return: asignar_actividades_flujo.html
+
+	@author: Gabriela Vazquez
+	"""
+    #band=False
+    #user_permissions_groups = request.user.get_group_permissions(obj=None)
+    # user_permissions = request.user.user_permissions.all()
+    #for p in user_permissions_groups:
+        #if (p == 'proyecto.add_flujoproyecto'):
+        #    band = True
+
+    #if (band == True):
+    registered = False
+    flujo = Flujo.objects.get(id=id_flujo)
+    #obtengo todas las actividades de el flujo seleccionado
+    actividadesFlujo = FlujoActividad.objects.filter(flujo_id=id_flujo)
+    actividadesAsignadas = []
+    for actividadFlujo in actividadesFlujo:
+        actividadesAsignadas.append(Actividades.objects.get(id=actividadFlujo.actividad.pk))
+    #filtar actividades con activas
+    actividades = Actividades.objects.filter(is_active=True)
+    #activades no asignadas a los flujo
+    actividadesNoAsignadas = []
+    for actividad in actividades:
+        if actividad not in actividadesAsignadas:
+           actividadesNoAsignadas.append(actividad)
+
+
+    if request.method == 'POST':
+        form = AsignarActividadForm(request.POST, actividades_no_asignadas=actividadesNoAsignadas)
+        if form.is_valid():
+            form.clean()
+            actividades = form.cleaned_data['actividades']
+
+            for actividad in actividades:
+                m1 = FlujoActividad(flujo=flujo, actividad=actividad)
+                m1.save()
+
+            registered = True
+            pass
+    else:
+        form = AsignarActividadForm(actividades_no_asignadas=actividadesNoAsignadas)
+
+
+    template_name = './Flujos/asignar_actividades_flujo.html'
+    return render(request, template_name,
+                      {'asignar_actividades_form': form, 'id_flujo': id_flujo, 'registered': registered})
+
+    #else:
+    #    raise Http404("No cuenta con los permisos necesarios")

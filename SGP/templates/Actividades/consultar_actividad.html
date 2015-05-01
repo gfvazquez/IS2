@@ -8,8 +8,8 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/flujos/">Flujos</a></li>
-			<li class="active"><a href="/flujos/consultarFlujo/{{ id_flujo }}/">Consulta de flujo</a></li>
+			<li><a href="/actividades/">Actividades</a></li>
+			<li class="active"><a href="/actividades/consultar/{{ id }}/">Consulta de actividades</a></li>
         </ul>
 
 	</div>
@@ -20,7 +20,7 @@
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
-			<a href="#">{{ flujo.nombre}}</a>
+			<a href="#">{{ actividad.nombre}}</a>
 	</ul>
 </div>
 {% endblock %}
@@ -28,20 +28,13 @@
 {% block contenido %}
 <div class="content-secondary">
 	<p><h4>Id: <span class="label label-default">{{ perfil.id }}</span></h4></p>
-	<p><h4>Nombre del Flujo: <span class="label label-default">{{ perfil.nombre }}</span></h4></p>
-	<p><h4>Descripcion del Flujo: <span class="label label-default">{{ perfil.descripcion }}</span></h4></p>
+	<p><h4>Nombre: <span class="label label-default">{{ perfil.nombre }}</span></h4></p>
 	<p><h4>Estado: <span class="label label-default">{{ perfil.estado }}</span></h4></p>
-
-    <p><h4>Actividades asignadas:</h4></p>
-   {% for actividad in actividades %}
-    <li >{{ actividad.actividad.nombre }}</li>
-       <br>
-    {% endfor %}
 
 </div>
 <br>
 <div align="center">
-		<a href="/flujos/"><button type="button" class="btn btn-default">Volver</button></a>
+		<a href="/actividades/"><button type="button" class="btn btn-default">Volver</button></a>
 </div>
 	
 {% endblock %}

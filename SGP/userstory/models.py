@@ -33,18 +33,17 @@ PORCENTAJEREALIZADO=(
 
 class Userstory(models.Model):
     nombre= models.CharField(max_length=50, verbose_name='Nombre', unique=True)
-    descripcion=models.TextField(verbose_name='Descripcion')
+    descripcion=models.TextField(max_length=100,blank=True,verbose_name='Descripcion')
     tiempoestimado=models.IntegerField(default=0, verbose_name='Tiempo Estimado')#endias
     tiempotrabajado=models.IntegerField(default=0, verbose_name='Tiempo Trabajado') #enhoras
     #adjuntoasociado=models.FileField()
-    #flujoasociado=models.CharField()
-    comentarios= models.TextField(verbose_name='Comentarios')
+    comentarios= models.TextField(max_length=100,blank=True,verbose_name='Comentarios')
     usuarioasignado=models.ForeignKey(User, verbose_name='Asignado a: ')
-    estado=models.CharField(max_length=10, choices=ESTADOS, default="<no asignado>",verbose_name='Estado:')
+    estado=models.CharField(max_length=10, choices=ESTADOS, default="Nueva",verbose_name='Estado:')
     prioridad=models.CharField(max_length=10,default = True, choices=PRIORIDAD, verbose_name= 'Prioridad: ')
     porcentajerealizado=models.CharField(max_length=10, choices=PORCENTAJEREALIZADO, default="<0%>", verbose_name= 'Porcentaje Realizado: ')
-    #historial=models.TextField() poner en otro lado, no es algo que el usuario crea
-    activo = models.BooleanField(default = True) #para la eliminacion
+    historial=models.CharField(max_length=1000,blank=True, editable=False,verbose_name='Historico')# poner en otro lado, no es algo que el usuario crea
+    activo = models.BooleanField(default=True, editable=False) #para la eliminacion
     sprint = models.ForeignKey(Sprint)
 
     def __unicode__ (self):

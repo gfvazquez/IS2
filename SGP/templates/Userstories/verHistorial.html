@@ -1,0 +1,40 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/userstories/">User Stories</a></li>
+			<li class="active"><a href="/userstories/verHistorial/{{ id }}/">Historial del User Story</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ userstory.nombre}}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+    <p><h4>Historial de Cambios:</h4></p>
+    <textarea cols="100" rows="30">{{us.historial}}</textarea>
+</div>
+<br>
+<div align="center">
+		<a href="/userstories/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+
+{% endblock %}
+
+

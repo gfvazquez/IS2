@@ -2,6 +2,7 @@ from models import Userstory
 from django.contrib.auth.models import User
 from django import forms
 from sprint.models import Sprint
+from django.core.exceptions import ValidationError
 
 
 ESTADOS = (
@@ -34,6 +35,10 @@ PORCENTAJEREALIZADO=(
     ('90%', '90%'),
     ('100%', '100%'),
 )
+def validate_nombreus_unique(value):
+    if Userstory.objects.filter(nombre=value, activo=True).exists():
+        raise ValidationError(u'El nombre del user story ya existe dentro del sistema')
+
 class UserstoryForm(forms.ModelForm):
     """ Atributos de User Story necesarios para el registro en la base de datos
         de un nuevo us.
@@ -46,7 +51,7 @@ class UserstoryForm(forms.ModelForm):
     """
     class Meta:
         model = Userstory
-        fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'estado', 'prioridad', 'porcentajerealizado', 'activo', 'sprint')
+        fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'prioridad', 'porcentajerealizado', 'sprint')
 
 
 
@@ -60,14 +65,18 @@ class UserstoryModificadoForm (forms.Form):
 
     """
     Nombre_de_Userstory = forms.CharField(widget=forms.TextInput(), max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
-    descripcion = forms.CharField(widget=forms.TextInput(), max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
+    descripcion = forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
     tiempotrabajado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
-    comentarios = forms.CharField(widget=forms.Textarea, max_length=200,  error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
+    comentarios = forms.CharField(widget=forms.Textarea, max_length=50, required=False, error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
     usuarioasignado = forms.ModelChoiceField(queryset= User.objects.filter(is_active=True))
     estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
     prioridad = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
     porcentajerealizado = forms.ChoiceField(widget=forms.Select(), choices= (PORCENTAJEREALIZADO), required=False)
-    sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True))
+    sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True), required=False)
+
+
+class verHistorialForm(forms.Form):
+    historial = forms.CharField(widget=forms.Textarea)
 
 
 

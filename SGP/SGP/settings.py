@@ -44,6 +44,8 @@ INSTALLED_APPS = (
     'autenticacion',
     'sprint',
     'userstory',
+    'actividades',
+
 
 )
 

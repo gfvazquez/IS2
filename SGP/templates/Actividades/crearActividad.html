@@ -1,0 +1,61 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/actividades/">Actividades</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Actividad</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+
+{% block contenido %}
+        <h1>Crear Actividad</h1>
+
+        <div class="content-secondary">
+                {% if registered %}
+                <h2>Actividad Registrada Exitosamente</h2>
+                <a href="/actividades">Volver a lista de actividades.</a><br />
+                    <hr />
+                {% else %}
+                <h2>Complete los campos</h2><br />
+
+                <form id="actividades_form" method="post" action="/actividades/crear_actividad/"
+                        enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    <!-- Display each form. The as_p method wraps each element in a paragraph
+                         (<p>) element. This ensures each element appears on a new line,
+                         making everything look neater. -->
+                    {{ actividades_form.as_p }}
+
+                    <!-- Provide a button to click to submit the form. -->
+
+                    <div align="center">
+		                <input class="btn btn-default" type="submit" value="Crear"/>
+		                <a href="/actividades/"><button type="button" class="btn btn-default">Cancelar</button></a>
+	                </div>
+                </form>
+                {% endif %}
+        </div>
+
+{% endblock %}
+

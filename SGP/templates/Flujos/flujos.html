@@ -41,7 +41,7 @@
 	<br>
 		{% if lista_flujos %}
 			{% for Flujo in lista_flujos %}
-				{% if Flujo.estado %}
+				{% if Flujo.is_active %}
 	<div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
@@ -51,6 +51,8 @@
                           <a href="consultar/{{ Flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
                           <a href="modificarflujo/{{ Flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
                           <a href="eliminarflujo/{{ Flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
+                          <a href="asignar_actividades_flujo/{{ Flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Actividad</button></a>
+
 				      </h4>
 				    </div>
 	</div>

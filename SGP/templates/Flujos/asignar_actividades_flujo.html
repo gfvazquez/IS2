@@ -1,0 +1,54 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/flujos/">Flujos</a></li>
+			<li class="active"><a href="/flujos/asignar_actividades_flujo/{{ id_flujo }}/">Asignacion de Actividades a Flujo</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Asignar Actividades a Flujo</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+	{% if form.errors %}
+		Por favor verifique:
+	{% endif %}
+    {% if registered %}
+        <h2>Actividad/es asignadas a Flujo Exitosamente</h2>
+        <a href="/flujos">Volver a Lista de Flujos.</a><br />
+        <hr />
+    {% else %}
+
+	<form action="" method="post">
+		<table>
+			{{ asignar_actividades_form.as_table }}
+		</table>
+		{% csrf_token %}
+	<div align="center">
+		<input class="btn btn-default" type="submit" value="Guardar"/>
+		<a href="/flujos/"><button type="button" class="btn btn-default">Cancelar</button></a>
+	</div>
+	<br>
+	</form>
+    {% endif %}
+
+</div>
+{% endblock %}
