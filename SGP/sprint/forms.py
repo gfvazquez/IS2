@@ -30,7 +30,7 @@ class SprintForm(forms.ModelForm):
        # SprintForm.fields['status'].widget.attrs['readonly'] = True
       #  estado = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'True'}))
         model = Sprint
-        fields = ('id', 'nombre', 'fechainicio', 'tiempoacumulado', 'duracion', 'proyecto')
+        fields = ('id', 'nombre', 'fechainicio', 'tiempoacumulado', 'duracion')
 
 
 class SprintModificadoForm (forms.Form):
