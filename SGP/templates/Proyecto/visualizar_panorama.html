@@ -1,0 +1,54 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/">Proyectos</a></li>
+			<li class="active"><a href="/proyectos/visualizar_panorama/{{ id_proyecto }}/">Secuencialidad</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ proyecto.nombre }}</a>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="content-secondary">
+
+
+    <p><h4>Flujos asignados:</h4></p>
+   {% for flujo in flujos %}
+    <li >{{ flujo }}</li>
+       <br>
+    {% endfor %}
+
+    <p><h4>User Story asignados:</h4></p>
+    {% for u in us %}
+    <li >{{ u }}</li>
+        <br>
+    {% endfor %}
+
+</div>
+
+
+<br>
+<div align="center">
+		<a href="/proyectos/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+
+{% endblock %}
+
+

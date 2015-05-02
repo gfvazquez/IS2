@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import permission_required
 from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm
 from django.http import Http404
 from django.contrib.auth.models import Group, Permission, User
+from django.db.models import Q
+from sprint.models import Sprint
+from userstory.models import Userstory
 # Create your views here.
 
 @login_required
@@ -169,7 +172,7 @@ def consultarProyecto(request, id_proyecto):
 
     template_name = './Proyecto/consultar_proyecto.html'
     proyecto = Proyecto.objects.get(pk=id_proyecto)
-    flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+    flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
     usuarios = Equipo.objects.filter(proyecto_id=id_proyecto)
 
     return render(request, template_name,
@@ -333,3 +336,23 @@ def asignarSprint(request, id_proyecto, id_flujo):
     return render(request, template_name,
                       {'asignar_sprint_form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'id_flujo':id_flujo})
 
+
+def visualizarProcesos(request, id_proyecto):
+    flujosProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
+    flujos = [] #en esta variable se guardan los flujos que pertenecen a un proyecto
+    for flujoProyecto in flujosProyectos:
+        flujos.append(Flujo.objects.get(id=flujoProyecto.flujo.pk))
+
+    us = []
+    for flujo in flujos:
+        flujosProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=flujo.pk) #para obtener todos los sprints que esatn asociados a un flujo
+        us_un_flujo = []
+        for flujosProyecto in flujosProyectos:
+            sprint = Sprint.objects.filter(id = flujosProyecto.sprint.pk)
+            userStories = Userstory.objects.filter(sprint_id = sprint)
+            us_un_flujo.append(userStories)
+        us.append(us_un_flujo)
+
+    template_name = './Proyecto/visualizar_panorama.html'
+    return render(request, template_name,
+                  {'us': us, 'flujos': flujos, 'id_proyecto': id_proyecto})
