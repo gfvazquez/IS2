@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from flujo.models import Flujo
 from cliente.models import Cliente
+from sprint.models import Sprint
 from django.contrib.auth.models import Group, Permission, User
 
 
@@ -49,6 +50,7 @@ class Equipo(models.Model):
 class FlujoProyecto(models.Model):
     flujo = models.ForeignKey(Flujo)
     proyecto = models.ForeignKey(Proyecto)
+    sprint = models.ForeignKey(Sprint, default=1)
     def __unicode__(self):
         return self.flujo.nombre
 

@@ -1,6 +1,7 @@
 from django import forms
 from flujo.models import Flujo
 from cliente.models import Cliente
+from sprint.models import Sprint
 from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
@@ -121,10 +122,14 @@ class AsignarFlujoForm(forms.Form):
         for flujo in self.flujos_no_asignados:
             list_of_ids.append(flujo.pk)
         self.fields['flujos'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
-                                                               queryset=Flujo.objects.filter(pk__in=list_of_ids),
-                                                               required=False)
+                                                        queryset=Flujo.objects.filter(pk__in=list_of_ids),
+                                                        required=False)
 
 
-
+class AsignarSprintFlujoForm(forms.Form):
+    sprint = forms.ModelChoiceField(
+        widget=forms.Select,
+        queryset=Sprint.objects.all(),
+    )
 
 
