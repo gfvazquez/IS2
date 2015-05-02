@@ -63,12 +63,12 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='proyecto.Proyecto'),
             preserve_default=True,
         ),
-        migrations.AddField(
-            model_name='equipo',
-            name='rol',
-            field=models.ForeignKey(to='auth.Group'),
-            preserve_default=True,
-        ),
+        #migrations.AddField(
+        #    model_name='equipo',
+        #    name='rol',
+        #    field=models.ForeignKey(to='auth.Group'),
+        #    preserve_default=True,
+        #),
         migrations.AddField(
             model_name='equipo',
             name='usuario',
