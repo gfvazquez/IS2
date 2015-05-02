@@ -4,6 +4,7 @@ from forms import UserstoryForm, UserstoryModificadoForm,verHistorialForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404,HttpResponse
 from django.contrib.auth.decorators import login_required
+from sprint.models import Sprint
 import datetime
 
 @login_required
@@ -40,8 +41,16 @@ def crear_userstory(request):
 
                     # Guarda el Usuarios en la bd
                     us = userstory_form.save()
-                    us.save()
 
+                    usuario = userstory_form.cleaned_data['usuarioasignado']
+                    sprint = userstory_form.cleaned_data['sprint']
+                    if usuario and sprint:
+                        us.estado = 'InPlanning'
+
+                    if userstory_form.cleaned_data['prioridad'] == 'Alta':
+                        cambioDePrioridades(usuario, sprint)
+
+                    us.save()
                     #Actualiza la variable para llamar al template cuando el registro fue correcto
                     registered = True
 
@@ -141,6 +150,9 @@ def modificarUserstory(request, id_userstory):
     for p in user_permissions_groups:
         if (p == 'userstory.change_userstory'):
             band = True
+    warning = False
+    registered = False
+    mensaje = 'ATENCION: \nNo puede modificar el estado de un US en estado Comentario\nDebe concluir con los US en Alta'
 
     if (band == True):
             us = Userstory.objects.get(id=id_userstory)
@@ -156,6 +168,15 @@ def modificarUserstory(request, id_userstory):
                         estado= form.cleaned_data['estado']
                         prioridad= form.cleaned_data['prioridad']
                         porcentajerealizado= form.cleaned_data['porcentajerealizado']
+
+                        '''
+                            Procedicimiento si se modifica la prioridad del us a 'Alta'
+                        '''
+
+                        sprint = us.sprint
+                        if prioridad == 'Alta':
+                            cambioDePrioridades(usuarioasignado, sprint)
+
                         '''
                             Procedimiento necesario para definir el historial
                         '''
@@ -178,8 +199,11 @@ def modificarUserstory(request, id_userstory):
                                 modificaciones = modificaciones + " \n \t* COMENTARIOS -> Cambiado de " + str(us.comentarios) + " por " + str(comentarios)
                             if us.usuarioasignado != usuarioasignado:
                                 modificaciones = modificaciones + " \n \t* USUARIO ASIGNADO -> Cambiado de " + str(us.usuarioasignado) + " por " + str(usuarioasignado)
-                            if us.estado != estado:
-                                modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(us.estado) + " por " + str(estado)
+
+                            if (us.estado != 'Comentario'):
+                                if us.estado != estado:
+                                    modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(us.estado) + " por " + str(estado)
+
                             if us.prioridad != prioridad:
                                 modificaciones = modificaciones + " \n \t* PRIORIDAD -> Cambiado de " + str(us.prioridad) + " por " + str(prioridad)
                             if us.porcentajerealizado != porcentajerealizado:
@@ -190,15 +214,32 @@ def modificarUserstory(request, id_userstory):
                         us.tiempotrabajado= tiempotrabajado
                         us.comentarios=comentarios
                         us.usuarioasignado=usuarioasignado
-                        us.estado= estado
+
+                        if (us.estado == 'Comentario'):
+                            warning = True
+                        else:
+                            us.estado= estado
+
+                        if (us.prioridad=='Alta' and (estado=='Resuelta' or estado=='Validado')):
+                            userStories = Userstory.objects.filter(sprint_id=us.sprint.pk)
+
+                            if (tieneUsuarioUSAlta(us) is not True):
+                                for userStory in userStories:
+                                    if (userStory.usuarioasignado == us.usuarioasignado) and (userStory.estado=='Comentario'):
+                                        Userstory.objects.filter(id=userStory.pk).update(estado = 'InPlaning')
+
+
                         us.prioridad= prioridad
                         us.porcentajerealizado=porcentajerealizado
                         us.historial = modificaciones
+
+
                         us.save()
+                        registered = True
                         template_name = './Userstories/userstory_modificado.html'
-                        return render(request, template_name)
+                        return render(request, template_name, {'mensaje':mensaje, 'warning': warning, 'registered': registered})
             else:
-                data = {'Nombre_de_Userstory': us.nombre, 'descripcion': us.descripcion, 'tiempotrabajado': us.tiempotrabajado, 'comentarios': us.comentarios, 'usuarioasignado':us.usuarioasignado, 'estado':us.estado, 'prioridad':us.prioridad, 'porcentajerealizado':us.porcentajerealizado }
+                data = {'Nombre_de_Userstory': us.nombre, 'descripcion': us.descripcion, 'tiempotrabajado': us.tiempotrabajado, 'comentarios': us.comentarios, 'usuarioasignado':us.usuarioasignado, 'estado':us.estado, 'prioridad':us.prioridad, 'porcentajerealizado':us.porcentajerealizado, 'mensaje':mensaje, 'warning': warning, 'registered': registered}
                 form = UserstoryModificadoForm(data)
             template_name = './Userstories/modificar_userstory.html'
             return render(request, template_name, {'form': form, 'id_userstory': id_userstory})
@@ -235,3 +276,21 @@ def verhistorial(request, id_userstory):
      return render(request, template_name, {'us': us, 'id_userstory': id_userstory})
 
 
+def cambioDePrioridades(usuario, sprint):
+    userStories = Userstory.objects.filter(sprint_id=sprint.pk)
+
+    for userStory in userStories:
+        if (userStory.prioridad != 'Alta') and (userStory.usuarioasignado == usuario) and (userStory.estado=='EnCurso' or userStory.estado=='InPlanning'):
+            Userstory.objects.filter(id=userStory.pk).update(estado = 'Comentario')
+
+def tieneUsuarioUSAlta(userStoryRecibido):
+    usuario = userStoryRecibido.usuarioasignado
+    sprint = userStoryRecibido.sprint
+
+    userStories = Userstory.objects.filter(sprint_id=sprint.pk)
+
+    for userStory in userStories:
+        if ((userStory.prioridad == 'Alta') and (userStory.usuarioasignado == usuario) and (userStory != userStoryRecibido) and (userStory.estado == 'Resuleta' or userStory.estado == 'Validado')):
+            return True
+
+    return False

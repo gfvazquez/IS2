@@ -27,10 +27,15 @@
 
 {% block contenido %}
 <div class="content-secondary">
-	<h2>Los datos del user story se han modificado con exito </h2>
-	<a href="/userstories/"><button type="button" class="btn btn-default">OK</button></a>
-		<div class="form-group">
-		</div>
+	 {% if registered %}
+                <h2>Los datos del user story se han modificado con exito</h2>
+                {% if warning %}
+                    {{ mensaje }}
+                {% endif %}
+                <a href="/userstories/"><button type="button" class="btn btn-default">OK</button></a>
+                <div class="form-group">
+                </div>
+    {% endif %}
 
 </div>
 {% endblock %}

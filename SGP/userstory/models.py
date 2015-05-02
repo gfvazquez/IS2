@@ -8,7 +8,7 @@ ESTADOS = (
     ('InPlanning','InPlanning'),
     ('EnCurso','EnCurso'),
     ('Resuelta','Resuelta'),
-    ('Comentarios','Comentarios'),
+    ('Comentario','Comentario'),
     ('Validado','Validado'),
     ('Cancelado','Cancelado'),
 )
