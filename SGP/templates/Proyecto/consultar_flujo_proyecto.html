@@ -31,16 +31,16 @@
 	<div class="panel-group" id="accordion">
 
 	<br>
-		{% if flujos %}
-			{% for flujo in flujos %}
+		{% if flujosProyecto %}
+			{% for flujoProyecto in flujosProyecto %}
 	<div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
 				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
-				          	{{ flujo }}
+				          	{{ flujoProyecto }}
 				          </a>
-                          <a href="asignar_sprints/{{ flujo.flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
-
+                          <a href="asignar_sprints/{{ flujoProyecto.flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Sprint</button></a>
+                          <a href="consultar_un_flujo_proyecto/{{ flujoProyecto.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
 				      </h4>
 				    </div>
 	</div>

@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.utils.timezone
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sprint', '0001_initial'),
+        ('sprint', '0002_auto_20150501_0502'),
         ('userstory', '0001_initial'),
     ]
 

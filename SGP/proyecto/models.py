@@ -51,6 +51,7 @@ class FlujoProyecto(models.Model):
     flujo = models.ForeignKey(Flujo)
     proyecto = models.ForeignKey(Proyecto)
     sprint = models.ForeignKey(Sprint, default=1)
+    estado = models.CharField(max_length=15, default='Inactivo')
     def __unicode__(self):
         return self.flujo.nombre
 

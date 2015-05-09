@@ -301,12 +301,12 @@ def consultarFlujoProyecto(request, id_proyecto):
 
     template_name = './Proyecto/consultar_flujo_proyecto.html'
     proyecto = Proyecto.objects.get(pk=id_proyecto)
-    flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
+    flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
 
 
 
     return render(request, template_name,
-                  {'proyecto': proyecto, 'flujos': flujos, 'id_proyecto': id_proyecto})
+                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto})
 
 
 @login_required
@@ -356,3 +356,22 @@ def visualizarProcesos(request, id_proyecto):
     template_name = './Proyecto/visualizar_panorama.html'
     return render(request, template_name,
                   {'us': us, 'flujos': flujos, 'id_proyecto': id_proyecto})
+
+def consultarUnFlujoProyecto (request,id_proyecto, id_flujo_proyecto):
+    template_name = './Proyecto/consultar_un_flujo_proyecto.html'
+    flujo_proyecto = FlujoProyecto.objects.get(pk=id_flujo_proyecto)
+
+    proyectosFlujo = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto.proyecto.auto_increment_id, flujo_id=flujo_proyecto.flujo.id)
+
+
+    return render(request, template_name,
+                  {'proyectosFlujo': proyectosFlujo})
+
+def consultarUserStoriesSprint(request, id_sprint):
+    template_name = './Proyecto/consultar_user_stories_sprint.html'
+    #flujo_proyecto = FlujoProyecto.objects.get(pk=id_sprint)
+
+    userStories = Userstory.objects.filter(sprint_id=id_sprint)
+
+    return render(request, template_name,
+                  {'userStories':userStories})
