@@ -4,8 +4,11 @@ from models import Sprint
 from django.contrib.auth.models import User
 from django import forms
 
-formato = "%d/%m/%Y"
-
+ESTADOS = (
+    ('CREADO','Creado'),
+    ('INI','Iniciado'),
+    ('FIN','Finalizado'),
+)
 
 class SprintForm(forms.ModelForm):
     """ Atributos de Sprint necesarios para el registro en la base de datos
@@ -43,7 +46,7 @@ class SprintModificadoForm (forms.Form):
 
     """
     Nombre_de_Sprint = forms.CharField(widget=forms.TextInput(), max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de Sprint', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
-
-
+    duracion= forms.IntegerField(required=False, help_text='En Dias', error_messages={'required': 'Ingrese la duracion del Sprint',})
+    estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
 
 

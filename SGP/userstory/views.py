@@ -6,6 +6,9 @@ from django.http import HttpResponseRedirect, Http404,HttpResponse
 from django.contrib.auth.decorators import login_required
 from sprint.models import Sprint
 import datetime
+import django
+from django.conf import settings
+from django.core.mail import send_mail
 
 @login_required
 def crear_userstory(request):
@@ -235,6 +238,13 @@ def modificarUserstory(request, id_userstory):
 
 
                         us.save()
+
+                        '''
+                            Enviar correo electronico al SCRUM MASTER
+                        '''
+                        send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
+                                 ['gabyvazquez92@gmail.com', 'mauriallegretti@gmail.com','andy.benitez09@gmail.com'], fail_silently=False)
+
                         registered = True
                         template_name = './Userstories/userstory_modificado.html'
                         return render(request, template_name, {'mensaje':mensaje, 'warning': warning, 'registered': registered})

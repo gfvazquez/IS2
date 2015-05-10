@@ -136,6 +136,7 @@ def modificarSprint(request, id_sprint):
 	@author: Mauricio Allegretti """
     band=False
     user_permissions_groups = request.user.get_group_permissions(obj=None)
+    registered = False
     # user_permissions = request.user.user_permissions.all()
     for p in user_permissions_groups:
         if (p == 'sprint.change_sprint'):
@@ -148,14 +149,18 @@ def modificarSprint(request, id_sprint):
                     if form.is_valid():
                         form.clean()
                         nombre = form.cleaned_data['Nombre_de_Sprint']
-                        #descripcion =  form.cleaned_data['Descripcion_de_Flujo']
+                        duracion = form.cleaned_data['duracion']
+                        estado = form.cleaned_data['estado']
                         sp.nombre = nombre
-                        #sp.descripcion = descripcion
+                        sp.duracion = duracion
+                        sp.estado =estado
+
                         sp.save()
+                        registered = True
                         template_name = './Sprints/sprint_modificado.html'
-                        return render(request, template_name)
+                        return render(request, template_name,  {'registered': registered})
             else:
-                data = {'Nombre_de_Sprint': sp.nombre }
+                data = {'Nombre_de_Sprint': sp.nombre, 'duracion': sp.duracion, 'estado': sp.estado,'registered': registered }
                 form = SprintModificadoForm(data)
             template_name = './Sprints/modificar_sprint.html'
             return render(request, template_name, {'form': form, 'id_sprint': id_sprint})
