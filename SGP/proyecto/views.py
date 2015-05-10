@@ -174,7 +174,8 @@ def consultarProyecto(request, id_proyecto):
     proyecto = Proyecto.objects.get(pk=id_proyecto)
     flujos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
     usuarios = Equipo.objects.filter(proyecto_id=id_proyecto)
-
+    for usuario in usuarios:
+        usuario
     return render(request, template_name,
                   {'proyecto': proyecto, 'flujos': flujos, 'usuarios': usuarios, 'id_proyecto': id_proyecto})
 
@@ -298,6 +299,19 @@ def asignarFlujo(request, id_proyecto):
 
 @login_required
 def consultarFlujoProyecto(request, id_proyecto):
+    """ Muestra en pantalla los flujos asociados a un proyecto
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@param id_proyecto: identificador unico del proyecto
+
+	@rtype: django.HttpResponse
+	@return: asignar_flujos_proyecto.html, donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
 
     template_name = './Proyecto/consultar_flujo_proyecto.html'
     proyecto = Proyecto.objects.get(pk=id_proyecto)
@@ -311,6 +325,21 @@ def consultarFlujoProyecto(request, id_proyecto):
 
 @login_required
 def asignarSprint(request, id_proyecto, id_flujo):
+    """ Se asigna un sprint a un flujo asociado a un proyecto
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@type id_flujo: Integer
+	@param id_proyecto: identificador unico del proyecto
+
+	@rtype: django.HttpResponse
+	@return: asignar_flujos_proyecto.html, donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
+    flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
 
     flujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, flujo_id=id_flujo, sprint_id=1)
     if flujoProyecto.estado == "Inactivo" or flujoProyecto.estado=="Half-Done":
@@ -356,6 +385,19 @@ def asignarSprint(request, id_proyecto, id_flujo):
         return render(request, template_name, {'mensaje':mensaje})
 
 def visualizarProcesos(request, id_proyecto):
+    """ Se visualizan los userstories asociados a cada flujo asociado a un proyecto
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_proyecto: Integer
+	@param id_proyecto: identificador unico del proyecto
+
+	@rtype: django.HttpResponse
+	@return: asignar_flujos_proyecto.html, donde se le despliega al usuario los datos
+
+	@author: Andrea Benitez
+	"""
     flujosProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
     flujos = [] #en esta variable se guardan los flujos que pertenecen a un proyecto
     for flujoProyecto in flujosProyectos:

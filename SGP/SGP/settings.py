@@ -109,3 +109,8 @@ ADMINS = (
     ('Gabriela Vazquez', 'gabyvazquez92@gmail.com'),
     ('Andrea Benitez', 'andy.benitez09@gmail.com'),
 )
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'sgp2015.is@gmail.com'
+EMAIL_HOST_PASSWORD = 'gabymauandrea'
+EMAIL_PORT = 587
