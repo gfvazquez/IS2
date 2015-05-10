@@ -1,0 +1,65 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/">Proyectos</a></li>
+			<li class="active"><a href="/proyectos/sprints/{{ id_proyecto }}/">Consultar User Stories de un Sprint</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Consultar User Stories de un Sprint</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+    {% if flujosProyecto %}
+<div class="content-secondary">
+	<div class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Fecha Inicio</th>
+                <th>Tiempo Acumulado</th>
+                <th>Fecha Fin</th>
+                <th>Duracion</th>
+              </tr>
+            </thead>
+
+            <tbody>
+                 {% for flujoProyecto in flujosProyecto %}
+              <tr>
+                <td>{{ flujoProyecto.sprint.nombre }}</td>
+                <td>{{ flujoProyecto.sprint.estado }}</td>
+                <td>{{ flujoProyecto.sprint.fechainicio }}</td>
+                <td>{{ flujoProyecto.sprint.tiempoacumulado }}</td>
+                <td>{{ flujoProyecto.sprint.fechafin }}</td>
+                <td>{{ flujoProyecto.sprint.duracion }}</td>
+
+            {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+    </div>
+{% endif %}
+
+</div>
+{% endblock %}

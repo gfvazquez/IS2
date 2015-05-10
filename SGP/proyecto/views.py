@@ -375,3 +375,10 @@ def consultarUserStoriesSprint(request, id_sprint):
 
     return render(request, template_name,
                   {'userStories':userStories})
+
+def consultarSprintProyecto(request, id_proyecto):
+    template_name = './Proyecto/consultar_sprints_proyecto.html'
+    flujosProyecto = FlujoProyecto.objects.filter(proyecto=id_proyecto)
+
+    return render(request, template_name,
+                  {'flujosProyecto':flujosProyecto})
