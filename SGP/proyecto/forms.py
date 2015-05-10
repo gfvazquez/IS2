@@ -129,7 +129,7 @@ class AsignarFlujoForm(forms.Form):
 class AsignarSprintFlujoForm(forms.Form):
     sprint = forms.ModelChoiceField(
         widget=forms.Select,
-        queryset=Sprint.objects.all(),
+        queryset=Sprint.objects.all().exclude(id=1),
     )
 
 

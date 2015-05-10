@@ -11,7 +11,6 @@ ESTADOS = (
 class Flujo(models.Model):
     nombre= models.CharField(max_length=50, verbose_name='Nombre',unique=True)
     descripcion = models.CharField(max_length = 150)
-    estado = models.CharField(max_length=5, choices=ESTADOS, editable=False, blank=True) #blank true para queguarde como vacio en la bd al crear
     is_active = models.BooleanField(default = True, editable=False)
 
     def __unicode__ (self):

@@ -56,6 +56,10 @@
                 <td>{{ userStory.estado }}</td>
                 <td>{{ userStory.prioridad }}</td>
                 <td>{{ userStory.porcentajerealizado }}</td>
+                <td><a href="/userstories/consultar/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a></td>
+                <td><a href="/userstories/modificaruserstory/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a></td>
+                <td><a href="/userstories/eliminaruserstory/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a></td>
+                <td><a href="/userstories/verHistorial/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Ver Historial de Cambios</button></a></td>
             {% endfor %}
             </tbody>
 

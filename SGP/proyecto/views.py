@@ -311,31 +311,49 @@ def consultarFlujoProyecto(request, id_proyecto):
 
 @login_required
 def asignarSprint(request, id_proyecto, id_flujo):
-    flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
 
-    registered = False
-    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
-    flujo = Flujo.objects.get(id=id_flujo)
+    flujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, flujo_id=id_flujo, sprint_id=1)
+    if flujoProyecto.estado == "Inactivo" or flujoProyecto.estado=="Half-Done":
+        mensaje = False
+        flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
+        for flujoProyecto in flujosProyecto:
+            if(flujoProyecto.estado == "Doing"):
+                mensaje = True
 
-    if request.method == 'POST':
-        form = AsignarSprintFlujoForm(request.POST)
-        if form.is_valid():
+        if mensaje == False:
+            registered = False
+            proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+            flujo = Flujo.objects.get(id=id_flujo)
 
-            form.clean()
-            sprint = form.cleaned_data['sprint']
+            if request.method == 'POST':
+                form = AsignarSprintFlujoForm(request.POST)
+                if form.is_valid():
+                    form.clean()
+                    sprint = form.cleaned_data['sprint']
+                    m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
+                    sprint.estado = "Iniciado"
+                    m1.estado = "Doing"
+                    flujoProyecto.estado = "Doing"
+                    sprint.save()
+                    flujoProyecto.save()
+                    m1.save()
+                    registered = True
 
-            m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
-            m1.save()
-            registered = True
+            else:
+                    form = AsignarSprintFlujoForm()
 
+
+            template_name = './Proyecto/asignar_sprints.html'
+            return render(request, template_name,
+                              {'asignar_sprint_form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'id_flujo':id_flujo})
+        else:
+            mensaje = "Existe un Flujo activo en el proyecto, no se puede iniciar otro antes de culminarlo"
+            template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
+            return render(request, template_name, {'mensaje':mensaje})
     else:
-            form = AsignarSprintFlujoForm()
-
-
-    template_name = './Proyecto/asignar_sprints.html'
-    return render(request, template_name,
-                      {'asignar_sprint_form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'id_flujo':id_flujo})
-
+        mensaje = "El flujo ya posee asignado un Sprint Activo, no se pueden asignar ningun Sprint actualmente"
+        template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
+        return render(request, template_name, {'mensaje':mensaje})
 
 def visualizarProcesos(request, id_proyecto):
     flujosProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
@@ -357,11 +375,11 @@ def visualizarProcesos(request, id_proyecto):
     return render(request, template_name,
                   {'us': us, 'flujos': flujos, 'id_proyecto': id_proyecto})
 
-def consultarUnFlujoProyecto (request,id_proyecto, id_flujo_proyecto):
+def consultarUnFlujoProyecto (request, id_proyecto, id_flujo_proyecto):
     template_name = './Proyecto/consultar_un_flujo_proyecto.html'
     flujo_proyecto = FlujoProyecto.objects.get(pk=id_flujo_proyecto)
 
-    proyectosFlujo = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto.proyecto.auto_increment_id, flujo_id=flujo_proyecto.flujo.id)
+    proyectosFlujo = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto.proyecto.auto_increment_id, flujo_id=flujo_proyecto.flujo.id).exclude(sprint_id=1)
 
 
     return render(request, template_name,
