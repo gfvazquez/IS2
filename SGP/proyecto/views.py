@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from models import Proyecto, Equipo, FlujoProyecto
-from flujo.models import Flujo
+from flujo.models import Flujo, FlujoActividad
 from django.db import models
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
@@ -266,8 +266,11 @@ def asignarFlujo(request, id_proyecto):
         flujos = Flujo.objects.filter(is_active=True)
         flujosNoAsignados = []
         for flujo in flujos:
+            #print(len(Acti))
             if flujo not in flujosAsignados:
-                flujosNoAsignados.append(flujo)
+                Acti=FlujoActividad.objects.filter(flujo=flujo.id)
+                if(len(Acti) != 0):
+                    flujosNoAsignados.append(flujo)
 
 
         if request.method == 'POST':

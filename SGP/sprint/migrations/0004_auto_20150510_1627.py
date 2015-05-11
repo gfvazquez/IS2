@@ -18,10 +18,10 @@ class Migration(migrations.Migration):
             field=models.TextField(default=b'Creado', max_length=10),
             preserve_default=True,
         ),
-        migrations.AlterField(
+       ''' migrations.AlterField(
             model_name='sprint',
             name='fechafin',
             field=models.DateField(default=datetime.date(2015, 5, 10)),
             preserve_default=True,
-        ),
+        ),'''
     ]
