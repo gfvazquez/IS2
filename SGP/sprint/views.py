@@ -4,6 +4,7 @@ from forms import SprintForm, SprintModificadoForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import login_required
+from userstory.models import Userstory
 
 
 
@@ -84,6 +85,17 @@ def consultarSprint(request, id_sprint):
 
      template_name = './Sprints/consultar_sprint.html'
      sp = Sprint.objects.get(pk=id_sprint)
+     '''
+     Cargar en el atributo tiempoacumulado la suma de los tiempos estimados de los US asignados
+     '''
+     #Filtro todos los US del Sprint
+     usSprint = Userstory.objects.filter(sprint=id_sprint)
+     tiempoEstimadoTotal=0
+     for us in usSprint:
+         tiempoEstimadoTotal +=  us.tiempoestimado
+
+     sp.tiempoacumulado = tiempoEstimadoTotal
+     sp.save()
      return render(request, template_name, {'perfil': sp, 'id_sprint': id_sprint})
 
 
@@ -152,6 +164,7 @@ def modificarSprint(request, id_sprint):
                         duracion = form.cleaned_data['duracion']
                         estado = form.cleaned_data['estado']
                         fechaInicio = form.cleaned_data['Fecha_de_Inicio']
+
                         sp.nombre = nombre
                         sp.duracion = duracion
                         sp.estado =estado

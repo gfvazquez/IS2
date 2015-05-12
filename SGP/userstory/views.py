@@ -171,12 +171,13 @@ def modificarUserstory(request, id_userstory):
                         estado= form.cleaned_data['estado']
                         prioridad= form.cleaned_data['prioridad']
                         porcentajerealizado= form.cleaned_data['porcentajerealizado']
+                        sprint = form.cleaned_data['sprint']
 
                         '''
                             Procedicimiento si se modifica la prioridad del us a 'Alta'
                         '''
 
-                        sprint = us.sprint
+                        #sprint = us.sprint
                         if prioridad == 'Alta':
                             cambioDePrioridades(usuarioasignado, sprint)
 
@@ -185,7 +186,7 @@ def modificarUserstory(request, id_userstory):
                         '''
                         modificaciones=''
                         modificaciones= modificaciones + str(us.historial)
-                        if us.nombre != nombre or us.descripcion != descripcion or us.tiempotrabajado != tiempotrabajado or us.comentarios!=comentarios or us.usuarioasignado!=usuarioasignado or us.estado!=estado or us.prioridad!=prioridad or us.porcentajerealizado!=porcentajerealizado :
+                        if us.nombre != nombre or us.descripcion != descripcion or us.tiempotrabajado != tiempotrabajado or us.comentarios!=comentarios or us.usuarioasignado!=usuarioasignado or us.estado!=estado or us.prioridad!=prioridad or us.porcentajerealizado!=porcentajerealizado or us.sprint!=sprint:
                             marca = 'True'
                             modificaciones = modificaciones + "\nActualizado por "
                             modificaciones = modificaciones + str(us.usuarioasignado)
@@ -211,6 +212,9 @@ def modificarUserstory(request, id_userstory):
                                 modificaciones = modificaciones + " \n \t* PRIORIDAD -> Cambiado de " + str(us.prioridad) + " por " + str(prioridad)
                             if us.porcentajerealizado != porcentajerealizado:
                                 modificaciones = modificaciones + " \n \t* PORCENTAJE REALIZADO -> Cambiado de " + str(us.porcentajerealizado) + " por " + str(porcentajerealizado)
+
+                            if us.sprint != sprint:
+                                modificaciones = modificaciones + " \n \t* SPRINT -> Cambiado de " + str(us.sprint) + " por " + str(sprint)
                             modificaciones=modificaciones+'\n'
                         us.nombre = nombre
                         us.descripcion = descripcion
@@ -235,8 +239,7 @@ def modificarUserstory(request, id_userstory):
                         us.prioridad= prioridad
                         us.porcentajerealizado=porcentajerealizado
                         us.historial = modificaciones
-
-
+                        us.sprint = sprint
                         us.save()
 
                         '''
