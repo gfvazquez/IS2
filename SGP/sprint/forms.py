@@ -48,5 +48,6 @@ class SprintModificadoForm (forms.Form):
     Nombre_de_Sprint = forms.CharField(widget=forms.TextInput(), max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de Sprint', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
     duracion= forms.IntegerField(required=False, help_text='En Dias', error_messages={'required': 'Ingrese la duracion del Sprint',})
     estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
+    Fecha_de_Inicio = forms.DateField(input_formats=['%Y-%m-%d'], required=True, help_text='* Ingrese en formato anho-mes-dia', error_messages={'required': 'Ingrese una fecha de inicio de Sprint'} )
 
 

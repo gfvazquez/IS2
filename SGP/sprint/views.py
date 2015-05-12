@@ -151,16 +151,17 @@ def modificarSprint(request, id_sprint):
                         nombre = form.cleaned_data['Nombre_de_Sprint']
                         duracion = form.cleaned_data['duracion']
                         estado = form.cleaned_data['estado']
+                        fechaInicio = form.cleaned_data['Fecha_de_Inicio']
                         sp.nombre = nombre
                         sp.duracion = duracion
                         sp.estado =estado
-
+                        sp.fechainicio=fechaInicio
                         sp.save()
                         registered = True
                         template_name = './Sprints/sprint_modificado.html'
                         return render(request, template_name,  {'registered': registered})
             else:
-                data = {'Nombre_de_Sprint': sp.nombre, 'duracion': sp.duracion, 'estado': sp.estado,'registered': registered }
+                data = {'Nombre_de_Sprint': sp.nombre, 'duracion': sp.duracion, 'estado': sp.estado,'Fecha_de_Inicio': sp.fechainicio,'registered': registered }
                 form = SprintModificadoForm(data)
             template_name = './Sprints/modificar_sprint.html'
             return render(request, template_name, {'form': form, 'id_sprint': id_sprint})
