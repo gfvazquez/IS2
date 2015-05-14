@@ -315,12 +315,13 @@ def consultarFlujoProyecto(request, id_proyecto):
 
     template_name = './Proyecto/consultar_flujo_proyecto.html'
     proyecto = Proyecto.objects.get(pk=id_proyecto)
+    activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
     flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
 
 
 
     return render(request, template_name,
-                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto})
+                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto})
 
 
 @login_required
@@ -341,15 +342,18 @@ def asignarSprint(request, id_proyecto, id_flujo):
 	"""
     flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
 
-    flujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, flujo_id=id_flujo, sprint_id=1)
-    if flujoProyecto.estado == "Inactivo" or flujoProyecto.estado=="Half-Done":
-        mensaje = False
+    flujoProyectoDone = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=id_flujo, estado='Done').exists()
+    flujoProyectoDoing = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=id_flujo, estado='Doing').exists()
+    if (not flujoProyectoDone) and (not flujoProyectoDoing):
+
+        mensajeDoing = False
         flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
         for flujoProyecto in flujosProyecto:
-            if(flujoProyecto.estado == "Doing"):
-                mensaje = True
+            if(FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=flujoProyecto.flujo.id).exists()):
+                mensajeDoing = True
 
-        if mensaje == False:
+
+        if mensajeDoing == False:
             registered = False
             proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
             flujo = Flujo.objects.get(id=id_flujo)
@@ -380,7 +384,11 @@ def asignarSprint(request, id_proyecto, id_flujo):
             template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
             return render(request, template_name, {'mensaje':mensaje})
     else:
-        mensaje = "El flujo ya posee asignado un Sprint Activo, no se pueden asignar ningun Sprint actualmente"
+        if flujoProyectoDoing:
+            mensaje = "El flujo ya posee asignado un Sprint Activo, no se pueden asignar ningun Sprint actualmente"
+        elif flujoProyectoDone:
+            mensaje = "El flujo ya fue conluido, no se puede mas asignar Sprints al mismo"
+
         template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
         return render(request, template_name, {'mensaje':mensaje})
 
