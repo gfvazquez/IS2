@@ -205,11 +205,23 @@ def asignarEquipo(request, id_proyecto):
         if (p == 'proyecto.add_equipo'):
             band = True
 
+
+    equipo = Equipo.objects.filter(proyecto_id=id_proyecto)
+    usuariosAsignados = []
+    for row in equipo:
+        usuariosAsignados.append(User.objects.get(id=row.usuario.pk))
+
+    usuarios = User.objects.filter(is_active=True)
+    usuariosNoAsignados = []
+    for usuario in usuarios:
+        if usuario not in usuariosAsignados:
+            usuariosNoAsignados.append(usuario)
+
     if (band == True):
         registered = False
         proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
         if request.method == 'POST':
-            form = AsignarUsuariosForm(request.POST)
+            form = AsignarUsuariosForm(request.POST, usuarios_no_asignados=usuariosNoAsignados)
             if form.is_valid():
                 form.clean()
                 usuario = form.cleaned_data['usuarios']
@@ -221,9 +233,9 @@ def asignarEquipo(request, id_proyecto):
                 m1.save()
 
                 registered = True
-
+                pass
         else:
-            form = AsignarUsuariosForm();
+            form = AsignarUsuariosForm(usuarios_no_asignados=usuariosNoAsignados)
 
         template_name = './Proyecto/asignar_usuarios_proyecto.html'
         return render(request, template_name,
@@ -314,14 +326,21 @@ def consultarFlujoProyecto(request, id_proyecto):
 	"""
 
     template_name = './Proyecto/consultar_flujo_proyecto.html'
+    activoFlujoProyecto = False
+    mensaje = False
     proyecto = Proyecto.objects.get(pk=id_proyecto)
-    activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
+    existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
+    if existeActivoFlujoProyecto:
+         activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
+    else:
+        mensaje = 'No existe ningun Flujo Activo'
+
     flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
 
 
 
     return render(request, template_name,
-                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto})
+                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto, 'mensaje': mensaje})
 
 
 @login_required
@@ -349,7 +368,7 @@ def asignarSprint(request, id_proyecto, id_flujo):
         mensajeDoing = False
         flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
         for flujoProyecto in flujosProyecto:
-            if(FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=flujoProyecto.flujo.id).exists()):
+            if(FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=flujoProyecto.flujo.id, estado='Doing').exists()):
                 mensajeDoing = True
 
 
@@ -358,8 +377,19 @@ def asignarSprint(request, id_proyecto, id_flujo):
             proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
             flujo = Flujo.objects.get(id=id_flujo)
 
+            flujoProyectos = FlujoProyecto.objects.all()
+            sprintsAsignados = []
+            for flujoProyecto in flujoProyectos:
+                sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
+
+            sprints = Sprint.objects.filter(activo=True)
+            sprintsNoAsignados = []
+            for sprint in sprints:
+                if sprint not in sprintsAsignados:
+                    sprintsNoAsignados.append(sprint)
+
             if request.method == 'POST':
-                form = AsignarSprintFlujoForm(request.POST)
+                form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
                 if form.is_valid():
                     form.clean()
                     sprint = form.cleaned_data['sprint']
@@ -371,9 +401,10 @@ def asignarSprint(request, id_proyecto, id_flujo):
                     flujoProyecto.save()
                     m1.save()
                     registered = True
+                    pass
 
             else:
-                    form = AsignarSprintFlujoForm()
+                    form = AsignarSprintFlujoForm(sprints_no_asignados=sprintsNoAsignados)
 
 
             template_name = './Proyecto/asignar_sprints.html'
@@ -446,7 +477,7 @@ def consultarUserStoriesSprint(request, id_sprint):
 
 def consultarSprintProyecto(request, id_proyecto):
     template_name = './Proyecto/consultar_sprints_proyecto.html'
-    flujosProyecto = FlujoProyecto.objects.filter(proyecto=id_proyecto)
+    flujosProyecto = FlujoProyecto.objects.filter(proyecto=id_proyecto).exclude(sprint_id=1)
 
     return render(request, template_name,
                   {'flujosProyecto':flujosProyecto})
