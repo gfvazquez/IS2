@@ -112,9 +112,12 @@ def sprint_eliminar(request, id_sprint):
 
     if (band == True):
             sprintDelLogic = Sprint.objects.get(pk=id_sprint)
-            sprintDelLogic.activo=False
-            sprintDelLogic.save()
-            return HttpResponseRedirect('/sprints/')
+            if(sprintDelLogic.fechainicio is None):
+                sprintDelLogic.activo=False
+                sprintDelLogic.save()
+                return HttpResponseRedirect('/sprints/')
+            else:
+                 raise Http404("No se puede eliminar un sprint con fecha de inicio")
     else:
         raise Http404("No cuenta con los permisos necesarios")
 

@@ -147,7 +147,7 @@ def modificarUserstory(request, id_userstory):
 	@return: userstory_modificado.html, formulario donde se muestran los datos que el usuario puede modificar
 
 	@author: Gabriela Vazquez """
-    band=False
+    band = False
     user_permissions_groups = request.user.get_group_permissions(obj=None)
     # user_permissions = request.user.user_permissions.all()
     for p in user_permissions_groups:
@@ -155,106 +155,139 @@ def modificarUserstory(request, id_userstory):
             band = True
     warning = False
     registered = False
+    warningUS = False
     mensaje = 'ATENCION: \nNo puede modificar el estado de un US en estado Comentario\nDebe concluir con los US en Alta'
+    mensajeCurso = 'ATENCION: \nNo puede modificar el estado de este US en estado Curso, ya posee otro US en ese estado\nFinalice su otro US o coloque a Comentario'
 
     if (band == True):
-            us = Userstory.objects.get(id=id_userstory)
-            if request.method == 'POST':
-                    form = UserstoryModificadoForm(request.POST)
-                    if form.is_valid():
-                        form.clean()
-                        nombre = form.cleaned_data['Nombre_de_Userstory']
-                        descripcion =  form.cleaned_data['descripcion']
-                        tiempotrabajado=  form.cleaned_data['tiempotrabajado']
-                        comentarios = form.cleaned_data['comentarios']
-                        usuarioasignado = form.cleaned_data['usuarioasignado']
-                        estado= form.cleaned_data['estado']
-                        prioridad= form.cleaned_data['prioridad']
-                        porcentajerealizado= form.cleaned_data['porcentajerealizado']
+        us = Userstory.objects.get(id=id_userstory)
+        if request.method == 'POST':
+            form = UserstoryModificadoForm(request.POST)
+            if form.is_valid():
+                form.clean()
+                nombre = form.cleaned_data['Nombre_de_Userstory']
+                descripcion = form.cleaned_data['descripcion']
+                tiempotrabajado = form.cleaned_data['tiempotrabajado']
+                comentarios = form.cleaned_data['comentarios']
+                usuarioasignado = form.cleaned_data['usuarioasignado']
+                estado = form.cleaned_data['estado']
+                prioridad = form.cleaned_data['prioridad']
+                porcentajerealizado = form.cleaned_data['porcentajerealizado']
+                #sprint = form.cleaned_data['sprint']
 
+                '''
+                            Filtar todos los us que posee el usuario asignado
                         '''
-                            Procedicimiento si se modifica la prioridad del us a 'Alta'
+                userStoriesUsuario = Userstory.objects.filter(usuarioasignado=usuarioasignado)
+                contadorEnCurso = 0
+                for usUsuario in userStoriesUsuario:
+                    if usUsuario.estado == 'EnCurso':
+                        contadorEnCurso += 1
+
+                '''
+                            Procedimiento si se modifica la prioridad del us a 'Alta'
                         '''
 
-                        sprint = us.sprint
-                        if prioridad == 'Alta':
-                            cambioDePrioridades(usuarioasignado, sprint)
+                # sprint = us.sprint
+                if prioridad == 'Alta':
+                    cambioDePrioridades(usuarioasignado, us.sprint)
 
-                        '''
+                '''
                             Procedimiento necesario para definir el historial
                         '''
-                        modificaciones=''
-                        modificaciones= modificaciones + str(us.historial)
-                        if us.nombre != nombre or us.descripcion != descripcion or us.tiempotrabajado != tiempotrabajado or us.comentarios!=comentarios or us.usuarioasignado!=usuarioasignado or us.estado!=estado or us.prioridad!=prioridad or us.porcentajerealizado!=porcentajerealizado :
-                            marca = 'True'
-                            modificaciones = modificaciones + "\nActualizado por "
-                            modificaciones = modificaciones + str(us.usuarioasignado)
-                            ahora = datetime.date.today()
-                            modificaciones = modificaciones + " el " + str(ahora) + "\n"
-                        if marca == 'True':
-                            if us.nombre != nombre:
-                                modificaciones = modificaciones + " \n \t* NOMBRE -> Cambiado de " + str(us.nombre) + " por " + str(nombre)
-                            if us.descripcion != descripcion:
-                                modificaciones = modificaciones + " \n \t* DESCRIPCION  -> Cambiado de " + str(us.descripcion) + " por " + str(descripcion)
-                            if us.tiempotrabajado != tiempotrabajado:
-                                modificaciones = modificaciones + " \n \t* TIEMPO TRABAJADO -> Cambiado de " + str(us.tiempotrabajado) + " por " + str(tiempotrabajado)
-                            if us.comentarios != comentarios:
-                                modificaciones = modificaciones + " \n \t* COMENTARIOS -> Cambiado de " + str(us.comentarios) + " por " + str(comentarios)
-                            if us.usuarioasignado != usuarioasignado:
-                                modificaciones = modificaciones + " \n \t* USUARIO ASIGNADO -> Cambiado de " + str(us.usuarioasignado) + " por " + str(usuarioasignado)
+                modificaciones = ''
+                modificaciones = modificaciones + str(us.historial)
+                if us.nombre != nombre or us.descripcion != descripcion or us.tiempotrabajado != tiempotrabajado or us.comentarios != comentarios or us.usuarioasignado != usuarioasignado or us.estado != estado or us.prioridad != prioridad or us.porcentajerealizado != porcentajerealizado: #or us.sprint != sprint:
+                    marca = 'True'
+                    modificaciones = modificaciones + "\nActualizado por "
+                    modificaciones = modificaciones + str(us.usuarioasignado)
+                    ahora = datetime.date.today()
+                    modificaciones = modificaciones + " el " + str(ahora) + "\n"
+                if marca == 'True':
+                    if us.nombre != nombre:
+                        modificaciones = modificaciones + " \n \t* NOMBRE -> Cambiado de " + str(
+                            us.nombre) + " por " + str(nombre)
+                    if us.descripcion != descripcion:
+                        modificaciones = modificaciones + " \n \t* DESCRIPCION  -> Cambiado de " + str(
+                            us.descripcion) + " por " + str(descripcion)
+                    if us.tiempotrabajado != tiempotrabajado:
+                        modificaciones = modificaciones + " \n \t* TIEMPO TRABAJADO -> Cambiado de " + str(
+                            us.tiempotrabajado) + " por " + str(tiempotrabajado)
+                    if us.comentarios != comentarios:
+                        modificaciones = modificaciones + " \n \t* COMENTARIOS -> Cambiado de " + str(
+                            us.comentarios) + " por " + str(comentarios)
+                    if us.usuarioasignado != usuarioasignado:
+                        modificaciones = modificaciones + " \n \t* USUARIO ASIGNADO -> Cambiado de " + str(
+                            us.usuarioasignado) + " por " + str(usuarioasignado)
 
-                            if (us.estado != 'Comentario'):
-                                if us.estado != estado:
-                                    modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(us.estado) + " por " + str(estado)
+                    if (us.estado != 'Comentario'):
+                        if estado != 'EnCurso' or contadorEnCurso == 0:#si
+                            if us.estado != estado:
+                             modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(
+                                us.estado) + " por " + str(estado)
 
-                            if us.prioridad != prioridad:
-                                modificaciones = modificaciones + " \n \t* PRIORIDAD -> Cambiado de " + str(us.prioridad) + " por " + str(prioridad)
-                            if us.porcentajerealizado != porcentajerealizado:
-                                modificaciones = modificaciones + " \n \t* PORCENTAJE REALIZADO -> Cambiado de " + str(us.porcentajerealizado) + " por " + str(porcentajerealizado)
-                            modificaciones=modificaciones+'\n'
-                        us.nombre = nombre
-                        us.descripcion = descripcion
-                        us.tiempotrabajado= tiempotrabajado
-                        us.comentarios=comentarios
-                        us.usuarioasignado=usuarioasignado
+                    if us.prioridad != prioridad:
+                        modificaciones = modificaciones + " \n \t* PRIORIDAD -> Cambiado de " + str(
+                            us.prioridad) + " por " + str(prioridad)
+                    if us.porcentajerealizado != porcentajerealizado:
+                        modificaciones = modificaciones + " \n \t* PORCENTAJE REALIZADO -> Cambiado de " + str(
+                            us.porcentajerealizado) + " por " + str(porcentajerealizado)
 
-                        if (us.estado == 'Comentario'):
-                            warning = True
-                        else:
-                            us.estado= estado
+                    #if us.sprint != sprint:
+                    #    modificaciones = modificaciones + " \n \t* SPRINT -> Cambiado de " + str(
+                    #        us.sprint) + " por " + str(sprint)
+                    modificaciones = modificaciones + '\n'
 
-                        if (us.prioridad=='Alta' and (estado=='Resuelta' or estado=='Validado')):
-                            userStories = Userstory.objects.filter(sprint_id=us.sprint.pk)
+                us.nombre = nombre
+                us.descripcion = descripcion
+                us.tiempotrabajado = tiempotrabajado
+                us.comentarios = comentarios
+                us.usuarioasignado = usuarioasignado
 
-                            if (tieneUsuarioUSAlta(us) is not True):
-                                for userStory in userStories:
-                                    if (userStory.usuarioasignado == us.usuarioasignado) and (userStory.estado=='Comentario'):
-                                        Userstory.objects.filter(id=userStory.pk).update(estado = 'InPlaning')
+                if (us.estado == 'Comentario'):
+                    warning = True
+                elif estado == 'EnCurso' and contadorEnCurso != 0: #No se puedo cambiar
+                    warningUS = True
+                else:
+                    us.estado = estado
 
+                if (us.prioridad == 'Alta' and (estado == 'Resuelta' or estado == 'Validado')):
+                    userStories = Userstory.objects.filter(sprint_id=us.sprint.pk)
 
-                        us.prioridad= prioridad
-                        us.porcentajerealizado=porcentajerealizado
-                        us.historial = modificaciones
+                    if (tieneUsuarioUSAlta(us) is not True):
+                        for userStory in userStories:
+                            if (userStory.usuarioasignado == us.usuarioasignado) and (userStory.estado == 'Comentario'):
+                                Userstory.objects.filter(id=userStory.pk).update(estado='InPlaning')
 
+                us.prioridad = prioridad
+                us.porcentajerealizado = porcentajerealizado
+                us.historial = modificaciones
+                #us.sprint = sprint
+                us.save()
 
-                        us.save()
-
-                        '''
+                '''
                             Enviar correo electronico al SCRUM MASTER
                         '''
-                        send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
-                                 ['gabyvazquez92@gmail.com', 'mauriallegretti@gmail.com','andy.benitez09@gmail.com'], fail_silently=False)
+                send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
+                          ['gabyvazquez92@gmail.com'],
+                          fail_silently=False)
 
-                        registered = True
-                        template_name = './Userstories/userstory_modificado.html'
-                        return render(request, template_name, {'mensaje':mensaje, 'warning': warning, 'registered': registered})
-            else:
-                data = {'Nombre_de_Userstory': us.nombre, 'descripcion': us.descripcion, 'tiempotrabajado': us.tiempotrabajado, 'comentarios': us.comentarios, 'usuarioasignado':us.usuarioasignado, 'estado':us.estado, 'prioridad':us.prioridad, 'porcentajerealizado':us.porcentajerealizado, 'mensaje':mensaje, 'warning': warning, 'registered': registered}
-                form = UserstoryModificadoForm(data)
-            template_name = './Userstories/modificar_userstory.html'
-            return render(request, template_name, {'form': form, 'id_userstory': id_userstory})
+                registered = True
+                template_name = './Userstories/userstory_modificado.html'
+                return render(request, template_name,
+                              {'mensaje': mensaje, 'warning': warning, 'mensajeCurso': mensajeCurso, 'warningUS': warningUS,'registered': registered})
+        else:
+            data = {'Nombre_de_Userstory': us.nombre, 'descripcion': us.descripcion,
+                    'tiempotrabajado': us.tiempotrabajado, 'comentarios': us.comentarios,
+                    'usuarioasignado': us.usuarioasignado, 'estado': us.estado, 'prioridad': us.prioridad,
+                    'porcentajerealizado': us.porcentajerealizado, 'mensaje': mensaje, 'warning': warning,'mensajeCurso': mensajeCurso, 'warningUS': warningUS,
+                    'registered': registered}
+            form = UserstoryModificadoForm(data)
+        template_name = './Userstories/modificar_userstory.html'
+        return render(request, template_name, {'form': form, 'id_userstory': id_userstory})
     else:
         raise Http404("No cuenta con los permisos necesarios")
+
 
 def userstory(request):
     """ Recibe un request, y lista todos los us registrados.

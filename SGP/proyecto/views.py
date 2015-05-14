@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from models import Proyecto, Equipo, FlujoProyecto
-from flujo.models import Flujo
+from models import Proyecto, Equipo, FlujoProyecto, ProyectoFlujoActividad
+from flujo.models import Flujo, FlujoActividad
 from django.db import models
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
@@ -291,6 +291,13 @@ def asignarFlujo(request, id_proyecto):
 
                 for flujo in flujos:
                     m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo)
+
+
+                    flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
+                    for flujoActividad in flujoActividades:
+                        m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estadoActividad='Inact')
+                        m2.save()
+
                     m1.save()
 
                 registered = True
