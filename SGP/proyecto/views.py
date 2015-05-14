@@ -291,13 +291,6 @@ def asignarFlujo(request, id_proyecto):
 
                 for flujo in flujos:
                     m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo)
-
-
-                    flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
-                    for flujoActividad in flujoActividades:
-                        m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estadoActividad='Inact')
-                        m2.save()
-
                     m1.save()
 
                 registered = True
@@ -342,9 +335,8 @@ def consultarFlujoProyecto(request, id_proyecto):
     else:
         mensaje = 'No existe ningun Flujo Activo'
 
+
     flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
-
-
 
     return render(request, template_name,
                   {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto, 'mensaje': mensaje})
@@ -404,6 +396,13 @@ def asignarSprint(request, id_proyecto, id_flujo):
                     sprint.estado = "Iniciado"
                     m1.estado = "Doing"
                     flujoProyecto.estado = "Doing"
+
+                    userStories = Userstory.objects.filter(sprint_id=sprint.pk)
+                    flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
+                    for userStory in userStories:
+                        for flujoActividad in flujoActividades:
+                            m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estadoActividad='Inact', userStory_id=userStory.pk)
+                            m2.save()
                     sprint.save()
                     flujoProyecto.save()
                     m1.save()
@@ -488,3 +487,39 @@ def consultarSprintProyecto(request, id_proyecto):
 
     return render(request, template_name,
                   {'flujosProyecto':flujosProyecto})
+
+def consultarUSdelSprintActivoDelUsuario(request, id_proyecto):
+    template_name = './Proyecto/consultar_us_usuario_sprint_activo.html'
+
+    activoFlujoProyecto = False
+    mensaje = False
+    userStories = False
+    proyecto = Proyecto.objects.get(pk=id_proyecto)
+    existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
+    if existeActivoFlujoProyecto:
+         activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
+         sprintActivo = Sprint.objects.get(id=activoFlujoProyecto.sprint.pk)
+
+         userStories = Userstory.objects.filter(sprint_id=sprintActivo.id, usuarioasignado=request.user.pk)
+
+    else:
+        mensaje = 'No existe ningun Flujo Activo'
+
+    return render(request, template_name,
+                  {'userStories':userStories, 'mensaje':mensaje})
+
+def consultarKanban(request, id_proyecto, id_userstory):
+    template_name = './Proyecto/consultar_Kanban.html'
+
+    mensaje = False
+    userStories = False
+    proyectoFlujoActividad = False
+    existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
+    if existeActivoFlujoProyecto:
+         userstory = Userstory.objects.get(id=id_userstory)
+         proyectoFlujoActividad = ProyectoFlujoActividad.objects.filter(userStory=userstory.pk)
+    else:
+        mensaje = 'No existe ningun Flujo Activo'
+
+    return render(request, template_name,
+                  {'userstory':userstory, 'mensaje':mensaje, 'proyectoFlujoActividad':proyectoFlujoActividad})

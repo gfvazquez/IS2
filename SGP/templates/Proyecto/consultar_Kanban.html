@@ -1,0 +1,67 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/">Proyectos</a></li>
+			<li class="active"><a href="/proyectos/sprint_activo/user_stories_current_user/{{ id_proyecto }}/consultar_kanban/{{ id_userstory }}/">Consultar Kanban</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Consultar Kanban</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+    {% if proyectoFlujoActividad %}
+<div class="content-secondary">
+        <div class="page-header">
+        <h1>{{ userstory.nombre }}</h1>
+      </div>
+	<div class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Proyecto</th>
+                <th>Flujo</th>
+                <th>Actividad</th>
+                  <th>Orden Actividad</th>
+                  <th>Estado</th>
+
+              </tr>
+            </thead>
+
+            <tbody>
+                 {% for pfa in proyectoFlujoActividad %}
+              <tr>
+                <td>{{ pfa.proyecto.nombre }}</td>
+                <td>{{ pfa.flujoActividad.flujo.nombre }}</td>
+                <td>{{ pfa.flujoActividad.actividad.nombre }}</td>
+                <td>{{ pfa.flujoActividad.orden }}</td>
+                <td>{{ pfa.estadoActividad }}</td>
+
+            {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+    </div>
+{% endif %}
+
+</div>
+{% endblock %}
