@@ -559,6 +559,9 @@ def consultarKanban(request, id_proyecto, id_userstory):
                 estado_siguiente='Done'
             break
 
+    #if (estado_siguiente == 'Flujo Terminado'):
+    #    userstory = Userstory.objects.get(id=id_userstory)
+    #    FlujoProyecto.objects.get(proyecto_id=id_proyecto, flujo_id=pfa.flujoActividad.flujo.pk, sprint_id=userstory.sprint.pk).update(estado='Done')
 
     if request.method == 'POST':
         form = consultarKanbanForm(request.POST, estado_siguiente_actividad=estado_siguiente)
@@ -573,4 +576,4 @@ def consultarKanban(request, id_proyecto, id_userstory):
         form = consultarKanbanForm(estado_siguiente_actividad=estado_siguiente)
 
     return render(request, template_name,
-                  {'userstory':userstory, 'form':form ,'mensaje':mensaje, 'proyectoFlujoActividadConsulta':proyectoFlujoActividadConsulta, 'registered':registered})
+                  {'userstory':userstory, 'form':form ,'mensaje':mensaje, 'proyectoFlujoActividadConsulta':proyectoFlujoActividadConsulta, 'registered':registered, 'estado_siguiente':estado_siguiente})

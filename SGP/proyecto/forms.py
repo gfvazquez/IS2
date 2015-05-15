@@ -142,8 +142,6 @@ class AsignarSprintFlujoForm(forms.Form):
 
 
 class consultarKanbanForm(forms.Form):
-
-
     def __init__(self, *args, **kwargs):
         self.estado_siguiente_actividad = kwargs.pop('estado_siguiente_actividad', None)
         super(consultarKanbanForm, self).__init__(*args, **kwargs)
@@ -151,5 +149,5 @@ class consultarKanbanForm(forms.Form):
             (self.estado_siguiente_actividad, self.estado_siguiente_actividad),
         )
         self.fields['estadoActividad'] = forms.ChoiceField(widget=forms.Select(),
-                                choices=(ESTADOS),
-                                required=False)
+                                    choices=(ESTADOS),
+                                    required=False)

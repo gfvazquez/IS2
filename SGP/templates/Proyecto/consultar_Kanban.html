@@ -30,10 +30,11 @@
 
     <div class="content-secondary">
         {% if registered %}
-                <h2>Cambio de Estado de Actividada Correctamente</h2>
+                <h2>Cambio de Estado de Actividad Correctamente</h2>
                 <a href="/proyectos">Return to the homepage.</a><br />
 
         {% else %}
+            {% if estado_siguiente != 'Flujo Terminado' %}
         <form id="proyecto_form" method="post"
                         enctype="multipart/form-data">
 
@@ -51,6 +52,9 @@
 		                <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	                </div>
                 </form>
+             {% else %}
+                <h2>Se han concluido las Actividades del Flujo</h2>
+             {% endif %}
 
 
 
