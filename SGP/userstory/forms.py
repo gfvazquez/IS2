@@ -49,14 +49,14 @@ class UserstoryForm(forms.ModelForm):
         @author: Gabriela Vazquez
 
     """
-    sprint = forms.ModelChoiceField(
-        widget=forms.Select,
-        queryset=Sprint.objects.all().exclude(id=1),
-    )
+    #sprint = forms.ModelChoiceField(
+    #    widget=forms.Select,
+    #    queryset=Sprint.objects.all().exclude(id=1),
+    #)
 
     class Meta:
         model = Userstory
-        fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'prioridad', 'porcentajerealizado')
+        fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'prioridad', 'porcentajerealizado', 'sprint')
 
 
 
