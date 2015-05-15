@@ -399,7 +399,6 @@ def asignarSprint(request, id_proyecto, id_flujo):
                     m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
                     sprint.estado = "Iniciado"
                     m1.estado = "Doing"
-                    flujoProyecto.estado = "Doing"
 
                     userStories = Userstory.objects.filter(sprint_id=sprint.pk)
                     flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
@@ -408,7 +407,6 @@ def asignarSprint(request, id_proyecto, id_flujo):
                             m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estadoActividad='Inact', userStory_id=userStory.pk)
                             m2.save()
                     sprint.save()
-                    flujoProyecto.save()
                     m1.save()
                     registered = True
                     pass
@@ -561,9 +559,6 @@ def consultarKanban(request, id_proyecto, id_userstory):
                 estado_siguiente='Done'
             break
 
-
-
-
     if request.method == 'POST':
         form = consultarKanbanForm(request.POST, estado_siguiente_actividad=estado_siguiente)
         if form.is_valid():
@@ -573,6 +568,7 @@ def consultarKanban(request, id_proyecto, id_userstory):
             ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividad.pk).update(estadoActividad=estado)
             if (estado_siguiente == 'Done' and flujoActividad.orden==orden[len(orden)-1]):
                 Userstory.objects.filter(id=id_userstory).update(estado='Resuelta')
+
             registered = True
         pass
     else:

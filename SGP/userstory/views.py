@@ -43,7 +43,7 @@ def crear_userstory(request):
                 if userstory_form.is_valid():
 
                     # Guarda el Usuarios en la bd
-                    us = userstory_form.save()
+                    us = userstory_form
 
                     usuario = userstory_form.cleaned_data['usuarioasignado']
                     sprint = userstory_form.cleaned_data['sprint']
