@@ -39,7 +39,7 @@ def validate_nombreus_unique(value):
     if Userstory.objects.filter(nombre=value, activo=True).exists():
         raise ValidationError(u'El nombre del user story ya existe dentro del sistema')
 
-class UserstoryForm(forms.ModelForm):
+class UserstoryForm(forms.Form):
     """ Atributos de User Story necesarios para el registro en la base de datos
         de un nuevo us.
         @type forms.Form: django.forms
@@ -49,15 +49,21 @@ class UserstoryForm(forms.ModelForm):
         @author: Gabriela Vazquez
 
     """
-    #sprint = forms.ModelChoiceField(
-    #    widget=forms.Select,
-    #    queryset=Sprint.objects.all().exclude(id=1),
-    #)
 
-    class Meta:
+    nombre = forms.CharField(widget=forms.TextInput(),validators=[validate_nombreus_unique], max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
+    descripcion =forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
+    tiempoestimado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
+    tiempotrabajado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
+    comentarios = forms.CharField(widget=forms.Textarea, max_length=50, required=False, error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
+    usuarioasignado = forms.ModelChoiceField(queryset= User.objects.filter(is_active=True))
+    prioridad = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
+    porcentajerealizado = forms.ChoiceField(widget=forms.Select(), choices= (PORCENTAJEREALIZADO), required=False)
+    sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True), required=False)
+
+    '''class Meta:
         model = Userstory
         fields = ('id', 'nombre', 'descripcion', 'tiempoestimado', 'tiempotrabajado','comentarios', 'usuarioasignado', 'prioridad', 'porcentajerealizado', 'sprint')
-
+    '''
 
 
 class UserstoryModificadoForm (forms.Form):

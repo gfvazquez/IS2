@@ -25,6 +25,8 @@ def crear_userstory(request):
 
 	"""
     band=False
+    context = RequestContext(request)
+
     user_permissions_groups = request.user.get_group_permissions(obj=None)
     # user_permissions = request.user.user_permissions.all()
     for p in user_permissions_groups:
@@ -32,7 +34,6 @@ def crear_userstory(request):
             band = True
 
     if (band == True):
-            context = RequestContext(request)
 
             #valor booleano para llamar al template cuando el registro fue correcto
             registered = False
@@ -43,15 +44,35 @@ def crear_userstory(request):
                 if userstory_form.is_valid():
 
                     # Guarda el Usuarios en la bd
-                    us = userstory_form
+                    #us = userstory_form
+                    userstory_form.clean()
+                    nombre = userstory_form.cleaned_data['nombre']
+                    descripcion =userstory_form.cleaned_data['descripcion']
+                    tiempoestimado =userstory_form.cleaned_data['tiempoestimado']
+                    tiempotrabajado =userstory_form.cleaned_data['tiempotrabajado']
+                    comentarios =userstory_form.cleaned_data['comentarios']
+                    usuarioasignado= userstory_form.cleaned_data['usuarioasignado']
+                    prioridad =userstory_form.cleaned_data['prioridad']
+                    porcentajerealizado= userstory_form.cleaned_data['porcentajerealizado']
+                    sprint=userstory_form.cleaned_data['sprint']
 
-                    usuario = userstory_form.cleaned_data['usuarioasignado']
-                    sprint = userstory_form.cleaned_data['sprint']
-                    if usuario and sprint:
+                    us = Userstory()
+
+                    if usuarioasignado and sprint:
                         us.estado = 'InPlanning'
 
                     if userstory_form.cleaned_data['prioridad'] == 'Alta':
-                        cambioDePrioridades(usuario, sprint)
+                        cambioDePrioridades(usuarioasignado, sprint)
+
+                    us.nombre = nombre
+                    us.descripcion =descripcion
+                    us.tiempoestimado =tiempoestimado
+                    us.tiempotrabajado =tiempotrabajado
+                    us.comentarios=comentarios
+                    us.usuarioasignado =usuarioasignado
+                    us.prioridad=prioridad
+                    us.porcentajerealizado=porcentajerealizado
+                    us.sprint = sprint
 
                     us.save()
                     #Actualiza la variable para llamar al template cuando el registro fue correcto
@@ -176,8 +197,8 @@ def modificarUserstory(request, id_userstory):
                 #sprint = form.cleaned_data['sprint']
 
                 '''
-                            Filtar todos los us que posee el usuario asignado
-                        '''
+                    Filtar todos los us que posee el usuario asignado
+                '''
                 userStoriesUsuario = Userstory.objects.filter(usuarioasignado=usuarioasignado)
                 contadorEnCurso = 0
                 for usUsuario in userStoriesUsuario:
