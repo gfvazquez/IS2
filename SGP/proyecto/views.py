@@ -12,7 +12,9 @@ from django.contrib.auth.models import Group, Permission, User
 from django.db.models import Q
 from sprint.models import Sprint
 from userstory.models import Userstory
+from django.db.models import Q
 # Create your views here.
+
 
 @login_required
 def proyectos(request):
@@ -502,7 +504,7 @@ def consultarUSdelSprintActivoDelUsuario(request, id_proyecto):
          activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
          sprintActivo = Sprint.objects.get(id=activoFlujoProyecto.sprint.pk)
 
-         userStories = Userstory.objects.filter(sprint_id=sprintActivo.id, usuarioasignado=request.user.pk)
+         userStories = Userstory.objects.filter(sprint_id=sprintActivo.id, usuarioasignado=request.user.pk, estado='EnCurso')
 
     else:
         mensaje = 'No existe ningun Flujo Activo'
@@ -559,9 +561,8 @@ def consultarKanban(request, id_proyecto, id_userstory):
                 estado_siguiente='Done'
             break
 
-    #if (estado_siguiente == 'Flujo Terminado'):
-    #    userstory = Userstory.objects.get(id=id_userstory)
-    #    FlujoProyecto.objects.get(proyecto_id=id_proyecto, flujo_id=pfa.flujoActividad.flujo.pk, sprint_id=userstory.sprint.pk).update(estado='Done')
+
+
 
     if request.method == 'POST':
         form = consultarKanbanForm(request.POST, estado_siguiente_actividad=estado_siguiente)
@@ -570,6 +571,8 @@ def consultarKanban(request, id_proyecto, id_userstory):
             estado = form.cleaned_data['estadoActividad']
 
             ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividad.pk).update(estadoActividad=estado)
+            if (estado_siguiente == 'Done' and flujoActividad.orden==orden[len(orden)-1]):
+                Userstory.objects.filter(id=id_userstory).update(estado='Resuelta')
             registered = True
         pass
     else:
