@@ -516,7 +516,9 @@ def consultarKanban(request, id_proyecto, id_userstory):
     mensaje = False
     userStories = False
     form = False
+    registered=False
     proyectoFlujoActividadConsulta = False
+    estado_siguiente = 'Flujo Terminado'
     existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
     if existeActivoFlujoProyecto:
          userstory = Userstory.objects.get(id=id_userstory)
@@ -565,9 +567,10 @@ def consultarKanban(request, id_proyecto, id_userstory):
             estado = form.cleaned_data['estadoActividad']
 
             ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividad.pk).update(estadoActividad=estado)
+            registered = True
         pass
     else:
         form = consultarKanbanForm(estado_siguiente_actividad=estado_siguiente)
 
     return render(request, template_name,
-                  {'userstory':userstory, 'form':form ,'mensaje':mensaje, 'proyectoFlujoActividadConsulta':proyectoFlujoActividadConsulta})
+                  {'userstory':userstory, 'form':form ,'mensaje':mensaje, 'proyectoFlujoActividadConsulta':proyectoFlujoActividadConsulta, 'registered':registered})

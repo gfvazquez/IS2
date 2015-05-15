@@ -28,7 +28,13 @@
 
 {% block contenido %}
 
-    <form id="kanban_form" method="post"
+    <div class="content-secondary">
+        {% if registered %}
+                <h2>Cambio de Estado de Actividada Correctamente</h2>
+                <a href="/proyectos">Return to the homepage.</a><br />
+
+        {% else %}
+        <form id="proyecto_form" method="post"
                         enctype="multipart/form-data">
 
                     {% csrf_token %}
@@ -40,46 +46,51 @@
 
                     <!-- Provide a button to click to submit the form. -->
 
+                    <div align="center">
+		                <input class="btn btn-default" type="submit" value="Cambiar Estado Actividad Actual"/>
+		                <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
+	                </div>
+                </form>
 
-    </form>
 
-    {% if proyectoFlujoActividadConsulta %}
-<div class="content-secondary">
-        <div class="page-header">
-        <h1>{{ userstory.nombre }}</h1>
-      </div>
-	<div class="row">
-        <div class="col-md-6">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Proyecto</th>
-                <th>Flujo</th>
-                <th>Actividad</th>
-                  <th>Orden Actividad</th>
-                  <th>Estado</th>
 
-              </tr>
-            </thead>
+            {% if proyectoFlujoActividadConsulta %}
+            <div class="content-secondary">
+                    <div class="page-header">
+                    <h1>{{ userstory.nombre }}</h1>
+                  </div>
+                <div class="row">
+                    <div class="col-md-6">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Proyecto</th>
+                            <th>Flujo</th>
+                            <th>Actividad</th>
+                              <th>Orden Actividad</th>
+                              <th>Estado</th>
 
-            <tbody>
-                 {% for pfa in proyectoFlujoActividadConsulta %}
-              <tr>
-                <td>{{ pfa.proyecto.nombre }}</td>
-                <td>{{ pfa.flujoActividad.flujo.nombre }}</td>
-                <td>{{ pfa.flujoActividad.actividad.nombre }}</td>
-                <td>{{ pfa.flujoActividad.orden }}</td>
-                <td>{{ pfa.estadoActividad }}</td>
+                          </tr>
+                        </thead>
 
-            {% endfor %}
-            </tbody>
+                        <tbody>
+                             {% for pfa in proyectoFlujoActividadConsulta %}
+                          <tr>
+                            <td>{{ pfa.proyecto.nombre }}</td>
+                            <td>{{ pfa.flujoActividad.flujo.nombre }}</td>
+                            <td>{{ pfa.flujoActividad.actividad.nombre }}</td>
+                            <td>{{ pfa.flujoActividad.orden }}</td>
+                            <td>{{ pfa.estadoActividad }}</td>
 
-          </table>
-        </div>
+                        {% endfor %}
+                        </tbody>
+
+                      </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
     </div>
-{% endif %}
+    {% endif %}
 
-
-
-</div>
 {% endblock %}
