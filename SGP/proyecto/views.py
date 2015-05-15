@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm
+from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm, consultarKanbanForm
 from django.http import Http404
 from django.contrib.auth.models import Group, Permission, User
 from django.db.models import Q
@@ -513,13 +513,59 @@ def consultarKanban(request, id_proyecto, id_userstory):
 
     mensaje = False
     userStories = False
-    proyectoFlujoActividad = False
+    form = False
+    proyectoFlujoActividadConsulta = False
     existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
     if existeActivoFlujoProyecto:
          userstory = Userstory.objects.get(id=id_userstory)
-         proyectoFlujoActividad = ProyectoFlujoActividad.objects.filter(userStory=userstory.pk)
+         proyectoFlujoActividadConsulta = ProyectoFlujoActividad.objects.filter(userStory=userstory.pk)
     else:
         mensaje = 'No existe ningun Flujo Activo'
 
+    actividad=[]
+    orden=[]
+    proyectoFlujoActividad = proyectoFlujoActividadConsulta
+    for pfa in proyectoFlujoActividad:
+        actividad.append(pfa.flujoActividad.actividad.pk)
+        orden.append(pfa.flujoActividad.orden)
+
+    sorted = False  # We haven't started sorting yet
+
+    '''while not sorted:
+        sorted = True  # Assume the list is now sorted
+        for element in range(0, len(orden)):
+            if orden[element] > orden[element + 1]:
+                sorted = False  # We found two elements in the wrong order
+                hold = orden[element + 1]
+                hold2 = actividad[element + 1]
+                orden[element + 1] = orden[element]
+                actividad[element + 1] = orden[element]
+                orden[element] = hold
+                actividad[element] = hold2'''
+
+    for i in actividad:
+        flujoActividad = FlujoActividad.objects.get(actividad_id=i, flujo_id=pfa.flujoActividad.flujo.pk)
+        proyectoFlujoActividad = ProyectoFlujoActividad.objects.get(proyecto_id=id_proyecto, userStory_id=id_userstory, flujoActividad_id=flujoActividad.pk)
+        if proyectoFlujoActividad.estadoActividad != 'Done':
+            if proyectoFlujoActividad.estadoActividad == 'ToDo':
+                estado_siguiente='Doing'
+            elif proyectoFlujoActividad.estadoActividad == 'Inact':
+                estado_siguiente='ToDo'
+            elif proyectoFlujoActividad.estadoActividad == 'Doing':
+                estado_siguiente='Done'
+            break
+
+
+    if request.method == 'POST':
+        form = consultarKanbanForm(request.POST, estado_siguiente_actividad=estado_siguiente)
+        if form.is_valid():
+            form.clean()
+            estado = form.cleaned_data['estadoActividad']
+
+            ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividad.pk).update(estadoActividad=estado)
+        pass
+    else:
+        form = consultarKanbanForm(estado_siguiente_actividad=estado_siguiente)
+
     return render(request, template_name,
-                  {'userstory':userstory, 'mensaje':mensaje, 'proyectoFlujoActividad':proyectoFlujoActividad})
+                  {'userstory':userstory, 'form':form ,'mensaje':mensaje, 'proyectoFlujoActividadConsulta':proyectoFlujoActividadConsulta})

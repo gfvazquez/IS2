@@ -1,7 +1,7 @@
 from django import forms
 from flujo.models import Flujo
-from cliente.models import Cliente
 from sprint.models import Sprint
+from cliente.models import Cliente
 from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
@@ -141,3 +141,15 @@ class AsignarSprintFlujoForm(forms.Form):
     #)
 
 
+class consultarKanbanForm(forms.Form):
+
+
+    def __init__(self, *args, **kwargs):
+        self.estado_siguiente_actividad = kwargs.pop('estado_siguiente_actividad', None)
+        super(consultarKanbanForm, self).__init__(*args, **kwargs)
+        ESTADOS=(
+            (self.estado_siguiente_actividad, self.estado_siguiente_actividad),
+        )
+        self.fields['estadoActividad'] = forms.ChoiceField(widget=forms.Select(),
+                                choices=(ESTADOS),
+                                required=False)
