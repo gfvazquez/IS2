@@ -68,7 +68,7 @@ def crear_actividad(request):
 
                     actividad = Actividades()
                     actividad.nombre = nombre
-                    actividad.estado = ''
+                    #actividad.estado = ''
                     actividad.is_active = 'True'
                     actividad.save()
 
@@ -115,17 +115,17 @@ def modificar(request, id_actividad):
                 if form.is_valid():
                     form.clean()
                     nombre = form.cleaned_data['Nombre_Actividad']
-                    estado = form.cleaned_data['Nuevo_Estado']
+                    #estado = form.cleaned_data['Nuevo_Estado']
 
                     actividad.nombre = nombre
-                    actividad.estado = estado
+                    #actividad.estado = estado
                     actividad.save()
 
                     template_name = './Actividades/actividad_modificado.html'
                     return render(request, template_name)
         else:
              data = {'Nombre_Actividad': actividad.nombre,
-                    'Nuevo_Estado': actividad.estado,
+                    #'Nuevo_Estado': actividad.estado,
                     }
              form = ActividadModificadoForm(data)
         template_name = './Actividades/modificar_actividad.html'

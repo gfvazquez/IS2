@@ -42,7 +42,7 @@ class ActividadModificadoForm(forms.Form):
 
     """
     Nombre_Actividad = forms.CharField(widget=forms.TextInput(), max_length=50, min_length=2, required=True, error_messages={'required': 'Ingrese un nombre para la actividad', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 2 caracteres'})
-    Nuevo_Estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
+    #Nuevo_Estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
 
 
 

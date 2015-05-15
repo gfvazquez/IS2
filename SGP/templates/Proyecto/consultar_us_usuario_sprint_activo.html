@@ -1,0 +1,73 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/">Proyectos</a></li>
+			<li class="active"><a href="/proyectos/sprint_activo/user_stories_current_user/{{ id_proyecto }}/">Consultar Mis User Stories del Sprint Activo</a></li>
+        </ul>
+
+	</div>
+</nav>
+{% endblock %}
+
+{% block menu %}
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">User Stories del Sprint Activo de Usted</a>
+		</li>
+	</ul>
+</div>
+{% endblock %}
+
+{% block contenido %}
+    {% if userStories %}
+<div class="content-secondary">
+	<div class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Tiempo Estimado</th>
+                  <th>Comentarios</th>
+                  <th>Usuario Asignado</th>
+                  <th>Estado</th>
+                  <th>Prioridad</th>
+                  <th>Porcentaje Realizado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+                 {% for userStory in userStories %}
+              <tr>
+                <td>{{ userStory.nombre }}</td>
+                <td>{{ userStory.descripcion }}</td>
+                <td>{{ userStory.tiempoestimado }}</td>
+                <td>{{ userStory.comentarios }}</td>
+                <td>{{ userStory.usuarioasignado.username }}</td>
+                <td>{{ userStory.estado }}</td>
+                <td>{{ userStory.prioridad }}</td>
+                <td>{{ userStory.porcentajerealizado }}</td>
+                <td><a href="/userstories/modificaruserstory/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a></td>
+                <td><a href="/userstories/verHistorial/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Ver Historial de Cambios</button></a></td>
+                <td><a href="consultar_kanban/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar Kanban</button></a></td>
+
+
+                 {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+    </div>
+{% endif %}
+
+</div>
+{% endblock %}

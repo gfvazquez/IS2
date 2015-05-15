@@ -1,11 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
-from flujo.models import Flujo
+from flujo.models import Flujo, FlujoActividad
 from cliente.models import Cliente
 from sprint.models import Sprint
+from userstory.models import Userstory
 from django.contrib.auth.models import Group, Permission, User
+from actividades.models import Actividades
 
 
+ESTADOS = (
+
+        ('ToDo','ToDo'),
+        ('Doing','Doing'),
+        ('Done','Done'),
+    )
 
 class Proyecto(models.Model):
 
@@ -54,4 +62,12 @@ class FlujoProyecto(models.Model):
     estado = models.CharField(max_length=15, default='Inactivo')
     def __unicode__(self):
         return self.flujo.nombre
+
+class ProyectoFlujoActividad(models.Model):
+    proyecto = models.ForeignKey(Proyecto)
+    flujoActividad = models.ForeignKey(FlujoActividad)
+    userStory = models.ForeignKey(Userstory)
+    estadoActividad = models.CharField(max_length=5, choices=ESTADOS, editable=False, blank=True) #blank true para queguarde como vacio en la bd al crear
+    def __unicode__(self):
+        return self.proyecto.nombre
 

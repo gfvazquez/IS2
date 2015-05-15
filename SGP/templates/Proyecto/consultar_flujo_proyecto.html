@@ -48,4 +48,37 @@
 		{% endif %}
 	</div>
 	</div>
+
+    <br>
+    <br>
+    <div class="page-header">
+      </div>
+    <div class="row">
+        <div class="col-sm-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Flujo Activo</h3>
+            </div>
+            <div class="panel-body">
+                {% if activoFlujoProyecto %}
+                    {{ activoFlujoProyecto.flujo.nombre }}
+                {% else %}
+                    {{ mensaje }}
+                {% endif %}
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Sprint Activo</h3>
+            </div>
+            <div class="panel-body">
+                {% if activoFlujoProyecto %}
+                    {{ activoFlujoProyecto.sprint.nombre }}
+                {% else %}
+                    {{ mensaje }}
+                {% endif %}
+            </div>
+          </div>
+        </div><!-- /.col-sm-4 -->
+    </div>
 {% endblock %}

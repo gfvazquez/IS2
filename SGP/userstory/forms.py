@@ -77,7 +77,7 @@ class UserstoryModificadoForm (forms.Form):
     estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS), required=False)
     prioridad = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
     porcentajerealizado = forms.ChoiceField(widget=forms.Select(), choices= (PORCENTAJEREALIZADO), required=False)
-    sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True), required=False)
+    #sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True), required=False)
 
 
 class verHistorialForm(forms.Form):

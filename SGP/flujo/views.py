@@ -150,10 +150,10 @@ def modificarFlujo(request, id_flujo):
                     form.clean()
                     nombre = form.cleaned_data['Nombre_de_Flujo']
                     descripcion =  form.cleaned_data['Descripcion_de_Flujo']
-                    estado= form.cleaned_data['Nuevo_Estado']
+                    #estado= form.cleaned_data['Nuevo_Estado']
                     flow.nombre = nombre
                     flow.descripcion = descripcion
-                    flow.estado=estado
+                    #flow.estado=estado
                     flow.save()
                     template_name = './Flujos/flujo_modificado.html'
                     return render(request, template_name)
@@ -225,10 +225,11 @@ def asignarActividad(request, id_flujo):
         if form.is_valid():
             form.clean()
             actividades = form.cleaned_data['actividades']
+            orden = form.cleaned_data['orden']
 
-            for actividad in actividades:
-                m1 = FlujoActividad(flujo=flujo, actividad=actividad)
-                m1.save()
+            #for actividad in actividades:
+            m1 = FlujoActividad(flujo=flujo, actividad=actividades, orden=orden)
+            m1.save()
 
             registered = True
             pass

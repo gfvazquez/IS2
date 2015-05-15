@@ -2,11 +2,8 @@ __author__ = 'mauricio'
 from django.db import models
 from actividades.models import Actividades
 
-ESTADOS = (
 
-    ('Doing','Doing'),
-    ('Done','Done'),
-)
+
 
 class Flujo(models.Model):
     nombre= models.CharField(max_length=50, verbose_name='Nombre',unique=True)
@@ -20,5 +17,9 @@ class Flujo(models.Model):
 class FlujoActividad(models.Model):
     flujo = models.ForeignKey(Flujo)
     actividad = models.ForeignKey(Actividades)
+    orden = models.PositiveIntegerField()
+    #estado = models.CharField(max_length=5, choices=ESTADOS, editable=False, blank=True) #blank true para queguarde como vacio en la bd al crear
     def __unicode__(self):
         return self.flujo.nombre
+
+

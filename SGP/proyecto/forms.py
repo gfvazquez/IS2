@@ -1,7 +1,7 @@
 from django import forms
 from flujo.models import Flujo
-from cliente.models import Cliente
 from sprint.models import Sprint
+from cliente.models import Cliente
 from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
@@ -79,28 +79,26 @@ class AsignarUsuariosForm(forms.Form):
         @author: Andrea Benitez
 
     """
-    usuarios = forms.ModelChoiceField(
-        widget=forms.Select,
-        queryset=User.objects.filter(is_active=True),
-        )
-
-    roles = forms.ModelChoiceField(
-        widget=forms.Select,
-        queryset=Group.objects.all(),
-    )
-    #def __init__(self, *args, **kwargs):
-    #    self.usuarios_no_asignados = kwargs.pop('usuarios_no_asignados', None)
-    #    super(AsignarUsuariosForm, self).__init__(*args, **kwargs)
-    #    list_of_ids = []
-    #    for usuario in self.usuarios_no_asignados:
-    #        list_of_ids.append(usuario.pk)
-    #   self.fields['usuarios'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
-    #                                                           queryset=User.objects.filter(pk__in=list_of_ids),
-    #                                                           required=False)
-    #    self.fields['roles'] = forms.ModelChoiceField(
-    #        widget=forms.Select,
-    #        queryset=Group.objects.all(),
+    #usuarios = forms.ModelChoiceField(
+    #    widget=forms.Select,
+    #    queryset=User.objects.filter(is_active=True),
     #    )
+
+
+    def __init__(self, *args, **kwargs):
+        self.usuarios_no_asignados = kwargs.pop('usuarios_no_asignados', None)
+        super(AsignarUsuariosForm, self).__init__(*args, **kwargs)
+        list_of_ids = []
+        for usuario in self.usuarios_no_asignados:
+            list_of_ids.append(usuario.pk)
+        self.fields['usuarios'] = forms.ModelChoiceField(widget=forms.Select,
+                                                        queryset=User.objects.filter(pk__in=list_of_ids),
+                                                        required=False)
+        self.fields['roles'] = forms.ModelChoiceField(
+                                widget=forms.Select,
+                                queryset=Group.objects.all())
+
+
 
 
 
@@ -127,9 +125,31 @@ class AsignarFlujoForm(forms.Form):
 
 
 class AsignarSprintFlujoForm(forms.Form):
-    sprint = forms.ModelChoiceField(
-        widget=forms.Select,
-        queryset=Sprint.objects.all().exclude(id=1),
-    )
+    def __init__(self, *args, **kwargs):
+        self.sprints_no_asignados = kwargs.pop('sprints_no_asignados', None)
+        super(AsignarSprintFlujoForm, self).__init__(*args, **kwargs)
+        list_of_ids = []
+        for sprint in self.sprints_no_asignados:
+            list_of_ids.append(sprint.pk)
+        self.fields['sprint'] = forms.ModelChoiceField(widget=forms.Select,
+                                                        queryset=Sprint.objects.filter(pk__in=list_of_ids).exclude(id=1),
+                                                        required=False)
+
+    #sprint = forms.ModelChoiceField(
+    #    widget=forms.Select,
+    #    queryset=Sprint.objects.all().exclude(id=1),
+    #)
 
 
+class consultarKanbanForm(forms.Form):
+
+
+    def __init__(self, *args, **kwargs):
+        self.estado_siguiente_actividad = kwargs.pop('estado_siguiente_actividad', None)
+        super(consultarKanbanForm, self).__init__(*args, **kwargs)
+        ESTADOS=(
+            (self.estado_siguiente_actividad, self.estado_siguiente_actividad),
+        )
+        self.fields['estadoActividad'] = forms.ChoiceField(widget=forms.Select(),
+                                choices=(ESTADOS),
+                                required=False)
