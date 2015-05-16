@@ -177,8 +177,10 @@ def modificarUserstory(request, id_userstory):
     warning = False
     registered = False
     warningUS = False
+    warningPorcentaje = False
     mensaje = 'ATENCION: \nNo puede modificar el estado de un US en estado Comentario\nDebe concluir con los US en Alta'
     mensajeCurso = 'ATENCION: \nNo puede modificar el estado de este US en estado Curso, ya posee otro US en ese estado\nFinalice su otro US o coloque a Comentario'
+    mensajePorcentaje = 'ATENCION: \nNo puede modificar el estado de este US a estado Resuelta, porque su porcentaje no esta en 100%\n Cambie a 100% antes de realizar este cambio'
 
     if (band == True):
         us = Userstory.objects.get(id=id_userstory)
@@ -243,9 +245,10 @@ def modificarUserstory(request, id_userstory):
 
                     if (us.estado != 'Comentario'):
                         if estado != 'EnCurso' or contadorEnCurso == 0:#si
-                            if us.estado != estado:
-                             modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(
-                                us.estado) + " por " + str(estado)
+                            if estado != 'Resuelta' or porcentajerealizado ==100:
+                                    if us.estado != estado:
+                                     modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(
+                                        us.estado) + " por " + str(estado)
 
                     if us.prioridad != prioridad:
                         modificaciones = modificaciones + " \n \t* PRIORIDAD -> Cambiado de " + str(
@@ -269,6 +272,8 @@ def modificarUserstory(request, id_userstory):
                     warning = True
                 elif estado == 'EnCurso' and contadorEnCurso != 0: #No se puedo cambiar
                     warningUS = True
+                elif estado == 'Resuelta' and porcentajerealizado != 100: #No se puedo cambiar
+                    warningPorcentaje = True
                 else:
                     us.estado = estado
 
@@ -296,12 +301,12 @@ def modificarUserstory(request, id_userstory):
                 registered = True
                 template_name = './Userstories/userstory_modificado.html'
                 return render(request, template_name,
-                              {'mensaje': mensaje, 'warning': warning, 'mensajeCurso': mensajeCurso, 'warningUS': warningUS,'registered': registered})
+                              {'mensaje': mensaje, 'warning': warning, 'mensajeCurso': mensajeCurso,'mensajePorcentaje': mensajePorcentaje, 'warningUS': warningUS, 'warningPorcentaje': warningPorcentaje,'registered': registered})
         else:
             data = {'Nombre_de_Userstory': us.nombre, 'descripcion': us.descripcion,
                     'tiempotrabajado': us.tiempotrabajado, 'comentarios': us.comentarios,
                     'usuarioasignado': us.usuarioasignado, 'estado': us.estado, 'prioridad': us.prioridad,
-                    'porcentajerealizado': us.porcentajerealizado, 'mensaje': mensaje, 'warning': warning,'mensajeCurso': mensajeCurso, 'warningUS': warningUS,
+                    'porcentajerealizado': us.porcentajerealizado, 'mensaje': mensaje, 'warning': warning,'mensajeCurso': mensajeCurso,'mensajePorcentaje': mensajePorcentaje, 'warningUS': warningUS,'warningPorcentaje': warningPorcentaje,
                     'registered': registered}
             form = UserstoryModificadoForm(data)
         template_name = './Userstories/modificar_userstory.html'
