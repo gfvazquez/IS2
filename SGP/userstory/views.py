@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response, render
 from userstory.models import Userstory
+from proyecto.models import Proyecto, FlujoProyecto,Equipo
 from forms import UserstoryForm, UserstoryModificadoForm,verHistorialForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404,HttpResponse
@@ -9,6 +10,8 @@ import datetime
 import django
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
+
 
 @login_required
 def crear_userstory(request):
@@ -169,6 +172,7 @@ def modificarUserstory(request, id_userstory):
 
 	@author: Gabriela Vazquez """
     band = False
+
     user_permissions_groups = request.user.get_group_permissions(obj=None)
     # user_permissions = request.user.user_permissions.all()
     for p in user_permissions_groups:
@@ -291,12 +295,17 @@ def modificarUserstory(request, id_userstory):
                 us.historial = modificaciones
                 #us.sprint = sprint
                 us.save()
+                '''
+                    Obtener Lider, scrum master del proyecto al que se corresponde este US
+                '''
+
+                #scrum_master = Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario
 
                 '''
-                            Enviar correo electronico al SCRUM MASTER
-                        '''
+                   Enviar correo electronico al SCRUM MASTER
+                '''
                 send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
-                          ['gabyvazquez92@gmail.com'],
+                          ['gabyvazquez92@gmail.com',Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario.email],
                           fail_silently=False)
 
                 registered = True
