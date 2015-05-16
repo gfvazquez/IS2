@@ -226,6 +226,7 @@ def modificarUserstory(request, id_userstory):
                     modificaciones = modificaciones + str(us.usuarioasignado)
                     ahora = datetime.date.today()
                     modificaciones = modificaciones + " el " + str(ahora) + "\n"
+
                 if marca == 'True':
                     if us.nombre != nombre:
                         modificaciones = modificaciones + " \n \t* NOMBRE -> Cambiado de " + str(

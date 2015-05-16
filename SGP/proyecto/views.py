@@ -404,7 +404,7 @@ def asignarSprint(request, id_proyecto, id_flujo):
                     flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
                     for userStory in userStories:
                         for flujoActividad in flujoActividades:
-                            m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estadoActividad='Inact', userStory_id=userStory.pk)
+                            m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estado='Inact', userstory_id=userStory.pk)
                             m2.save()
                     sprint.save()
                     m1.save()
@@ -427,6 +427,7 @@ def asignarSprint(request, id_proyecto, id_flujo):
             mensaje = "El flujo ya posee asignado un Sprint Activo, no se pueden asignar ningun Sprint actualmente"
         elif flujoProyectoDone:
             mensaje = "El flujo ya fue conluido, no se puede mas asignar Sprints al mismo"
+
 
         template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
         return render(request, template_name, {'mensaje':mensaje})
@@ -522,7 +523,7 @@ def consultarKanban(request, id_proyecto, id_userstory):
     existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
     if existeActivoFlujoProyecto:
          userstory = Userstory.objects.get(id=id_userstory)
-         proyectoFlujoActividadConsulta = ProyectoFlujoActividad.objects.filter(userStory=userstory.pk)
+         proyectoFlujoActividadConsulta = ProyectoFlujoActividad.objects.filter(userstory=userstory.pk)
     else:
         mensaje = 'No existe ningun Flujo Activo'
 
@@ -533,29 +534,17 @@ def consultarKanban(request, id_proyecto, id_userstory):
         actividad.append(pfa.flujoActividad.actividad.pk)
         orden.append(pfa.flujoActividad.orden)
 
-    sorted = False  # We haven't started sorting yet
-
-    '''while not sorted:
-        sorted = True  # Assume the list is now sorted
-        for element in range(0, len(orden)):
-            if orden[element] > orden[element + 1]:
-                sorted = False  # We found two elements in the wrong order
-                hold = orden[element + 1]
-                hold2 = actividad[element + 1]
-                orden[element + 1] = orden[element]
-                actividad[element + 1] = orden[element]
-                orden[element] = hold
-                actividad[element] = hold2'''
+    bubblesort(orden, actividad)
 
     for i in actividad:
         flujoActividad = FlujoActividad.objects.get(actividad_id=i, flujo_id=pfa.flujoActividad.flujo.pk)
-        proyectoFlujoActividad = ProyectoFlujoActividad.objects.get(proyecto_id=id_proyecto, userStory_id=id_userstory, flujoActividad_id=flujoActividad.pk)
-        if proyectoFlujoActividad.estadoActividad != 'Done':
-            if proyectoFlujoActividad.estadoActividad == 'ToDo':
+        proyectoFlujoActividad = ProyectoFlujoActividad.objects.get(proyecto_id=id_proyecto, userstory_id=id_userstory, flujoActividad_id=flujoActividad.pk)
+        if proyectoFlujoActividad.estado != 'Done':
+            if proyectoFlujoActividad.estado == 'ToDo':
                 estado_siguiente='Doing'
-            elif proyectoFlujoActividad.estadoActividad == 'Inact':
+            elif proyectoFlujoActividad.estado == 'Inact':
                 estado_siguiente='ToDo'
-            elif proyectoFlujoActividad.estadoActividad == 'Doing':
+            elif proyectoFlujoActividad.estado == 'Doing':
                 estado_siguiente='Done'
             break
 
@@ -563,9 +552,9 @@ def consultarKanban(request, id_proyecto, id_userstory):
         form = consultarKanbanForm(request.POST, estado_siguiente_actividad=estado_siguiente)
         if form.is_valid():
             form.clean()
-            estado = form.cleaned_data['estadoActividad']
+            estado = form.cleaned_data['estado']
 
-            ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividad.pk).update(estadoActividad=estado)
+            ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividad.pk).update(estado=estado_siguiente)
             if (estado_siguiente == 'Done' and flujoActividad.orden==orden[len(orden)-1]):
                 Userstory.objects.filter(id=id_userstory).update(estado='Resuelta')
 
@@ -576,3 +565,33 @@ def consultarKanban(request, id_proyecto, id_userstory):
 
     return render(request, template_name,
                   {'userstory':userstory, 'form':form ,'mensaje':mensaje, 'proyectoFlujoActividadConsulta':proyectoFlujoActividadConsulta, 'registered':registered, 'estado_siguiente':estado_siguiente})
+
+
+def bubblesort( a, b ):
+  for i in range( len( a ) ):
+    for k in range( len( a ) - 1, i, -1 ):
+      if ( a[k] < b[k - 1] ):
+        swap( a, k, k - 1 )
+        swap(b, k, k-1)
+
+def swap( a, x, y ):
+  tmp = a[x]
+  a[x] = a[y]
+  a[y] = tmp
+
+
+def consultarBacklog(request, id_proyecto):
+    template_name = './Proyecto/consultar_backlog.html'
+    flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto).exclude(sprint_id=1)
+    sprintsProyecto=[]
+    for flujoProyecto in flujosProyecto:
+        sprintsProyecto.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
+
+    userStoriesIncompleto=[]
+    for sprint in sprintsProyecto:
+        userStories = Userstory.objects.filter(sprint_id=sprint.pk, estado='Incompleto')
+        for userStory in userStories:
+            userStoriesIncompleto.append(userStory)
+
+    return render(request, template_name,
+                  {'userstories':userStoriesIncompleto})

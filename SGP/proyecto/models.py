@@ -66,8 +66,8 @@ class FlujoProyecto(models.Model):
 class ProyectoFlujoActividad(models.Model):
     proyecto = models.ForeignKey(Proyecto)
     flujoActividad = models.ForeignKey(FlujoActividad)
-    userStory = models.ForeignKey(Userstory)
-    estadoActividad = models.CharField(max_length=5, choices=ESTADOS, editable=False, blank=True) #blank true para queguarde como vacio en la bd al crear
+    userstory = models.ForeignKey(Userstory)
+    estado = models.CharField(max_length=5, choices=ESTADOS, editable=False, blank=True) #blank true para queguarde como vacio en la bd al crear
     def __unicode__(self):
         return self.proyecto.nombre
 

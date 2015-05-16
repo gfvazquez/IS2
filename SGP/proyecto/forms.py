@@ -148,6 +148,6 @@ class consultarKanbanForm(forms.Form):
         ESTADOS=(
             (self.estado_siguiente_actividad, self.estado_siguiente_actividad),
         )
-        self.fields['estadoActividad'] = forms.ChoiceField(widget=forms.Select(),
+        self.fields['estado'] = forms.ChoiceField(widget=forms.Select(),
                                     choices=(ESTADOS),
                                     required=False)
