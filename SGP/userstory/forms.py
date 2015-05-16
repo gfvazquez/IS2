@@ -52,7 +52,7 @@ class UserstoryForm(forms.Form):
 
     nombre = forms.CharField(widget=forms.TextInput(),validators=[validate_nombreus_unique], max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
     descripcion =forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
-    tiempoestimado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
+    tiempoestimado = forms.IntegerField(required=False, help_text='En Dias', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
     tiempotrabajado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
     comentarios = forms.CharField(widget=forms.Textarea, max_length=50, required=False, error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
     usuarioasignado = forms.ModelChoiceField(queryset= User.objects.filter(is_active=True))

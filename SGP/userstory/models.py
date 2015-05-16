@@ -35,7 +35,7 @@ class Userstory(models.Model):
     nombre= models.CharField(max_length=50, verbose_name='Nombre', unique=True)
     descripcion=models.TextField(max_length=100,blank=True,verbose_name='Descripcion')
     tiempoestimado=models.IntegerField(default=0, verbose_name='Tiempo Estimado')#endias
-    tiempotrabajado=models.IntegerField(default=0, verbose_name='Tiempo Trabajado') #enhoras
+    tiempotrabajado=models.IntegerField(default=0, verbose_name='Tiempo Trabajado',null=True,blank=True) #enhoras
     #adjuntoasociado=models.FileField()
     comentarios= models.TextField(max_length=100,blank=True,verbose_name='Comentarios')
     usuarioasignado=models.ForeignKey(User, verbose_name='Asignado a: ')
