@@ -595,3 +595,60 @@ def consultarBacklog(request, id_proyecto):
 
     return render(request, template_name,
                   {'userstories':userStoriesIncompleto})
+
+def reasignarSprint(request, id_proyecto, id_userstory):
+
+    registered = False
+    mensaje = False
+    proyecto = Proyecto.objects.get(pk = id_proyecto)
+    userstoryIncompleto=Userstory.objects.get(id=id_userstory)
+    sprintFinalizado = Sprint.objects.get(id=userstoryIncompleto.sprint.pk)
+    flujoProyetoHalfDone=FlujoProyecto.objects.get(sprint_id=sprintFinalizado.pk, estado='HalfDone')
+    flujo = flujoProyetoHalfDone.flujo
+    flujoProyectos = FlujoProyecto.objects.all()
+    sprintsAsignados = []
+    for flujoProyecto in flujoProyectos:
+        #si el estado del flujoProyecto es doing se puede todavia reasignar un US a la combinacion sprint-flujo-proyecto
+        if (flujoProyecto.estado != 'Doing'):
+            sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
+
+    sprints = Sprint.objects.filter(activo=True)
+    sprintsNoAsignados = []
+    for sprint in sprints:
+        if sprint not in sprintsAsignados:
+            sprintsNoAsignados.append(sprint)
+
+    if request.method == 'POST':
+        form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
+        if form.is_valid():
+            form.clean()
+            sprint = form.cleaned_data['sprint']
+            existeFlujoProyecto = FlujoProyecto.objects.filter(sprint_id=sprint.pk).exists()
+            #si el Sprint todavia no fue asignado a ningun flujo se crea un FlujoProyecto
+            if existeFlujoProyecto==False:
+                m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
+                sprint.estado = "Iniciado"
+                m1.estado = "Doing"
+                sprint.save()
+                m1.save()
+                Userstory.objects.filter(id=id_userstory).update(sprint_id=sprint.pk, estado='InPlanning')
+
+            #el Sprint ya fue asignado a un flujo
+            elif existeFlujoProyecto==True:
+                flujoProyecto=FlujoProyecto.objects.get(sprint_id=sprint.pk)
+                if (flujo.pk == flujoProyecto.flujo.pk):
+                    Userstory.objects.filter(id=id_userstory).update(sprint_id=sprint.pk, estado='InPlanning')
+                #El US debe tener asignado el mismo flujo que el Sprint
+                else:
+                    mensaje = "No se puede reasignar este US a este Sprint porque el sprint esta asignado a un Flujo distino al US"
+
+            registered = True
+            pass
+
+    else:
+        form = AsignarSprintFlujoForm(sprints_no_asignados=sprintsNoAsignados)
+
+
+    template_name = './Proyecto/reasignar_sprints.html'
+    return render(request, template_name,
+                        {'form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'flujo':flujo, 'mensaje':mensaje})
