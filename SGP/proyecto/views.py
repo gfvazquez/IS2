@@ -389,7 +389,9 @@ def asignarSprint(request, id_proyecto, id_flujo):
             sprintsNoAsignados = []
             for sprint in sprints:
                 if sprint not in sprintsAsignados:
-                    sprintsNoAsignados.append(sprint)
+                    listaUS=Userstory.objects.filter(sprint_id=sprint.id)
+                    if(len(listaUS) != 0):
+                        sprintsNoAsignados.append(sprint)
 
             if request.method == 'POST':
                 form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
