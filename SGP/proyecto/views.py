@@ -625,6 +625,7 @@ def reasignarSprint(request, id_proyecto, id_userstory):
         if form.is_valid():
             form.clean()
             sprint = form.cleaned_data['sprint']
+
             existeFlujoProyecto = FlujoProyecto.objects.filter(sprint_id=sprint.pk).exists()
             #si el Sprint todavia no fue asignado a ningun flujo se crea un FlujoProyecto
             if existeFlujoProyecto==False:
