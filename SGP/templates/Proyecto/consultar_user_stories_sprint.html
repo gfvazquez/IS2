@@ -41,7 +41,7 @@
                   <th>Usuario Asignado</th>
                   <th>Estado</th>
                   <th>Prioridad</th>
-                  <th>Porcentaje Realizado</th>
+                  <!--<th>Porcentaje Realizado</th>-->
               </tr>
             </thead>
 
@@ -55,7 +55,7 @@
                 <td>{{ userStory.usuarioasignado.username }}</td>
                 <td>{{ userStory.estado }}</td>
                 <td>{{ userStory.prioridad }}</td>
-                <td>{{ userStory.porcentajerealizado }}</td>
+                <!--<td>{{ userStory.porcentajerealizado }}</td>-->
                 <td><a href="/userstories/consultar/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a></td>
                 <td><a href="/userstories/modificaruserstory/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a></td>
                 <td><a href="/userstories/eliminaruserstory/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a></td>
