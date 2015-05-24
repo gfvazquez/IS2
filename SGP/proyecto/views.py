@@ -15,7 +15,12 @@ from django.contrib.auth.models import Group, Permission, User
 
 @login_required
 def proyectos(request):
-    proyectos = Proyecto.objects.all()
+
+    proyectos_usuario = Equipo.objects.filter(usuario_id=request.user.pk)
+    proyectos=[]
+    for proy_usu in proyectos_usuario:
+        proyectos.append(proy_usu.proyecto)
+
     return render_to_response('./Proyecto/proyectos.html', {'lista_proyectos': proyectos},
                               context_instance=RequestContext(request))
 
@@ -118,9 +123,12 @@ def modificarProyecto(request, id_proyecto):
     rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
     user_permissions_groups = list(rol.permissions.all())
 
+
     for p in user_permissions_groups:
         if (p.codename == 'change_proyecto'):
             band = True
+
+
 
     if (band == True):
         proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
@@ -202,9 +210,11 @@ def asignarEquipo(request, id_proyecto):
 	"""
     band=False
 
+
     rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
     rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
     user_permissions_groups = list(rol.permissions.all())
+
 
 
     for p in user_permissions_groups:

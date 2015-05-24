@@ -7,6 +7,13 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+
+        <!--<script src="/home/andrea/Escritorio/TP/IS2/SGP/static/js/bootstrap.min.js"></script>-->
+        <script>
+            $(document).ready(function () {
+                $('.dropdown-toggle').dropdown();
+            });
+        </script>
         <title>SGP</title>
         <style type="text/css">
             .multiple-checkbox ul { /* Used to hide <li> elements in multiple checkbox forms */
@@ -19,36 +26,63 @@
 	<!-- Fin de la cabecera -->
 	
 	<body>
-		<!-- Comienzo del banner -->
-		<div class="container-fluid">
-			<div class="row">
-			  <div class="col-md-8"><h3>{{ user.username | capfirst }}</h3></div>
-			  <div class="col-md-4"><a href="/cerrar/"><button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-log-out"></span> Cerrar Sesion</button></a></div>
-			</div>
-			<div class="row">
-			  <div class="col-md-9 col-md-offset-1">
-				<h1>Sistema de Administracion de Proyectos</h1>
-				</div>
-				</div>
-				<div class="row">
-				  <div class="col-md-6">
-					<br>
-					  <a href="/usuarios"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-home"></span> Inicio</button></a><!-- Boton de Inicio -->
-					  <div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><!-- Boton de Configuracion -->
-						  <span class="glyphicon glyphicon-cog"></span> Configuracion
-						</button>
-						<ul class="dropdown-menu">
-						  <li><a href="/usuarios">Administrar Usuarios</a></li>
 
-						</ul>
-					  </div>
-				  </div>
-				</div>
-			  </div>
-			</div>
-		</div>
-		
+    <div class="container">
+
+        <!-- Static navbar -->
+          <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">SGP</a>
+              </div>
+              <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+
+                  <li class="active"><a href='/proyectos'>Proyectos</a></li>
+                  <li><a href='/flujos'>Flujo</a></li>
+                  <li><a href='/actividades'>Actividades</a></li>
+                  <li><a href='/usuarios'>Usuarios</a></li>
+                  <li><a href='/clientes'>Clientes</a></li>
+                  <li><a href='/roles'>Roles</a></li>
+
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">Action</a></li>
+                      <li><a href="#">Another action</a></li>
+                      <li><a href="#">Something else here</a></li>
+                      <li class="divider"></li>
+                      <li class="dropdown-header">Nav header</li>
+                      <li><a href="#">Separated link</a></li>
+                      <li><a href="#">One more separated link</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
+                  <li><a href="#">{{ user.username | capfirst }}</a></li>
+                  <li><a href="/cerrar/"><button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-log-out"></span> Cerrar Sesion</button></a></li>
+                </ul>
+              </div><!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
+          </nav>
+
+        <div class="container theme-showcase" role="main">
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+            <div class="jumbotron">
+                <h1>Sistema de Administracion de Proyectos</h1>
+                <p>Sistema de implementacion del Metodo Agil</p>
+            </div>
+        </div>
+    </div>
+
 		<!-- Fin del banner -->
 		<div class="wrapper">
 		{% block navegacion %}{% endblock %}
