@@ -1,6 +1,7 @@
 {% extends "base_general.html" %}
 
 {% block navegacion %}
+    <div class="container">
 <nav class="navbar navbar-default">
 	<div class="navbar-header">
 		<a href="/principal/" class="navbar-brand">SGP</a>
@@ -14,9 +15,11 @@
 
 	</div>
 </nav>
+    </div>
 {% endblock %}
 
 {% block menu %}
+    <div class="container">
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
@@ -24,9 +27,11 @@
 		</li>
 	</ul>
 </div>
+    </div>
 {% endblock %}
 
 {% block contenido %}
+    <div class="container">
     {% if proyectosFlujo %}
 <div class="content-secondary">
 	<div class="row">
@@ -62,4 +67,5 @@
 {% endif %}
 
 </div>
+    </div>
 {% endblock %}

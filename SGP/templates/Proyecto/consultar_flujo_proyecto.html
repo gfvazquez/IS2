@@ -1,6 +1,7 @@
 {% extends "base_general.html" %}
 
 {% block navegacion %}
+    <div class="container">
 <nav class="navbar navbar-default">
 	<div class="navbar-header">
 		<a href="/principal/" class="navbar-brand">SGP</a>
@@ -22,10 +23,12 @@
 		</li>
 	</ul>
 </div>
+    </div>
 {% endblock %}
 
 
 {% block contenido %}
+    <div class="container">
 <div class="content-secondary">
 <!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
 	<div class="panel-group" id="accordion">
@@ -80,5 +83,6 @@
             </div>
           </div>
         </div><!-- /.col-sm-4 -->
+    </div>
     </div>
 {% endblock %}

@@ -1,22 +1,27 @@
 {% extends "base_general.html" %}
 
 {% block navegacion %}
-<nav class="navbar navbar-default">
-	<div class="navbar-header">
-		<a href="/principal/" class="navbar-brand">SGP</a>
-	</div>
+    <div class="container">
+        <nav class="navbar navbar-default">
 
-	<div  class="collapse navbar-collapse navbar-ex1-collapse">
-		<ul class="nav navbar-nav">
-			<li><a href="/proyectos/">Proyectos</a></li>
-			<li class="active"><a href="/proyectos/asignar_flujos_proyecto/{{ id_proyecto }}/">Asignacion de Equipo a Proyecto</a></li>
-        </ul>
+            <div class="navbar-header">
+                <a href="/principal/" class="navbar-brand">SGP</a>
+            </div>
 
-	</div>
-</nav>
+            <div  class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/proyectos/">Proyectos</a></li>
+                    <li class="active"><a href="/proyectos/asignar_flujos_proyecto/{{ id_proyecto }}/">Asignacion de Equipo a Proyecto</a></li>
+                </ul>
+
+            </div>
+
+        </nav>
+    </div>
 {% endblock %}
 
 {% block menu %}
+    <div class="container">
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
@@ -24,9 +29,11 @@
 		</li>
 	</ul>
 </div>
+    </div>
 {% endblock %}
 
 {% block contenido %}
+    <div class="container">
 <div class="content-secondary">
 	{% if form.errors %}
 		Por favor verifique:
@@ -51,4 +58,5 @@
     {% endif %}
 
 </div>
+    </div>
 {% endblock %}
