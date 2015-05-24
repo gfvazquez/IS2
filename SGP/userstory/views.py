@@ -9,10 +9,11 @@ import django
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 
 
 @login_required
-def crear_userstory(request):
+def crear_userstory(request, id_proyecto):
     """ Recibe un request, obtiene el formulario con los datos del US a crear.
      Luego verifica los datos recibidos y registra al nuevo US.
 
@@ -28,18 +29,21 @@ def crear_userstory(request):
     band=False
     context = RequestContext(request)
 
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-    # user_permissions = request.user.user_permissions.all()
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'userstory.add_userstory'):
+        if (p.codename == 'add_userstory'):
             band = True
 
     if (band == True):
 
             #valor booleano para llamar al template cuando el registro fue correcto
             registered = False
+
             if request.method == 'POST':
-                userstory_form = UserstoryForm(data=request.POST)
+                userstory_form = UserstoryForm(data=request.POST, id_proyecto=id_proyecto)
 
                 # If the two forms are valid...
                 if userstory_form.is_valid():
@@ -85,19 +89,21 @@ def crear_userstory(request):
                 else:
                     print userstory_form.errors
 
+                pass
+
             # Not a HTTP POST, so we render our form using two ModelForm instances.
             # These forms will be blank, ready for user input.
             else:
-                userstory_form = UserstoryForm()
+                userstory_form = UserstoryForm(id_proyecto=id_proyecto)
 
 
             # Render the template depending on the context.
-            return render_to_response('./Userstories/crearUserstory.html', {'user_form': userstory_form, 'registered': registered}, context)
+            return render_to_response('./Userstories/crearUserstory.html', {'user_form': userstory_form, 'registered': registered, 'id_proyecto': id_proyecto}, context)
     else:
         raise Http404("No cuenta con los permisos necesarios")
 
 @login_required
-def consultarUserstory(request, id_userstory):
+def consultarUserstory(request,id_proyecto, id_userstory):
      """ Recibe un request y un id, luego busca en la base de datos el US
     cuyos datos se quieren consultar.
 
@@ -118,7 +124,7 @@ def consultarUserstory(request, id_userstory):
 
 
 @login_required
-def userstory_eliminar(request, id_userstory):
+def userstory_eliminar(request,id_proyecto, id_userstory):
     """ Recibe un request y un id, luego busca en la base de datos el US
         que se va a eliminar. Luego se elimina este US.
 
@@ -137,10 +143,13 @@ def userstory_eliminar(request, id_userstory):
     #cuentra dentro del Backlog.
     #No se eliminael US si esta Resuelta
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-    # user_permissions = request.user.user_permissions.all()
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'userstory.delete_userstory'):
+        if (p.codename == 'delete_userstory'):
             band = True
 
     if (band == True):
@@ -149,12 +158,12 @@ def userstory_eliminar(request, id_userstory):
             if ((userstoryDelLogic.estado == "Nueva") or (userstoryDelLogic.estado == "InPlanning") or (userstoryDelLogic.estado == "EnCurso") or (userstoryDelLogic.estado == "Comentarios")):
                 userstoryDelLogic.activo=False
             userstoryDelLogic.save()
-            return HttpResponseRedirect('/userstories/')
+            return HttpResponseRedirect('/proyectos/')
     else:
         raise Http404("No cuenta con los permisos necesarios")
 
 @login_required
-def modificarUserstory(request, id_userstory):
+def modificarUserstory(request,id_proyecto, id_userstory):
     """ Recibe un request y un id, luego busca en la base de datos al us
     cuyos datos se quieren modificar. Se muestra un formulario con estos
     campos y luego se guardan los cambios realizados.
@@ -171,10 +180,12 @@ def modificarUserstory(request, id_userstory):
 	@author: Gabriela Vazquez """
     band = False
 
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-    # user_permissions = request.user.user_permissions.all()
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'userstory.change_userstory'):
+        if (p.codename == 'change_userstory'):
             band = True
     warning = False
     registered = False
@@ -303,9 +314,9 @@ def modificarUserstory(request, id_userstory):
                 '''
                    Enviar correo electronico al SCRUM MASTER
                 '''
-                send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
-                          ['gabyvazquez92@gmail.com',Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario.email],
-                          fail_silently=False)
+                #send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
+                #          ['gabyvazquez92@gmail.com',Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario.email],
+                #          fail_silently=False)
 
                 registered = True
                 template_name = './Userstories/userstory_modificado.html'
@@ -319,12 +330,12 @@ def modificarUserstory(request, id_userstory):
                     'registered': registered}
             form = UserstoryModificadoForm(data)
         template_name = './Userstories/modificar_userstory.html'
-        return render(request, template_name, {'form': form, 'id_userstory': id_userstory})
+        return render(request, template_name, {'form': form, 'id_userstory': id_userstory, 'id_proyecto': id_proyecto})
     else:
         raise Http404("No cuenta con los permisos necesarios")
 
 
-def userstory(request):
+def userstory(request, id_proyecto):
     """ Recibe un request, y lista todos los us registrados.
 
 	@type request: django.http.HttpRequest
@@ -336,10 +347,18 @@ def userstory(request):
 	@author: Mauricio Allegretti
 
 	"""
+    id_proyecto = int(id_proyecto)
+    userstoryproyecto=[]
     userstories = Userstory.objects.all()
-    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstories}, context_instance=RequestContext(request))
+    for us in userstories:
+        sprint = Sprint.objects.get(id=us.sprint.pk)
 
-def verhistorial(request, id_userstory):
+        if (sprint.proyecto.pk == id_proyecto):
+            userstoryproyecto.append(us)
+
+    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstoryproyecto}, context_instance=RequestContext(request))
+
+def verhistorial(request, id_proyecto, id_userstory):
      us = Userstory.objects.get(id=id_userstory)
      if request.method == 'GET':
         form = verHistorialForm(request.GET)
@@ -351,7 +370,7 @@ def verhistorial(request, id_userstory):
 
      template_name = './Userstories/verHistorial.html'
      #return HttpResponse(template_name)
-     return render(request, template_name, {'us': us, 'id_userstory': id_userstory})
+     return render(request, template_name, {'us': us, 'id_userstory': id_userstory, 'id_proyecto':id_proyecto})
 
 
 def cambioDePrioridades(usuario, sprint):

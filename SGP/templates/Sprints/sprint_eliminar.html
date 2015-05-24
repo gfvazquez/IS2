@@ -8,7 +8,7 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/sprints/">Sprints</a></li>
+			<li><a href="/proyectos/sprints/{{ id_proyecto }}/">Sprints</a></li>
         </ul>
 
 	</div>
@@ -22,7 +22,7 @@
 			<p class="text-warning"><small>Seguro que desea eliminar el sprint?</small></p>
 
         <a href="eliminar/{{ sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Si</button></a>
-		<a type="button" class="btn btn-default" href="sprints/">No</a>
+		<a type="button" class="btn btn-default" href="/proyectos/">No</a>
 	</div>
 </div>
 {% endblock %}

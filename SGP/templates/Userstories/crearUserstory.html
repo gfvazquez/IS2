@@ -8,7 +8,8 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/userstories/">User Stories</a></li>
+			<li><a href="/proyectos/userstories/{{ id_proyecto }}/crearuserstory/">User Stories</a></li>
+
         </ul>
 
 	</div>
@@ -31,12 +32,13 @@
 <div class="content-secondary">
  {% if registered %}
                 <h2>User Story Creado Exitosamente</h2>
-                <a href="/userstories">Volver a la lista de User Stories.</a><br />
+                <a href="/proyectos/">Volver a la lista de User Stories.</a><br />
                     <hr />
     {% else %}
      <h2>Complete los campos</h2><br />
-          <form id="userstory_form" method="post" action="/userstories/crearuserstory/" enctype="multipart/form-data">
+          <form id="userstory_form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+
 
                     <!-- Display each form. The as_p method wraps each element in a paragraph
                          (<p>) element. This ensures each element appears on a new line,
@@ -46,7 +48,7 @@
                     <!-- Provide a button to click to submit the form. -->
                     <div align="center">
 		                <input class="btn btn-default" type="submit" value="Crear"/>
-		                <a href="/userstories/"><button type="button" class="btn btn-default">Cancelar</button></a>
+		                <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	                </div>
                 </form>
     {% endif %}

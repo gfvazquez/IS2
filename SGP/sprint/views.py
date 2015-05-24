@@ -4,12 +4,14 @@ from forms import SprintForm, SprintModificadoForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import login_required
-from userstory.models import Userstory
+from proyecto.models import Userstory, Proyecto, Equipo
+from django.contrib.auth.models import Group
 
 
 
 
-def crear_sprint(request):
+
+def crear_sprint(request, id_proyecto):
     """ Recibe un request, obtiene el formulario con los datos del sprint a crear.
      Luego verifica los datos recibidos y registra al nuevo sprint.
 
@@ -23,10 +25,13 @@ def crear_sprint(request):
 
 	"""
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-    # user_permissions = request.user.user_permissions.all()
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'sprint.add_sprint'):
+        if (p.codename == 'add_sprint'):
             band = True
 
     if (band == True):
@@ -43,7 +48,18 @@ def crear_sprint(request):
                 # If the two forms are valid...
                 if sprint_form.is_valid():
                     # Guarda el Usuarios en la bd
-                    sp = sprint_form.save()
+                    sprint_form.clean()
+
+                    nombre =sprint_form.cleaned_data['nombre']
+                    fechainicio =sprint_form.cleaned_data['fechainicio']
+                    duracion =sprint_form.cleaned_data['duracion']
+
+                    sp = Sprint()
+                    sp.nombre = nombre
+                    sp.fechainicio =fechainicio
+                    sp.duracion =duracion
+                    sp.proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+
                     sp.save()
 
                     #Actualiza la variable para llamar al template cuando el registro fue correcto
@@ -62,12 +78,13 @@ def crear_sprint(request):
 
 
             # Render the template depending on the context.
-            return render_to_response('./Sprints/crearSprint.html', {'user_form': sprint_form, 'registered': registered}, context)
+            return render_to_response('./Sprints/crearSprint.html', {'user_form': sprint_form, 'registered': registered,
+                                                                     'id_proyecto': id_proyecto}, context)
     else:
         raise Http404("No cuenta con los permisos necesarios")
 
 @login_required
-def consultarSprint(request, id_sprint):
+def consultarSprint(request,id_proyecto, id_sprint):
      """ Recibe un request y un id, luego busca en la base de datos el sprint
     cuyos datos se quieren consultar.
 
@@ -100,7 +117,7 @@ def consultarSprint(request, id_sprint):
 
 
 @login_required
-def sprint_eliminar(request, id_sprint):
+def sprint_eliminar(request,id_proyecto, id_sprint):
     """ Recibe un request y un id, luego busca en la base de datos el sprint
         que se va a eliminar. Luego se elimina este sprint.
 
@@ -116,10 +133,15 @@ def sprint_eliminar(request, id_sprint):
 	@author: Mauricio Allegretti
 	"""
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-    # user_permissions = request.user.user_permissions.all()
+
+    sprint = Sprint.objects.get(id=id_sprint)
+    proyecto = Proyecto.objects.get(auto_increment_id=(sprint.proyecto.pk))
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=proyecto.pk)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'sprint.delete_sprint'):
+        if (p.codename == 'delete_sprint'):
             band = True
 
     if (band == True):
@@ -134,7 +156,7 @@ def sprint_eliminar(request, id_sprint):
         raise Http404("No cuenta con los permisos necesarios")
 
 @login_required
-def modificarSprint(request, id_sprint):
+def modificarSprint(request,id_proyecto, id_sprint):
     """ Recibe un request y un id, luego busca en la base de datos al sprint
     cuyos datos se quieren modificar. Se muestra un formulario con estos
     campos y luego se guardan los cambios realizados.
@@ -150,11 +172,14 @@ def modificarSprint(request, id_sprint):
 
 	@author: Mauricio Allegretti """
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
     registered = False
-    # user_permissions = request.user.user_permissions.all()
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'sprint.change_sprint'):
+        if (p.codename == 'change_sprint'):
             band = True
 
     if (band == True):
@@ -177,14 +202,14 @@ def modificarSprint(request, id_sprint):
                         template_name = './Sprints/sprint_modificado.html'
                         return render(request, template_name,  {'registered': registered})
             else:
-                data = {'Nombre_de_Sprint': sp.nombre, 'duracion': sp.duracion, 'estado': sp.estado,'Fecha_de_Inicio': sp.fechainicio,'registered': registered }
+                data = {'Nombre_de_Sprint': sp.nombre, 'duracion': sp.duracion, 'estado': sp.estado ,'Fecha_de_Inicio': sp.fechainicio,'registered': registered, 'id_proyecto':id_proyecto}
                 form = SprintModificadoForm(data)
             template_name = './Sprints/modificar_sprint.html'
             return render(request, template_name, {'form': form, 'id_sprint': id_sprint})
     else:
         raise Http404("No cuenta con los permisos necesarios")
 
-def sprints(request):
+def sprints(request, id_proyecto):
     """ Recibe un request, y lista todos los sprints registrados.
 
 	@type request: django.http.HttpRequest
@@ -196,6 +221,6 @@ def sprints(request):
 	@author: Mauricio Allegretti
 
 	"""
-    sprints = Sprint.objects.all()
+    sprints = Sprint.objects.filter(proyecto_id = id_proyecto).exclude(id=1)
     return render_to_response('./Sprints/sprints.html', {'lista_sprints':sprints}, context_instance=RequestContext(request))
 

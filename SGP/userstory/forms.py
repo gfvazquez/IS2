@@ -1,7 +1,7 @@
-from models import Userstory
+from proyecto.models import Userstory
 from django.contrib.auth.models import User
 from django import forms
-from proyecto.models import Sprint
+from proyecto.models import Sprint, Equipo
 from django.core.exceptions import ValidationError
 
 
@@ -50,15 +50,23 @@ class UserstoryForm(forms.Form):
 
     """
 
-    nombre = forms.CharField(widget=forms.TextInput(),validators=[validate_nombreus_unique], max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
-    descripcion =forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
-    tiempoestimado = forms.IntegerField(required=False, help_text='En Dias', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
-    tiempotrabajado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
-    comentarios = forms.CharField(widget=forms.Textarea, max_length=50, required=False, error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
-    usuarioasignado = forms.ModelChoiceField(queryset= User.objects.filter(is_active=True))
-    prioridad = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
-    porcentajerealizado = forms.ChoiceField(widget=forms.Select(), choices= (PORCENTAJEREALIZADO), required=False)
-    sprint = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True), required=False)
+    def __init__(self, *args, **kwargs):
+        self.id_proyecto = kwargs.pop('id_proyecto', None)
+        super(UserstoryForm, self).__init__(*args, **kwargs)
+        equipo_usuarios_proyecto = Equipo.objects.filter(proyecto_id=self.id_proyecto)
+        list_of_ids=[]
+        for equipo in equipo_usuarios_proyecto:
+            list_of_ids.append(equipo.usuario.pk)
+
+        self.fields['nombre'] = forms.CharField(widget=forms.TextInput(),validators=[validate_nombreus_unique], max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
+        self.fields['descripcion'] =forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
+        self.fields['tiempoestimado'] = forms.IntegerField(required=False, help_text='En Dias', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
+        self.fields['tiempotrabajado'] = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
+        self.fields['comentarios'] = forms.CharField(widget=forms.Textarea, max_length=50, required=False, error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
+        self.fields['usuarioasignado'] = forms.ModelChoiceField(queryset= User.objects.filter(pk__in=list_of_ids))
+        self.fields['prioridad'] = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
+        self.fields['porcentajerealizado'] = forms.ChoiceField(widget=forms.Select(), choices= (PORCENTAJEREALIZADO), required=False)
+        self.fields['sprint'] = forms.ModelChoiceField(queryset=Sprint.objects.filter(activo=True, proyecto_id=self.id_proyecto, estado='Creado').exclude(id=1), required=False)
 
     '''class Meta:
         model = Userstory

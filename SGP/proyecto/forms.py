@@ -1,6 +1,7 @@
 from django import forms
 from flujo.models import Flujo
 from cliente.models import Cliente
+from models import Sprint
 from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets

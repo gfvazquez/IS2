@@ -8,7 +8,7 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/sprints/">Sprints</a></li>
+			<li><a href="/proyectos/sprints/{{ id_proyecto }}/crearsprint">Crear Sprint</a></li>
         </ul>
 
 	</div>
@@ -31,11 +31,11 @@
 <div class="content-secondary">
  {% if registered %}
                 <h2>Sprint Creado Exitosamente</h2>
-                <a href="/sprints">Volver a la lista de Sprints.</a><br />
+                <a href="/proyectos/">Volver a la lista de Sprints.</a><br />
                     <hr />
     {% else %}
      <h2>Complete los campos</h2><br />
-          <form id="sprint_form" method="post" action="/sprints/crearsprint/" enctype="multipart/form-data">
+          <form id="sprint_form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     <!-- Display each form. The as_p method wraps each element in a paragraph
@@ -46,7 +46,7 @@
                     <!-- Provide a button to click to submit the form. -->
                     <div align="center">
 		                <input class="btn btn-default" type="submit" value="Crear"/>
-		                <a href="/sprints/"><button type="button" class="btn btn-default">Cancelar</button></a>
+		                <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	                </div>
                 </form>
     {% endif %}

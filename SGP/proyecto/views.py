@@ -113,10 +113,13 @@ def modificarProyecto(request, id_proyecto):
 
 	@author: Andrea Benitez """
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-   # user_permissions = request.user.user_permissions.all()
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'proyecto.change_proyecto'):
+        if (p.codename == 'change_proyecto'):
             band = True
 
     if (band == True):
@@ -198,10 +201,14 @@ def asignarEquipo(request, id_proyecto):
 	@author: Andrea Benitez
 	"""
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
 
     for p in user_permissions_groups:
-        if (p == 'proyecto.add_equipo'):
+        if (p.codename == 'add_equipo'):
             band = True
 
 
@@ -260,10 +267,13 @@ def asignarFlujo(request, id_proyecto):
 	@author: Andrea Benitez
 	"""
     band=False
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
-    # user_permissions = request.user.user_permissions.all()
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
     for p in user_permissions_groups:
-        if (p == 'proyecto.add_flujoproyecto'):
+        if (p.codename == 'add_flujoproyecto'):
             band = True
 
     if (band == True):
@@ -377,18 +387,18 @@ def asignarSprint(request, id_proyecto, id_flujo):
             proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
             flujo = Flujo.objects.get(id=id_flujo)
 
-            flujoProyectos = FlujoProyecto.objects.all()
+            flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
             sprintsAsignados = []
             for flujoProyecto in flujoProyectos:
                 sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
 
-            sprints = Sprint.objects.filter(activo=True)
+            sprints = Sprint.objects.filter(activo=True, proyecto_id=id_proyecto)
             sprintsNoAsignados = []
             for sprint in sprints:
                 if sprint not in sprintsAsignados:
                     listaUS=Userstory.objects.filter(sprint_id=sprint.id)
-                    if(len(listaUS) != 0):
-                        sprintsNoAsignados.append(sprint)
+                    #if(len(listaUS) != 0):
+                    sprintsNoAsignados.append(sprint)
 
             if request.method == 'POST':
                 form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
@@ -483,12 +493,12 @@ def consultarUserStoriesSprint(request, id_sprint):
     return render(request, template_name,
                   {'userStories':userStories})
 
-def consultarSprintProyecto(request, id_proyecto):
+'''def consultarSprintProyecto(request, id_proyecto):
     template_name = './Proyecto/consultar_sprints_proyecto.html'
     flujosProyecto = FlujoProyecto.objects.filter(proyecto=id_proyecto).exclude(sprint_id=1)
 
     return render(request, template_name,
-                  {'flujosProyecto':flujosProyecto})
+                  {'flujosProyecto':flujosProyecto})'''
 
 def consultarUSdelSprintActivoDelUsuario(request, id_proyecto):
     template_name = './Proyecto/consultar_us_usuario_sprint_activo.html'
@@ -569,7 +579,7 @@ def consultarKanban(request, id_proyecto, id_userstory):
 def bubblesort( a, b ):
   for i in range( len( a ) ):
     for k in range( len( a ) - 1, i, -1 ):
-      if ( a[k] < b[k - 1] ):
+      if ( a[k] < a[k - 1] ):
         swap( a, k, k - 1 )
         swap(b, k, k-1)
 

@@ -8,7 +8,7 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/userstories/">User Story</a></li>
+			<li><a href="/proyectos/userstories/{{ id_proyecto }}">User Story</a></li>
         </ul>
 
 	</div>
@@ -22,7 +22,7 @@
 			<p class="text-warning"><small>Seguro que desea eliminar el user story?</small></p>
 
         <a href="eliminar/{{ userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Si</button></a>
-		<a type="button" class="btn btn-default" href="userstories/">No</a>
+		<a type="button" class="btn btn-default" href="/proyectos/">No</a>
 	</div>
 </div>
 {% endblock %}
