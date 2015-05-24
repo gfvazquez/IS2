@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.forms import widgets
-from models import Sprint
+from proyecto.models import Sprint
 from django.contrib.auth.models import User
 from django import forms
 

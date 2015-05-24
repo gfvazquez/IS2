@@ -1,7 +1,7 @@
 from models import Userstory
 from django.contrib.auth.models import User
 from django import forms
-from sprint.models import Sprint
+from proyecto.models import Sprint
 from django.core.exceptions import ValidationError
 
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response, render
-from sprint.models import Sprint
+from proyecto.models import Sprint
 from forms import SprintForm, SprintModificadoForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404

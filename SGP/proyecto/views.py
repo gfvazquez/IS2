@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from models import Proyecto, Equipo, FlujoProyecto, ProyectoFlujoActividad
+from models import Proyecto, Equipo, FlujoProyecto, ProyectoFlujoActividad, Sprint, Userstory
 from flujo.models import Flujo, FlujoActividad
 from django.db import models
 from django.shortcuts import render_to_response, render
@@ -9,10 +9,7 @@ from django.contrib.auth.decorators import permission_required
 from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm, consultarKanbanForm
 from django.http import Http404
 from django.contrib.auth.models import Group, Permission, User
-from django.db.models import Q
-from sprint.models import Sprint
-from userstory.models import Userstory
-from django.db.models import Q
+
 # Create your views here.
 
 

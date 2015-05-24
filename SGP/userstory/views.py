@@ -1,11 +1,9 @@
 from django.shortcuts import render_to_response, render
-from userstory.models import Userstory
-from proyecto.models import Proyecto, FlujoProyecto,Equipo
+from proyecto.models import Proyecto, FlujoProyecto,Equipo, Userstory, Sprint
 from forms import UserstoryForm, UserstoryModificadoForm,verHistorialForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404,HttpResponse
 from django.contrib.auth.decorators import login_required
-from sprint.models import Sprint
 import datetime
 import django
 from django.conf import settings
@@ -182,6 +180,7 @@ def modificarUserstory(request, id_userstory):
     registered = False
     warningUS = False
     warningPorcentaje = False
+    marca = False
     mensaje = 'ATENCION: \nNo puede modificar el estado de un US en estado Comentario\nDebe concluir con los US en Alta'
     mensajeCurso = 'ATENCION: \nNo puede modificar el estado de este US en estado Curso, ya posee otro US en ese estado\nFinalice su otro US o coloque a Comentario'
     mensajePorcentaje = 'ATENCION: \nNo puede modificar el estado de este US a estado Resuelta, porque su porcentaje no esta en 100%\n Cambie a 100% antes de realizar este cambio'

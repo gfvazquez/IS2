@@ -1,6 +1,5 @@
 from django import forms
 from flujo.models import Flujo
-from sprint.models import Sprint
 from cliente.models import Cliente
 from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
@@ -40,7 +39,7 @@ class ProyectoForm(forms.Form):
     Fecha_de_Inicio =  forms.DateField(input_formats=['%Y-%m-%d'], widget=widgets.AdminDateWidget, required=True, help_text='* Ingrese en formato anho-mes-dia', error_messages={'required': 'Ingrese una fecha de inicio de proyecto'} )
     Duracion = forms.IntegerField(required=True, help_text='* En semanas', validators=[validate_duracion_proyecto], error_messages={'required': 'Ingrese la duracion del proyecto',})
     Descripcion = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el proyecto', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
-    Cliente = forms.ModelChoiceField(queryset= Cliente.objects.filter(estado=True))
+    Cliente = forms.ModelChoiceField(queryset=Cliente.objects.filter(estado=True))
 
 
 
