@@ -1,6 +1,7 @@
 {% extends "base_general.html" %}
 
 {% block navegacion %}
+    <div class="container">
 <nav class="navbar navbar-default">
 	<div class="navbar-header">
 		<a href="/principal/" class="navbar-brand">SGP</a>
@@ -13,9 +14,11 @@
 
 	</div>
 </nav>
+    </div>
 {% endblock %}
 
-{% block menu %}		
+{% block menu %}
+    <div class="container">
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
@@ -23,9 +26,11 @@
 		</li>
 	</ul>
 </div>
+    </div>
 {% endblock %}
 
 {% block contenido %}
+    <div class="container">
 <div class="content-secondary">
 	 {% if registered %}
                 <h2>Los datos del user story se han modificado con exito</h2>
@@ -42,6 +47,6 @@
                 <div class="form-group">
                 </div>
     {% endif %}
-
+    </div>
 </div>
 {% endblock %}

@@ -1,6 +1,8 @@
 {% extends "base_general.html" %}
 
 {% block navegacion %}
+
+    <div class="container">
 <nav class="navbar navbar-default">
 	<div class="navbar-header">
 		<a href="/principal/" class="navbar-brand">SGP</a>
@@ -14,18 +16,22 @@
 
 	</div>
 </nav>
+    </div>
 {% endblock %}
 
-{% block menu %}		
+{% block menu %}
+    <div class="container">
 <div class="menu">
 	<ul>
 		<li id="option1" class="active">
 			<a href="#">{{ actividad.nombre}}</a>
 	</ul>
 </div>
+    </div>
 {% endblock %}
 
 {% block contenido %}
+    <div class="container">
 <div class="content-secondary">
 	<p><h4>Id: <span class="label label-default">{{ perfil.id }}</span></h4></p>
 	<p><h4>Nombre: <span class="label label-default">{{ perfil.nombre }}</span></h4></p>
@@ -36,7 +42,7 @@
 <div align="center">
 		<a href="/actividades/"><button type="button" class="btn btn-default">Volver</button></a>
 </div>
-	
+	</div>
 {% endblock %}
 
 
