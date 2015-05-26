@@ -29,8 +29,25 @@ def user_login(request):
                 if acceso.is_active:
                     login(request, acceso)
                     template_name = './principal.html'
-                    return render(request, template_name)
-                    # return HttpResponseRedirect('/usuarios/')
+                    flujo = False
+                    rol = False
+                    actividad = False
+                    usuario = False
+                    cliente = False
+                    user_permissions_groups = request.user.get_group_permissions(obj=None)
+                    for p in user_permissions_groups:
+                        if (p == 'flujo.add_fujo'):
+                            flujo = True
+                        if (p == 'auth.add_group'):
+                            rol = True
+                        if (p == 'actividades.add_actividades'):
+                            actividad = True
+                        if (p == 'auth.add_user'):
+                            usuario = True
+                        if (p == 'cliente.add_cliente'):
+                            cliente = True
+
+                    return render(request, template_name, {'flujo':flujo, 'rol':rol, 'actividad':actividad, 'usuario':usuario, 'cliente':cliente })
 
                 else:
                     return HttpResponse("El usuario no esta activo")
@@ -45,5 +62,23 @@ def user_login(request):
 
 def irprincipal(request):
     template_name = './principal.html'
-    return render(request, template_name)
+    user_permissions_groups = request.user.get_group_permissions(obj=None)
+    flujo = False
+    rol = False
+    actividad = False
+    usuario = False
+    cliente = False
+    for p in user_permissions_groups:
+        if (p == 'flujo.add_fujo'):
+            flujo = True
+        if (p == 'auth.add_group'):
+            rol = True
+        if (p == 'actividades.add_actividades'):
+            actividad = True
+        if (p == 'auth.add_user'):
+            usuario = True
+        if (p == 'cliente.add_cliente'):
+            cliente = True
+
+    return render(request, template_name, {'flujo':flujo, 'rol':rol, 'actividad':actividad, 'usuario':usuario, 'cliente':cliente })
 
