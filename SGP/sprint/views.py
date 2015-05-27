@@ -221,6 +221,25 @@ def sprints(request, id_proyecto):
 	@author: Mauricio Allegretti
 
 	"""
+    perm_add_sprint =0
+    perm_delete_sprint =0
+    perm_change_sprint=0
+
     sprints = Sprint.objects.filter(proyecto_id = id_proyecto).exclude(id=1)
-    return render_to_response('./Sprints/sprints.html', {'lista_sprints':sprints}, context_instance=RequestContext(request))
+    rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
+
+    if rol_en_proyecto_existe:
+        rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+        rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+        user_permissions_groups = list(rol.permissions.all())
+
+        for p in user_permissions_groups:
+            if (p.codename == 'add_sprint'):
+                perm_add_sprint = 1
+            elif (p.codename == 'change_sprint'):
+                perm_change_sprint = 1
+            elif (p.codename == 'delete_sprint'):
+                perm_delete_sprint = 1
+
+    return render_to_response('./Sprints/sprints.html', {'lista_sprints':sprints, 'perm_add_sprint':perm_add_sprint, 'perm_change_sprint':perm_change_sprint, 'perm_delete_sprint':perm_delete_sprint}, context_instance=RequestContext(request))
 
