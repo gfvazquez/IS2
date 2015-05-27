@@ -69,7 +69,7 @@ def irprincipal(request):
     usuario = False
     cliente = False
     for p in user_permissions_groups:
-        if (p == 'flujo.add_fujo'):
+        if (p == 'flujo.add_flujo'):
             flujo = True
         if (p == 'auth.add_group'):
             rol = True
