@@ -9,7 +9,7 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="/proyectos/consultar_flujo_proyecto/">Consultar Flujo a Proyecto</a></li>
+			<li class="active"><a href="/proyectos/consultar_flujo_proyecto/">Flujos Asignados al Proyecto</a></li>
         </ul>
 	</div>
 </nav>
@@ -42,7 +42,9 @@
 				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
 				          	{{ flujoProyecto }}
 				          </a>
-                          <a href="asignar_sprints/{{ flujoProyecto.flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Sprint</button></a>
+                          {% if perm_asignar_sprint == 1 %}
+                            <a href="asignar_sprints/{{ flujoProyecto.flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Sprint</button></a>
+                          {% endif %}
                           <a href="consultar_un_flujo_proyecto/{{ flujoProyecto.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
 				      </h4>
 				    </div>

@@ -380,8 +380,25 @@ def consultarFlujoProyecto(request, id_proyecto):
     mensaje = False
     proyecto = Proyecto.objects.get(pk=id_proyecto)
     existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
+    perm_asignar_sprint = 0
+
     if existeActivoFlujoProyecto:
-         activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
+        activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
+
+        rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
+
+        if rol_en_proyecto_existe:
+            rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+            rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+            user_permissions_groups = list(rol.permissions.all())
+
+            for p in user_permissions_groups:
+                if (p.codename == 'asignar_sprint'):
+                    perm_asignar_sprint = 1
+
+
+
+
     else:
         mensaje = 'No existe ningun Flujo Activo'
 
@@ -389,7 +406,7 @@ def consultarFlujoProyecto(request, id_proyecto):
     flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
 
     return render(request, template_name,
-                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto, 'mensaje': mensaje})
+                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto, 'mensaje': mensaje, 'perm_asignar_sprint':perm_asignar_sprint})
 
 
 @login_required
