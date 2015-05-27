@@ -45,24 +45,32 @@
 	<div class="panel-group" id="accordion">
 
 	<br>
-		{% if lista_proyectos %}
-			{% for proyecto in lista_proyectos %}
+		{% if lista %}
+			{% for x in lista %}
 	<div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
 				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
-				          	{{ proyecto.nombre }}
+				          	{{ x.proyecto.nombre }}
 				          </a>
-                          <a href="consultar/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
-                          <a href="modificar/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
-                          <a href="asignar_usuarios_proyecto/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Equipo</button></a>
-                          <a href="asignar_flujos_proyecto/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Flujo</button></a>
-                          <a href="consultar_flujo_proyecto/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar Flujo Proyecto</button></a>
-                          <!--<a href="visualizar_panorama/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Secuencializaion</button></a>-->
-                          <a href="sprints/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Sprints</button></a>
-                          <a href="userstories/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">User Stories</button></a>
-                          <a href="sprint_activo/user_stories_current_user/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar MIS US del Sprint actual</button></a>
-                          <a href="backlog/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar Backlog</button></a>
+                          <a href="consultar/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+                          {% if x.changeproyecto == 1 %}
+                          <a href="modificar/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
+                          {% endif %}
+
+                          {% if x.equipo == 1 %}
+                          <a href="asignar_usuarios_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Equipo</button></a>
+                          {% endif %}
+
+                          {% if x.flujoproyecto == 1 %}
+                          <a href="asignar_flujos_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Flujo</button></a>
+                          {% endif %}
+                          <a href="consultar_flujo_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Flujos asignados al Proyecto</button></a>
+                          <!--<a href="visualizar_panorama/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Secuencializaion</button></a>-->
+                          <a href="sprints/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Sprints</button></a>
+                          <a href="userstories/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">User Stories</button></a>
+                          <a href="sprint_activo/user_stories_current_user/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar MIS US del Sprint actual</button></a>
+                          <a href="backlog/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar Backlog</button></a>
 
                           <!--<a href="eliminar/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>!-->
 				      </h4>

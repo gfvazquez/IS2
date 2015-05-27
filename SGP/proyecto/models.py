@@ -67,14 +67,14 @@ class Proyecto(models.Model):
     def __unicode__(self):
         return self.nombre
 
-    #class Meta:
-    #    ordering = ["nombre"]
-    #    permissions = (
-    #                      ("listar_miembros", "Puede listar los miembros de un proyecto"),
-    #                      ("importar_proyectos", "Puede importar proyectos"),
-    #                      ("consultar_proyectos", "Puede consultar proyectos"),
-    #                      ("consultar_proyectosfinalizados", "Puede consultar proyectos finalizados"),
-    #                  )
+    class Meta:
+        ordering = ["nombre"]
+        permissions = (
+                          ("asignar_equipo", "Puede asignar un usuario al proyecto"),
+                          ("asignar_flujo", "Puede asignar un flujo al proyecto"),
+                          ("asignar_sprint", "Puede asignar un Sprint a un Flujo-Proyecto"),
+                          ("reasignar_sprint", "puede reasignar un Sprint a un Flujo-Proyecto"),
+                      )
 
 class Equipo(models.Model):
     usuario = models.ForeignKey(User)

@@ -18,10 +18,39 @@ def proyectos(request):
 
     proyectos_usuario = Equipo.objects.filter(usuario_id=request.user.pk)
     proyectos=[]
+    asignarEquipo=[]
+    asignarFlujo=[]
+    modificarProyecto=[]
+
+
     for proy_usu in proyectos_usuario:
         proyectos.append(proy_usu.proyecto)
 
-    return render_to_response('./Proyecto/proyectos.html', {'lista_proyectos': proyectos},
+        perm_add_equipo = 0
+        perm_add_flujo_proyecto = 0
+        perm_change_proyecto = 0
+
+        rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=proy_usu.pk).exists()
+        if rol_en_proyecto_existe:
+            rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=proy_usu.pk)
+            rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+            user_permissions_groups = list(rol.permissions.all())
+
+            for p in user_permissions_groups:
+                if (p.codename == 'add_equipo'):
+                    perm_add_equipo = 1
+                elif(p.codename == 'add_flujoproyecto'):
+                    perm_add_flujo_proyecto = 1
+                elif(p.codename == 'change_proyecto'):
+                    perm_change_proyecto = 1
+
+        asignarEquipo.append(perm_add_equipo)
+        asignarFlujo.append(perm_add_flujo_proyecto)
+        modificarProyecto.append(perm_change_proyecto)
+
+    lst = [{'proyecto': t[0], 'equipo': t[1], 'flujoproyecto':t[2], 'changeproyecto':t[3]} for t in zip(proyectos, asignarEquipo, asignarFlujo, modificarProyecto)]
+
+    return render_to_response('./Proyecto/proyectos.html', {'lista':lst},
                               context_instance=RequestContext(request))
 
 
@@ -379,77 +408,90 @@ def asignarSprint(request, id_proyecto, id_flujo):
 
 	@author: Andrea Benitez
 	"""
-    flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+    band=False
 
-    flujoProyectoDone = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=id_flujo, estado='Done').exists()
-    flujoProyectoDoing = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=id_flujo, estado='Doing').exists()
-    if (not flujoProyectoDone) and (not flujoProyectoDoing):
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
 
-        mensajeDoing = False
-        flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
-        for flujoProyecto in flujosProyecto:
-            if(FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=flujoProyecto.flujo.id, estado='Doing').exists()):
-                mensajeDoing = True
+    for p in user_permissions_groups:
+        if (p.codename == 'asignar_sprint'):
+            band = True
+
+    if (band == True):
+        flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+
+        flujoProyectoDone = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=id_flujo, estado='Done').exists()
+        flujoProyectoDoing = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=id_flujo, estado='Doing').exists()
+        if (not flujoProyectoDone) and (not flujoProyectoDoing):
+
+            mensajeDoing = False
+            flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
+            for flujoProyecto in flujosProyecto:
+                if(FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=flujoProyecto.flujo.id, estado='Doing').exists()):
+                    mensajeDoing = True
 
 
-        if mensajeDoing == False:
-            registered = False
-            proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
-            flujo = Flujo.objects.get(id=id_flujo)
+            if mensajeDoing == False:
+                registered = False
+                proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+                flujo = Flujo.objects.get(id=id_flujo)
 
-            flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
-            sprintsAsignados = []
-            for flujoProyecto in flujoProyectos:
-                sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
+                flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+                sprintsAsignados = []
+                for flujoProyecto in flujoProyectos:
+                    sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
 
-            sprints = Sprint.objects.filter(activo=True, proyecto_id=id_proyecto)
-            sprintsNoAsignados = []
-            for sprint in sprints:
-                if sprint not in sprintsAsignados:
-                    listaUS=Userstory.objects.filter(sprint_id=sprint.id)
-                    #if(len(listaUS) != 0):
-                    sprintsNoAsignados.append(sprint)
+                sprints = Sprint.objects.filter(activo=True, proyecto_id=id_proyecto)
+                sprintsNoAsignados = []
+                for sprint in sprints:
+                    if sprint not in sprintsAsignados:
+                        listaUS=Userstory.objects.filter(sprint_id=sprint.id)
+                        #if(len(listaUS) != 0):
+                        sprintsNoAsignados.append(sprint)
 
-            if request.method == 'POST':
-                form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
-                if form.is_valid():
-                    form.clean()
-                    sprint = form.cleaned_data['sprint']
-                    m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
-                    sprint.estado = "Iniciado"
-                    m1.estado = "Doing"
+                if request.method == 'POST':
+                    form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
+                    if form.is_valid():
+                        form.clean()
+                        sprint = form.cleaned_data['sprint']
+                        m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
+                        sprint.estado = "Iniciado"
+                        m1.estado = "Doing"
 
-                    userStories = Userstory.objects.filter(sprint_id=sprint.pk)
-                    flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
-                    for userStory in userStories:
-                        for flujoActividad in flujoActividades:
-                            m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estado='Inact', userstory_id=userStory.pk)
-                            m2.save()
-                    sprint.save()
-                    m1.save()
-                    registered = True
-                    pass
+                        userStories = Userstory.objects.filter(sprint_id=sprint.pk)
+                        flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
+                        for userStory in userStories:
+                            for flujoActividad in flujoActividades:
+                                m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estado='Inact', userstory_id=userStory.pk)
+                                m2.save()
+                        sprint.save()
+                        m1.save()
+                        registered = True
+                        pass
 
+                else:
+                        form = AsignarSprintFlujoForm(sprints_no_asignados=sprintsNoAsignados)
+
+
+                template_name = './Proyecto/asignar_sprints.html'
+                return render(request, template_name,
+                                  {'asignar_sprint_form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'id_flujo':id_flujo})
             else:
-                    form = AsignarSprintFlujoForm(sprints_no_asignados=sprintsNoAsignados)
-
-
-            template_name = './Proyecto/asignar_sprints.html'
-            return render(request, template_name,
-                              {'asignar_sprint_form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'id_flujo':id_flujo})
+                mensaje = "Existe un Flujo activo en el proyecto, no se puede iniciar otro antes de culminarlo"
+                template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
+                return render(request, template_name, {'mensaje':mensaje})
         else:
-            mensaje = "Existe un Flujo activo en el proyecto, no se puede iniciar otro antes de culminarlo"
+            if flujoProyectoDoing:
+                mensaje = "El flujo ya posee asignado un Sprint Activo, no se pueden asignar ningun Sprint actualmente"
+            elif flujoProyectoDone:
+                mensaje = "El flujo ya fue conluido, no se puede mas asignar Sprints al mismo"
+
+
             template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
             return render(request, template_name, {'mensaje':mensaje})
     else:
-        if flujoProyectoDoing:
-            mensaje = "El flujo ya posee asignado un Sprint Activo, no se pueden asignar ningun Sprint actualmente"
-        elif flujoProyectoDone:
-            mensaje = "El flujo ya fue conluido, no se puede mas asignar Sprints al mismo"
-
-
-        template_name = './Proyecto/no_se_puede_asignar_sprint_flujo.html'
-        return render(request, template_name, {'mensaje':mensaje})
+        raise Http404("No cuenta con los permisos necesarios")
 
 def visualizarProcesos(request, id_proyecto):
     """ Se visualizan los userstories asociados a cada flujo asociado a un proyecto
@@ -617,58 +659,71 @@ def consultarBacklog(request, id_proyecto):
 
 def reasignarSprint(request, id_proyecto, id_userstory):
 
-    registered = False
-    mensaje = False
-    proyecto = Proyecto.objects.get(pk = id_proyecto)
-    userstoryIncompleto=Userstory.objects.get(id=id_userstory)
-    sprintFinalizado = Sprint.objects.get(id=userstoryIncompleto.sprint.pk)
-    flujoProyetoHalfDone=FlujoProyecto.objects.get(sprint_id=sprintFinalizado.pk, estado='HalfDone')
-    flujo = flujoProyetoHalfDone.flujo
-    flujoProyectos = FlujoProyecto.objects.all()
-    sprintsAsignados = []
-    for flujoProyecto in flujoProyectos:
-        #si el estado del flujoProyecto es doing se puede todavia reasignar un US a la combinacion sprint-flujo-proyecto
-        if (flujoProyecto.estado != 'Doing'):
-            sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
+    band=False
 
-    sprints = Sprint.objects.filter(activo=True)
-    sprintsNoAsignados = []
-    for sprint in sprints:
-        if sprint not in sprintsAsignados:
-            sprintsNoAsignados.append(sprint)
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
 
-    if request.method == 'POST':
-        form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
-        if form.is_valid():
-            form.clean()
-            sprint = form.cleaned_data['sprint']
+    for p in user_permissions_groups:
+        if (p.codename == 'reasignar_sprint'):
+            band = True
 
-            existeFlujoProyecto = FlujoProyecto.objects.filter(sprint_id=sprint.pk).exists()
-            #si el Sprint todavia no fue asignado a ningun flujo se crea un FlujoProyecto
-            if existeFlujoProyecto==False:
-                m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
-                sprint.estado = "Iniciado"
-                m1.estado = "Doing"
-                sprint.save()
-                m1.save()
-                Userstory.objects.filter(id=id_userstory).update(sprint_id=sprint.pk, estado='InPlanning')
+        registered = False
+        mensaje = False
+        proyecto = Proyecto.objects.get(pk = id_proyecto)
+        userstoryIncompleto=Userstory.objects.get(id=id_userstory)
+        sprintFinalizado = Sprint.objects.get(id=userstoryIncompleto.sprint.pk)
+        flujoProyetoHalfDone=FlujoProyecto.objects.get(sprint_id=sprintFinalizado.pk, estado='HalfDone')
+        flujo = flujoProyetoHalfDone.flujo
+        flujoProyectos = FlujoProyecto.objects.all()
+        sprintsAsignados = []
+        for flujoProyecto in flujoProyectos:
+            #si el estado del flujoProyecto es doing se puede todavia reasignar un US a la combinacion sprint-flujo-proyecto
+            if (flujoProyecto.estado != 'Doing'):
+                sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
 
-            #el Sprint ya fue asignado a un flujo
-            elif existeFlujoProyecto==True:
-                flujoProyecto=FlujoProyecto.objects.get(sprint_id=sprint.pk)
-                if (flujo.pk == flujoProyecto.flujo.pk):
+        sprints = Sprint.objects.filter(activo=True)
+        sprintsNoAsignados = []
+        for sprint in sprints:
+            if sprint not in sprintsAsignados:
+                sprintsNoAsignados.append(sprint)
+
+        if request.method == 'POST':
+            form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
+            if form.is_valid():
+                form.clean()
+                sprint = form.cleaned_data['sprint']
+
+                existeFlujoProyecto = FlujoProyecto.objects.filter(sprint_id=sprint.pk).exists()
+                #si el Sprint todavia no fue asignado a ningun flujo se crea un FlujoProyecto
+                if existeFlujoProyecto==False:
+                    m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
+                    sprint.estado = "Iniciado"
+                    m1.estado = "Doing"
+                    sprint.save()
+                    m1.save()
                     Userstory.objects.filter(id=id_userstory).update(sprint_id=sprint.pk, estado='InPlanning')
-                #El US debe tener asignado el mismo flujo que el Sprint
-                else:
-                    mensaje = "No se puede reasignar este US a este Sprint porque el sprint esta asignado a un Flujo distino al US"
 
-            registered = True
-            pass
+                #el Sprint ya fue asignado a un flujo
+                elif existeFlujoProyecto==True:
+                    flujoProyecto=FlujoProyecto.objects.get(sprint_id=sprint.pk)
+                    if (flujo.pk == flujoProyecto.flujo.pk):
+                        Userstory.objects.filter(id=id_userstory).update(sprint_id=sprint.pk, estado='InPlanning')
+                    #El US debe tener asignado el mismo flujo que el Sprint
+                    else:
+                        mensaje = "No se puede reasignar este US a este Sprint porque el sprint esta asignado a un Flujo distino al US"
+
+                registered = True
+                pass
+
+        else:
+            form = AsignarSprintFlujoForm(sprints_no_asignados=sprintsNoAsignados)
+
+
+        template_name = './Proyecto/reasignar_sprints.html'
+        return render(request, template_name,
+                            {'form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'flujo':flujo, 'mensaje':mensaje})
 
     else:
-        form = AsignarSprintFlujoForm(sprints_no_asignados=sprintsNoAsignados)
-
-
-    template_name = './Proyecto/reasignar_sprints.html'
-    return render(request, template_name,
-                        {'form': form, 'id_proyecto': id_proyecto, 'registered': registered, 'flujo':flujo, 'mensaje':mensaje})
+        raise Http404("No cuenta con los permisos necesarios")
