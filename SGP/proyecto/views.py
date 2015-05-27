@@ -100,6 +100,7 @@ def crear_proyecto(request):
                 duracion = proyecto_form.cleaned_data['Duracion']
                 descripcion = proyecto_form.cleaned_data['Descripcion']
                 cliente = proyecto_form.cleaned_data['Cliente']
+                scrum_master  = proyecto_form.cleaned_data['Scrum_master']
 
                 proyecto = Proyecto()
                 proyecto.nombre = nombre
@@ -109,8 +110,15 @@ def crear_proyecto(request):
                 proyecto.is_active = 'True'
                 proyecto.descripcion = descripcion
                 proyecto.cliente = cliente
+                proyecto.scrum_master = scrum_master
                 proyecto.save()
 
+                user_scrum = User.objects.get(pk=scrum_master.pk)
+                rol = Group.objects.get(name='Scrum Master')
+                user_scrum.groups.add(rol)
+
+                m1 = Equipo(proyecto=proyecto, usuario=user_scrum, rol=rol)
+                m1.save()
                 #Actualiza la variable para llamar al template cuando el registro fue correcto
                 registered = True
 
@@ -180,6 +188,8 @@ def modificarProyecto(request, id_proyecto):
                 proyecto.descripcion = descripcion
                 proyecto.estado = estado
                 proyecto.save();
+
+
 
                 template_name = './Proyecto/proyecto_modificado.html'
                 return render(request, template_name)

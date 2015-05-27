@@ -41,6 +41,7 @@ class ProyectoForm(forms.Form):
     Duracion = forms.IntegerField(required=True, help_text='* En semanas', validators=[validate_duracion_proyecto], error_messages={'required': 'Ingrese la duracion del proyecto',})
     Descripcion = forms.CharField(widget=forms.TextInput(), validators=[validate_nombreproyecto_unique], max_length=30, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el proyecto', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
     Cliente = forms.ModelChoiceField(queryset=Cliente.objects.filter(estado=True))
+    Scrum_master = forms.ModelChoiceField(queryset=User.objects.filter(is_active=True))
 
 
 

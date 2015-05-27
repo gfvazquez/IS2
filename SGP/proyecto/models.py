@@ -53,15 +53,13 @@ class Proyecto(models.Model):
 
     auto_increment_id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=30)
-    #lider = models.ForeignKey(User, null=True)
     estado = models.CharField(max_length=15, choices=ESTADOS_PROYECTO, default='Iniciado')
     fecha_inicio = models.DateField()
     duracion_estimada = models.IntegerField()
     descripcion = models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)
-    usuarios_proyecto = models.ManyToManyField(User, through='Equipo')
     cliente = models.ForeignKey(Cliente)
-
+    scrum_master = models.ForeignKey(User)
     #flujo
 
     def __unicode__(self):
