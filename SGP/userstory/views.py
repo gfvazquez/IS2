@@ -356,7 +356,26 @@ def userstory(request, id_proyecto):
         if (sprint.proyecto.pk == id_proyecto):
             userstoryproyecto.append(us)
 
-    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstoryproyecto}, context_instance=RequestContext(request))
+    perm_add_us =0
+    perm_delete_us =0
+    perm_change_us=0
+
+    rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
+
+    if rol_en_proyecto_existe:
+        rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+        rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+        user_permissions_groups = list(rol.permissions.all())
+
+        for p in user_permissions_groups:
+            if (p.codename == 'add_userstory'):
+                perm_add_us = 1
+            elif (p.codename == 'change_userstory'):
+                perm_change_us = 1
+            elif (p.codename == 'delete_userstory'):
+                perm_delete_us = 1
+
+    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstoryproyecto, 'perm_add_us':perm_add_us, 'perm_change_us':perm_change_us, 'perm_delete_us':perm_delete_us}, context_instance=RequestContext(request))
 
 def verhistorial(request, id_proyecto, id_userstory):
      us = Userstory.objects.get(id=id_userstory)

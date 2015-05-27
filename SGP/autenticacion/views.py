@@ -62,7 +62,7 @@ def user_login(request):
 
 def irprincipal(request):
     template_name = './principal.html'
-    user_permissions_groups = request.user.get_group_permissions(obj=None)
+    user_permissions_groups = list(request.user.get_group_permissions(obj=None))
     flujo = False
     rol = False
     actividad = False

@@ -17,14 +17,18 @@ from django.contrib.auth.models import Group, Permission, User
 def proyectos(request):
 
     proyectos_usuario = Equipo.objects.filter(usuario_id=request.user.pk)
+    proyes=[]
+    for pr in proyectos_usuario:
+        proyes.append(Proyecto.objects.get(auto_increment_id=pr.proyecto.pk))
+
     proyectos=[]
     asignarEquipo=[]
     asignarFlujo=[]
     modificarProyecto=[]
 
 
-    for proy_usu in proyectos_usuario:
-        proyectos.append(proy_usu.proyecto)
+    for proy_usu in proyes:
+        proyectos.append(proy_usu)
 
         perm_add_equipo = 0
         perm_add_flujo_proyecto = 0
