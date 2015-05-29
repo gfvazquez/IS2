@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from models import Proyecto, Equipo, FlujoProyecto, ProyectoFlujoActividad, Sprint, Userstory
 from flujo.models import Flujo, FlujoActividad
+from userstory.views import modificarAvanceUserstory
 from django.db import models
 from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm, consultarKanbanForm
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.models import Group, Permission, User
 
 # Create your views here.
@@ -396,19 +397,22 @@ def consultarFlujoProyecto(request, id_proyecto):
     existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
     perm_asignar_sprint = 0
 
+    rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
+    if rol_en_proyecto_existe:
+        rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+        rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+        user_permissions_groups = list(rol.permissions.all())
+
+        for p in user_permissions_groups:
+            if (p.codename == 'asignar_sprint'):
+                perm_asignar_sprint = 1
+
     if existeActivoFlujoProyecto:
         activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
 
-        rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
 
-        if rol_en_proyecto_existe:
-            rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
-            rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
-            user_permissions_groups = list(rol.permissions.all())
 
-            for p in user_permissions_groups:
-                if (p.codename == 'asignar_sprint'):
-                    perm_asignar_sprint = 1
+
 
 
 
@@ -494,7 +498,7 @@ def asignarSprint(request, id_proyecto, id_flujo):
                         flujoActividades = FlujoActividad.objects.filter(flujo_id=flujo.pk)
                         for userStory in userStories:
                             for flujoActividad in flujoActividades:
-                                m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estado='Inact', userstory_id=userStory.pk)
+                                m2 = ProyectoFlujoActividad(proyecto=proyecto, flujoActividad=flujoActividad, estado='ToDo', userstory_id=userStory.pk)
                                 m2.save()
                         sprint.save()
                         m1.save()
@@ -758,3 +762,26 @@ def reasignarSprint(request, id_proyecto, id_userstory):
 
     else:
         raise Http404("No cuenta con los permisos necesarios")
+
+def confirmarDoneActividad(request, id_userstory, id_proyectoActividad):
+    us = Userstory.objects.get(id=id_userstory)
+    sprint = us.sprint
+    proyecto = sprint.proyecto
+
+    ProyectoFlujoActividad.objects.filter(id=id_proyectoActividad).update(estado='Done')
+
+    total_actividad = ProyectoFlujoActividad.objects.filter(userstory_id=id_userstory)
+    #total_actividad = len(proyectoFlujoActividadUS)
+    total_actividad_done = ProyectoFlujoActividad.objects.filter(userstory_id=id_userstory, estado='Done')
+
+
+    #Cuando todas las actividades de un us estan en Done el US pasa a resuelta
+    if len(total_actividad) == len(total_actividad_done):
+        Userstory.objects.filter(id=id_userstory).update(estado='Resuelta')
+
+        '''userstories_del_sprint = Userstory.objects.filter(sprint_id=sprint.pk)
+        userstories_del_sprint_done = Userstory.objects.filter(sprint_id=sprint.pk, estado='Resuelta')
+        if len(userstories_del_sprint) == len(userstories_del_sprint_done):
+            FlujoProyecto.objects.filter(proyecto_id=proyecto.pk, sprint_id=sprint.pk).update(estado='Done')'''
+
+    return HttpResponseRedirect('/proyectos/userstories/'+str(proyecto.pk)+'/modificar_avance_userstory/'+ str(id_userstory)+'/')

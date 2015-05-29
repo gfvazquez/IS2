@@ -45,9 +45,6 @@ INSTALLED_APPS = (
     'sprint',
     'userstory',
     'actividades',
-
-
-
 )
 
 MIDDLEWARE_CLASSES = (

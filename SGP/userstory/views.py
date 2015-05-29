@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, render
-from proyecto.models import Proyecto, FlujoProyecto,Equipo, Userstory, Sprint
-from forms import UserstoryForm, UserstoryModificadoForm,verHistorialForm
+from proyecto.models import Proyecto, FlujoProyecto,Equipo, Userstory, Sprint, ProyectoFlujoActividad
+from forms import UserstoryForm, UserstoryModificadoForm,verHistorialForm, AvanceUserStoryForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404,HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -54,8 +54,6 @@ def crear_userstory(request, id_proyecto):
                     nombre = userstory_form.cleaned_data['nombre']
                     descripcion =userstory_form.cleaned_data['descripcion']
                     tiempoestimado =userstory_form.cleaned_data['tiempoestimado']
-                    tiempotrabajado =userstory_form.cleaned_data['tiempotrabajado']
-                    comentarios =userstory_form.cleaned_data['comentarios']
                     usuarioasignado= userstory_form.cleaned_data['usuarioasignado']
                     prioridad =userstory_form.cleaned_data['prioridad']
                     porcentajerealizado= userstory_form.cleaned_data['porcentajerealizado']
@@ -72,8 +70,6 @@ def crear_userstory(request, id_proyecto):
                     us.nombre = nombre
                     us.descripcion =descripcion
                     us.tiempoestimado =tiempoestimado
-                    us.tiempotrabajado =tiempotrabajado
-                    us.comentarios=comentarios
                     us.usuarioasignado =usuarioasignado
                     us.prioridad=prioridad
                     us.porcentajerealizado=porcentajerealizado
@@ -195,22 +191,20 @@ def modificarUserstory(request,id_proyecto, id_userstory):
     mensaje = 'ATENCION: \nNo puede modificar el estado de un US en estado Comentario\nDebe concluir con los US en Alta'
     mensajeCurso = 'ATENCION: \nNo puede modificar el estado de este US en estado Curso, ya posee otro US en ese estado\nFinalice su otro US o coloque a Comentario'
     mensajePorcentaje = 'ATENCION: \nNo puede modificar el estado de este US a estado Resuelta, porque su porcentaje no esta en 100%\n Cambie a 100% antes de realizar este cambio'
-
+    us = Userstory.objects.get(id=id_userstory)
+    estado_us = us.estado
     if (band == True):
-        us = Userstory.objects.get(id=id_userstory)
+
         if request.method == 'POST':
-            form = UserstoryModificadoForm(request.POST)
+            form = UserstoryModificadoForm(request.POST, estado_us=estado_us)
             if form.is_valid():
                 form.clean()
                 nombre = form.cleaned_data['Nombre_de_Userstory']
-                descripcion = form.cleaned_data['descripcion']
-                tiempotrabajado = form.cleaned_data['tiempotrabajado']
-                comentarios = form.cleaned_data['comentarios']
                 usuarioasignado = form.cleaned_data['usuarioasignado']
-                estado = form.cleaned_data['estado']
+                if estado_us == 'Resuelta':
+                    estado = form.cleaned_data['estado']
                 prioridad = form.cleaned_data['prioridad']
-                porcentajerealizado = form.cleaned_data['porcentajerealizado']
-                #sprint = form.cleaned_data['sprint']
+
 
                 '''
                     Filtar todos los us que posee el usuario asignado
@@ -234,7 +228,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                         '''
                 modificaciones = ''
                 modificaciones = modificaciones + str(us.historial)
-                if us.nombre != nombre or us.descripcion != descripcion or us.tiempotrabajado != tiempotrabajado or us.comentarios != comentarios or us.usuarioasignado != usuarioasignado or us.estado != estado or us.prioridad != prioridad or us.porcentajerealizado != porcentajerealizado: #or us.sprint != sprint:
+                if us.nombre != nombre or us.usuarioasignado != usuarioasignado or us.estado != estado or us.prioridad != prioridad or us.porcentajerealizado != porcentajerealizado: #or us.sprint != sprint:
                     marca = 'True'
                     modificaciones = modificaciones + "\nActualizado por "
                     modificaciones = modificaciones + str(us.usuarioasignado)
@@ -245,22 +239,14 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                     if us.nombre != nombre:
                         modificaciones = modificaciones + " \n \t* NOMBRE -> Cambiado de " + str(
                             us.nombre) + " por " + str(nombre)
-                    if us.descripcion != descripcion:
-                        modificaciones = modificaciones + " \n \t* DESCRIPCION  -> Cambiado de " + str(
-                            us.descripcion) + " por " + str(descripcion)
-                    if us.tiempotrabajado != tiempotrabajado:
-                        modificaciones = modificaciones + " \n \t* TIEMPO TRABAJADO -> Cambiado de " + str(
-                            us.tiempotrabajado) + " por " + str(tiempotrabajado)
-                    if us.comentarios != comentarios:
-                        modificaciones = modificaciones + " \n \t* COMENTARIOS -> Cambiado de " + str(
-                            us.comentarios) + " por " + str(comentarios)
+
                     if us.usuarioasignado != usuarioasignado:
                         modificaciones = modificaciones + " \n \t* USUARIO ASIGNADO -> Cambiado de " + str(
                             us.usuarioasignado) + " por " + str(usuarioasignado)
 
                     if (us.estado != 'Comentario'):
                         if estado != 'EnCurso' or contadorEnCurso == 0:#si
-                            if estado != 'Resuelta' or porcentajerealizado ==100:
+                            if estado != 'Resuelta':
                                     if us.estado != estado:
                                      modificaciones = modificaciones + " \n \t* ESTADO -> Cambiado de " + str(
                                         us.estado) + " por " + str(estado)
@@ -268,9 +254,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                     if us.prioridad != prioridad:
                         modificaciones = modificaciones + " \n \t* PRIORIDAD -> Cambiado de " + str(
                             us.prioridad) + " por " + str(prioridad)
-                    if us.porcentajerealizado != porcentajerealizado:
-                        modificaciones = modificaciones + " \n \t* PORCENTAJE REALIZADO -> Cambiado de " + str(
-                            us.porcentajerealizado) + " por " + str(porcentajerealizado)
+
 
                     #if us.sprint != sprint:
                     #    modificaciones = modificaciones + " \n \t* SPRINT -> Cambiado de " + str(
@@ -278,16 +262,13 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                     modificaciones = modificaciones + '\n'
 
                 us.nombre = nombre
-                us.descripcion = descripcion
-                us.tiempotrabajado = tiempotrabajado
-                us.comentarios = comentarios
                 us.usuarioasignado = usuarioasignado
 
                 if (us.estado == 'Comentario'):
                     warning = True
                 elif estado == 'EnCurso' and contadorEnCurso != 0: #No se puedo cambiar
                     warningUS = True
-                elif estado == 'Resuelta' and porcentajerealizado != 100: #No se puedo cambiar
+                elif estado == 'Resuelta': #No se puedo cambiar
                     warningPorcentaje = True
                 else:
                     us.estado = estado
@@ -301,7 +282,6 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                                 Userstory.objects.filter(id=userStory.pk).update(estado='InPlaning')
 
                 us.prioridad = prioridad
-                us.porcentajerealizado = porcentajerealizado
                 us.historial = modificaciones
                 #us.sprint = sprint
                 us.save()
@@ -323,12 +303,8 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                 return render(request, template_name,
                               {'mensaje': mensaje, 'warning': warning, 'mensajeCurso': mensajeCurso,'mensajePorcentaje': mensajePorcentaje, 'warningUS': warningUS, 'warningPorcentaje': warningPorcentaje,'registered': registered})
         else:
-            data = {'Nombre_de_Userstory': us.nombre, 'descripcion': us.descripcion,
-                    'tiempotrabajado': us.tiempotrabajado, 'comentarios': us.comentarios,
-                    'usuarioasignado': us.usuarioasignado, 'estado': us.estado, 'prioridad': us.prioridad,
-                    'porcentajerealizado': us.porcentajerealizado, 'mensaje': mensaje, 'warning': warning,'mensajeCurso': mensajeCurso,'mensajePorcentaje': mensajePorcentaje, 'warningUS': warningUS,'warningPorcentaje': warningPorcentaje,
-                    'registered': registered}
-            form = UserstoryModificadoForm(data)
+
+            form = UserstoryModificadoForm(estado_us=estado_us)
         template_name = './Userstories/modificar_userstory.html'
         return render(request, template_name, {'form': form, 'id_userstory': id_userstory, 'id_proyecto': id_proyecto})
     else:
@@ -359,6 +335,7 @@ def userstory(request, id_proyecto):
     perm_add_us =0
     perm_delete_us =0
     perm_change_us=0
+    perm_avance_userstory=0
 
     rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
 
@@ -374,8 +351,10 @@ def userstory(request, id_proyecto):
                 perm_change_us = 1
             elif (p.codename == 'delete_userstory'):
                 perm_delete_us = 1
+            elif (p.codename == 'registrar_avance_userstory'):
+                perm_avance_userstory = 1
 
-    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstoryproyecto, 'perm_add_us':perm_add_us, 'perm_change_us':perm_change_us, 'perm_delete_us':perm_delete_us}, context_instance=RequestContext(request))
+    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstoryproyecto, 'perm_add_us':perm_add_us, 'perm_change_us':perm_change_us, 'perm_delete_us':perm_delete_us, 'perm_avance_userstory':perm_avance_userstory}, context_instance=RequestContext(request))
 
 def verhistorial(request, id_proyecto, id_userstory):
      us = Userstory.objects.get(id=id_userstory)
@@ -410,3 +389,147 @@ def tieneUsuarioUSAlta(userStoryRecibido):
             return True
 
     return False
+
+@login_required
+def modificarAvanceUserstory(request,id_proyecto, id_userstory):
+    """ Recibe un request y un id, luego busca en la base de datos al us
+    cuyos datos se quieren modificar. Se muestra un formulario con estos
+    campos y luego se guardan los cambios realizados.
+
+	@type request: django.http.HttpRequest
+	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
+
+	@type id_usuario: Integer
+	@param id_usuario: identificador unico del US
+
+	@rtype: django.HttpResponse
+	@return: userstory_modificado.html, formulario donde se muestran los datos que el usuario puede modificar
+
+	@author: Gabriela Vazquez """
+    band = False
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
+    for p in user_permissions_groups:
+        if (p.codename == 'registrar_avance_userstory'):
+            band = True
+
+    registered = False
+    marca = False
+    listaFlujoProyectoActividad =False
+    us = Userstory.objects.get(id=id_userstory)
+    usEstado = us.estado
+
+    #mirar esta consulta de vuelta
+    existeActivoFlujoProyectoDoing = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing', sprint_id=us.sprint.pk).exists()
+    existeActivoFlujoProyectoDone = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Done', sprint_id=us.sprint.pk).exists()
+    if existeActivoFlujoProyectoDoing or existeActivoFlujoProyectoDone:
+        userstory = Userstory.objects.get(id=id_userstory)
+        proyectoFlujoActividadConsulta = ProyectoFlujoActividad.objects.filter(userstory=userstory.pk)
+        proyectoFlujoActividadConsultaLista=[]
+
+        for x in proyectoFlujoActividadConsulta:
+            proyectoFlujoActividadConsultaLista.append(x)
+
+        bubblesortProyectoFlujoActividad(proyectoFlujoActividadConsultaLista)
+
+        perm_boton_done = []
+        boton_done=0
+
+        aux=0
+        for x in proyectoFlujoActividadConsultaLista:
+            aux=aux+1
+            if(x.estado == 'ToDo'):
+                perm_boton_done.append(0)
+
+            elif(x.estado == 'Doing'):
+                perm_boton_done.append(1)
+
+            elif(x.estado == 'Done'):
+                auxDone=aux
+                perm_boton_done.append(0)
+
+            listaFlujoProyectoActividad = [{'consulta': t[0], 'boton_done': t[1]} for t in zip(proyectoFlujoActividadConsultaLista, perm_boton_done)]
+
+
+    else:
+        mensaje = 'No existe ningun Flujo Activo'
+
+
+    if (band == True):
+
+        if request.method == 'POST':
+
+            form = AvanceUserStoryForm(request.POST)
+            if form.is_valid():
+                ahora = datetime.date.today()
+                form.clean()
+                tiempotrabajado = form.cleaned_data['tiempotrabajado']
+                comentarios = form.cleaned_data['comentarios']
+
+                '''
+                      Procedimiento necesario para definir el historial
+                '''
+                modificaciones = ''
+                modificaciones = modificaciones + str(us.historial)
+                if us.tiempotrabajado != tiempotrabajado or us.comentarios != comentarios:
+                    marca = 'True'
+                    modificaciones = modificaciones + "\nActualizado por "
+                    modificaciones = modificaciones + str(us.usuarioasignado)
+
+                    modificaciones = modificaciones + " el " + str(ahora) + "\n"
+
+                if marca == 'True':
+                    if us.tiempotrabajado != tiempotrabajado:
+                        totaltiempotrabajado = us.tiempotrabajado + tiempotrabajado
+                        modificaciones = modificaciones + " \n \t* TIEMPO TRABAJADO -> Cambiado de " + str(us.tiempotrabajado) + " por " + str(totaltiempotrabajado) + ". El usuario trabajo" + str(tiempotrabajado)
+                    if us.comentarios != comentarios:
+                        modificaciones = modificaciones + " \n \t* COMENTARIOS -> Cambiado de " + str(us.comentarios) + " por " + str(comentarios)
+                    modificaciones = modificaciones + '\n'
+
+                us.tiempotrabajado = us.tiempotrabajado + tiempotrabajado
+                us.comentarios = us.comentarios + '\n' +str(ahora)+ '\n' + comentarios
+                us.historial = modificaciones
+
+                if(us.estado == 'InPlanning'):
+                    us.estado='EnCurso' #Userstory.objects.filter(id=us.pk).update(estado='EnCurso')
+                    ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[0].pk).update(estado='Doing')
+                else:
+                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
+
+                us.save()
+
+
+
+                '''
+                   Enviar correo electronico al SCRUM MASTER
+                '''
+                send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
+                          ['gabyvazquez92@gmail.com',Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario.email],
+                          fail_silently=False)
+
+                registered = True
+                template_name = './Userstories/userstory_modificado.html'
+                return render(request, template_name,
+                              {'registered': registered})
+        else:
+            data = {'registered': registered}
+            form = AvanceUserStoryForm(data)
+        template_name = './Userstories/modificar_avance_userstory.html'
+
+        return render(request, template_name, {'form': form, 'id_userstory': id_userstory, 'id_proyecto': id_proyecto, 'proyectoFlujoActividadConsulta':listaFlujoProyectoActividad, 'us':us, 'usEstado': usEstado})
+    else:
+        raise Http404("No cuenta con los permisos necesarios")
+
+def bubblesortProyectoFlujoActividad( a ):
+  for i in range( len( a ) ):
+    for k in range( len( a ) - 1, i, -1 ):
+      if ( a[k].flujoActividad.orden < a[k - 1].flujoActividad.orden ):
+        swap( a, k, k - 1 )
+
+def swap( a, x, y ):
+  tmp = a[x]
+  a[x] = a[y]
+  a[y] = tmp

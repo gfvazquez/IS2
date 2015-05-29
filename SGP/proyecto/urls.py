@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
-from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint
+from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
-from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory
+from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory
 
 urlpatterns = patterns('',
     url(r'^proyectos/$', views.proyectos, name='proyectos'),
@@ -34,5 +34,8 @@ urlpatterns = patterns('',
     url(r'^proyectos/userstories/(?P<id_proyecto>\d+)/eliminaruserstory/(?P<id_userstory>\d+)', userstory_eliminar, name="eliminaruserstory"),
     url(r'^proyectos/userstories/(?P<id_proyecto>\d+)/consultar/(?P<id_userstory>\d+)/$', consultarUserstory),
     url(r'^proyectos/userstories/(?P<id_proyecto>\d+)/verHistorial/(?P<id_userstory>\d+)/$', verhistorial),
+    url(r'^proyectos/userstories/(?P<id_proyecto>\d+)/modificar_avance_userstory/(?P<id_userstory>\d+)', modificarAvanceUserstory),
+    url(r'^proyectos/userstories/modificar_avance_userstory/(?P<id_userstory>\d+)/confirmar_done/(?P<id_proyectoActividad>\d+)', confirmarDoneActividad),
+
 
 )

@@ -60,6 +60,10 @@
                           <a href="modificaruserstory/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
                           {% endif %}
 
+                          {% if perm_avance_userstory == 1 %}
+                          <a href="modificar_avance_userstory/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Registrar Avance</button></a>
+                          {% endif %}
+
                           {% if perm_delete_sprint == 1 %}
                           <a href="eliminaruserstory/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
                           {% endif %}

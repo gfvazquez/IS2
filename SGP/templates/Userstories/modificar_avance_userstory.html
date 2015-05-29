@@ -1,0 +1,102 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+    <div class="container">
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/userstories/">Userstories</a></li>
+			<li class="active"><a href="proyecto/userstories/modificar_avance_userstory/{{ id_userstory }}/">Modificación de userstory</a></li>
+        </ul>
+
+	</div>
+</nav>
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div class="container">
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Registrar Avances Userstory</a>
+		</li>
+	</ul>
+</div>
+    </div>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+<div class="content-secondary">
+	{% if form.errors %}
+		Por favor verifique:
+	{% endif %}
+    <h1>{{ us.nombre }}</h1>
+    {% if usEstado != 'Resuelta' %}
+	<form action="" method="post">
+		<table>
+			{{ form.as_table }}
+		</table>
+        <br>
+        {% csrf_token %}
+        <div align="center">
+            <input class="btn btn-default" type="submit" value="Guardar"/>
+            <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
+        </div>
+        {% else %}
+        {{ 'El estado del User Story es RESUELTA' }}
+        {% endif %}
+
+        {% if proyectoFlujoActividadConsulta %}
+            <div class="content-secondary">
+                    <div class="page-header">
+                    <h1>{{ userstory.nombre }}</h1>
+                  </div>
+                <div class="row">
+                    <div class="col-md-6">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <!--<th>Proyecto</th>
+                            <th>Flujo</th>-->
+                            <th>Actividad</th>
+                            <th>Orden Actividad</th>
+                            <th>Estado</th>
+
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                             {% for pfa in proyectoFlujoActividadConsulta %}
+                          <tr>
+                            <!--<td>{{ pfa.consulta.proyecto.nombre }}</td>
+                            <td>{{ pfa.consulta.flujoActividad.flujo.nombre }}</td>-->
+                            <td>{{ pfa.consulta.flujoActividad.actividad.nombre }}</td>
+                            <td>{{ pfa.consulta.flujoActividad.orden }}</td>
+                            <td>{{ pfa.consulta.estado }}</td>
+                            {% if pfa.boton_done == 1 %}
+                            <td><a href="/proyectos/userstories/modificar_avance_userstory/{{ pfa.consulta.userstory.id }}/confirmar_done/{{ pfa.consulta.id }}"><button type="button" class="btn btn-default btn-sm">Done</button></a></td>
+
+                            {% elif pfa.boton_done == 0 %}
+                            <td><button type="button" class="btn btn-default btn-sm" disabled=True>Done</button></td>
+                            {% endif %}
+
+                        {% endfor %}
+                        </tbody>
+
+                      </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+
+
+</div>
+    </div>
+{% endblock %}
