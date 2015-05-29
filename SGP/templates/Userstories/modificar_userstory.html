@@ -36,8 +36,12 @@
 	{% if form.errors %}
 		Por favor verifique: 
 	{% endif %}
-	
+
+    <strong>{{ 'Estado del User Story: ' }} {{ us.estado }}</strong>
+        <br>
+        <br>
 	<form action="" method="post">
+
 		<table>
 			{{ form.as_table }}
 		</table>

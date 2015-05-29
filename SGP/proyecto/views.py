@@ -779,9 +779,5 @@ def confirmarDoneActividad(request, id_userstory, id_proyectoActividad):
     if len(total_actividad) == len(total_actividad_done):
         Userstory.objects.filter(id=id_userstory).update(estado='Resuelta')
 
-        '''userstories_del_sprint = Userstory.objects.filter(sprint_id=sprint.pk)
-        userstories_del_sprint_done = Userstory.objects.filter(sprint_id=sprint.pk, estado='Resuelta')
-        if len(userstories_del_sprint) == len(userstories_del_sprint_done):
-            FlujoProyecto.objects.filter(proyecto_id=proyecto.pk, sprint_id=sprint.pk).update(estado='Done')'''
 
     return HttpResponseRedirect('/proyectos/userstories/'+str(proyecto.pk)+'/modificar_avance_userstory/'+ str(id_userstory)+'/')

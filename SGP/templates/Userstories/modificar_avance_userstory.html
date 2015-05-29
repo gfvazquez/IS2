@@ -38,19 +38,24 @@
 	{% endif %}
     <h1>{{ us.nombre }}</h1>
     {% if usEstado != 'Resuelta' %}
-	<form action="" method="post">
-		<table>
-			{{ form.as_table }}
-		</table>
-        <br>
-        {% csrf_token %}
+        {% if usEstado != 'Validado' %}
+	    <form action="" method="post">
+            <table>
+                {{ form.as_table }}
+            </table>
+            <br>
+            {% csrf_token %}
+
         <div align="center">
             <input class="btn btn-default" type="submit" value="Guardar"/>
             <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
         </div>
-        {% else %}
-        {{ 'El estado del User Story es RESUELTA' }}
-        {% endif %}
+    {% else %}
+        <strong>{{ 'Estado: ' }}</strong>
+        {{ us.estado }}
+    {% endif %}
+    {% endif  %}
+        </form>
 
         {% if proyectoFlujoActividadConsulta %}
             <div class="content-secondary">

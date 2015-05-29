@@ -90,14 +90,10 @@ class UserstoryModificadoForm (forms.Form):
     def __init__(self, *args, **kwargs):
         self.estado_us = kwargs.pop('estado_us', None)
         super(UserstoryModificadoForm, self).__init__(*args, **kwargs)
-        '''equipo_usuarios_proyecto = Equipo.objects.filter(proyecto_id=self.id_proyecto)
-        list_of_ids=[]
-        for equipo in equipo_usuarios_proyecto:
-            list_of_ids.append(equipo.usuario.pk)'''
 
-        self.fields['Nombre_de_Userstory'] = forms.CharField(widget=forms.TextInput(), max_length=50, required=True, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
-        self.fields['descripcion'] = forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=True, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
-        self.fields['usuarioasignado'] = forms.ModelChoiceField(queryset= User.objects.filter(is_active=True))
+        self.fields['Nombre_de_Userstory'] = forms.CharField(widget=forms.TextInput(), max_length=50, required=False, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
+        self.fields['descripcion'] = forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=False, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
+        #self.fields['usuarioasignado'] = forms.ModelChoiceField(required=False, blank=True, queryset= User.objects.filter(is_active=True))
         if(self.estado_us == 'Resuelta'):
             self.fields['estado'] = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS_US), required=False)
         self.fields['prioridad'] = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
