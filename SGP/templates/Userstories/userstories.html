@@ -43,39 +43,67 @@
     <div class="container">
 <div class="content-secondary">
 <!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
-	<div class="panel-group" id="accordion">
-
 	<br>
-		{% if lista_userstories %}
-			{% for Userstory in lista_userstories %}
-				{% if Userstory.activo %}
-	<div class="panel panel-default">
-				    <div class="panel-heading">
-				      <h4 class="panel-title">
-				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ Userstory.id }}">
-				          	{{ Userstory.nombre }}
-				          </a>
-                          <a href="consultar/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+		{% if lst %}
+<div class="content-secondary">
+	<div class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Tiempo Estimado</th>
+                  <th>Usuario Asignado</th>
+                  <th>Estado US</th>
+                  <th>Prioridad</th>
+                  <th>Sprint</th>
+                  <th>Estado Sprint</th>
+                  <!--<th>Porcentaje Realizado</th>-->
+              </tr>
+            </thead>
+
+            <tbody>
+                {% for x in lst %}
+				{% if x.userstory.activo %}
+	            <tr>
+
+				        <td>{{ x.userstory.nombre }}</td>
+                        <td>{{ x.userstory.descripcion }}</td>
+                        <td>{{ x.userstory.tiempoestimado }}</td>
+                        <td>{{ x.userstory.usuarioasignado.username }}</td>
+                        <td>{{ x.userstory.estado }}</td>
+                        <td>{{ x.userstory.prioridad }}</td>
+                        <td>{{ x.userstory.sprint.nombre }}</td>
+                        <td>{{ x.userstory.sprint.estado }}</td>
+                          <td><a href="consultar/{{ x.userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a></td>
                           {% if perm_change_us == 1 %}
-                          <a href="modificaruserstory/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a>
+                            <td><a href="modificaruserstory/{{ x.userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Modificar</button></a></td>
                           {% endif %}
 
                           {% if perm_avance_userstory == 1 %}
-                          <a href="modificar_avance_userstory/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Registrar Avance</button></a>
+                              {% if x.mi_us == 1 %}
+                                <td><a href="modificar_avance_userstory/{{ x.userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Registrar Avance</button></a></td>
+                              {% else %}
+                                <td>  <button type="button" disabled=True class="btn btn-default btn-sm">Registrar Avance</button></td>
+                              {% endif %}
                           {% endif %}
 
                           {% if perm_delete_sprint == 1 %}
-                          <a href="eliminaruserstory/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>
+                          <td><a href="eliminaruserstory/{{ x.userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a></td>
                           {% endif %}
 
-                          <a href="verHistorial/{{ Userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Ver Historial de Cambios</button></a>
-				      </h4>
-				    </div>
-	</div>
+                          <td><a href="verHistorial/{{ x.userstory.id }}/"><button type="button" class="btn btn-default btn-sm">Ver Historial de Cambios</button></a></td>
+
 				{% endif %}
 			{% endfor %}
-		{% endif %}
-	</div>
+                     </tr>
+            </tbody>
+
+          </table>
+        </div>
+    </div>
+{% endif %}
 	</div>
     </div>
 {% endblock %}

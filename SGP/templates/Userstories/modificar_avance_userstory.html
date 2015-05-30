@@ -36,9 +36,9 @@
 	{% if form.errors %}
 		Por favor verifique:
 	{% endif %}
+{% if mensaje != True %}
     <h1>{{ us.nombre }}</h1>
-    {% if usEstado != 'Resuelta' %}
-        {% if usEstado != 'Validado' %}
+    {% if usEstado == True %}
 	    <form action="" method="post">
             <table>
                 {{ form.as_table }}
@@ -51,10 +51,13 @@
             <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
         </div>
     {% else %}
-        <strong>{{ 'Estado: ' }}</strong>
-        {{ us.estado }}
+            <strong>{{ 'Estado: ' }}</strong>
+            {{ us.estado }}
+        {% if mensajeEnCurso %}
+            <strong>{{ mensajeEnCurso }}</strong>
+        {% endif %}
     {% endif %}
-    {% endif  %}
+
         </form>
 
         {% if proyectoFlujoActividadConsulta %}
@@ -99,9 +102,15 @@
                 </div>
             </div>
         {% endif %}
-
+{% else %}
+    <h1>El sprint de este US no ha sido asignado a un Flujo aun</h1>
+    <br>
+    <strong>Consulte con su Scrum Master</strong>
+    {% endif %}
 
 
 </div>
     </div>
+
+
 {% endblock %}

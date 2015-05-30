@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import permission_required
 from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm, consultarKanbanForm
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.models import Group, Permission, User
-
+from decimal import *
+from django.db.models import Q
 # Create your views here.
 
 
@@ -178,7 +179,7 @@ def modificarProyecto(request, id_proyecto):
             form = ProyectoModificadoForm(request.POST)
             if form.is_valid():
                 form.clean()
-                nombre = form.cleaned_data['Nombre_del_Proyecto']
+                nombre = form.cleaned_data['Nombre']
                 # lider =  form.cleaned_data['Nuevo_Lider']
                 estado = form.cleaned_data['Nuevo_Estado']
                 duracion = form.cleaned_data['Duracion']
@@ -195,7 +196,7 @@ def modificarProyecto(request, id_proyecto):
                 template_name = './Proyecto/proyecto_modificado.html'
                 return render(request, template_name)
         else:
-            data = {'Nombre_de_Proyecto': proyecto.nombre, 'Nuevo_estado': proyecto.estado,
+            data = {'Nombre': proyecto.nombre, 'Nuevo_estado': proyecto.estado,
                     'Duracion': proyecto.duracion_estimada,
                     'Descripcion': proyecto.descripcion,
             }
@@ -411,20 +412,24 @@ def consultarFlujoProyecto(request, id_proyecto):
         activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
 
 
-
-
-
-
-
-
     else:
         mensaje = 'No existe ningun Flujo Activo'
 
-
+    boton_burn=[]
     flujosProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=1)
+    for x in flujosProyecto:
+        sprint_activo_existe_2 = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=x.flujo.pk, estado= 'Doing').exists()
+        sprint_activo_existe = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, flujo_id=x.flujo.pk, estado= 'Done').exists()
+
+        if sprint_activo_existe or sprint_activo_existe_2:
+            boton_burn.append(1)
+        else:
+            boton_burn.append(0)
+
+    lst = [{'flujoproyecto': t[0], 'boton': t[1]} for t in zip(flujosProyecto, boton_burn)]
 
     return render(request, template_name,
-                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto, 'mensaje': mensaje, 'perm_asignar_sprint':perm_asignar_sprint})
+                  {'proyecto': proyecto, 'flujosProyecto': flujosProyecto, 'id_proyecto': id_proyecto, 'activoFlujoProyecto': activoFlujoProyecto, 'mensaje': mensaje, 'perm_asignar_sprint':perm_asignar_sprint, 'lst':lst})
 
 
 @login_required
@@ -778,6 +783,32 @@ def confirmarDoneActividad(request, id_userstory, id_proyectoActividad):
     #Cuando todas las actividades de un us estan en Done el US pasa a resuelta
     if len(total_actividad) == len(total_actividad_done):
         Userstory.objects.filter(id=id_userstory).update(estado='Resuelta')
+        if (us.estado == 'Alta'):
+            Userstory.objects.filter(estado='Comentario', usuarioasignado_id=us.usuarioasignado.pk, sprint_id=sprint.pk).update('InPlanning')
 
 
     return HttpResponseRedirect('/proyectos/userstories/'+str(proyecto.pk)+'/modificar_avance_userstory/'+ str(id_userstory)+'/')
+
+def burndownchart(request, id_proyecto, id_flujo_proyecto):
+
+        flujo_proyecto_sprint = FlujoProyecto.objects.get(id=id_flujo_proyecto)
+        flujo_proyecto = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto_sprint.proyecto.pk, flujo_id=flujo_proyecto_sprint.flujo.pk).exclude(sprint_id=1)
+        sprint = Sprint.objects.get(id=flujo_proyecto[0].sprint.pk)
+        user_stories = Userstory.objects.filter(sprint_id = sprint.pk)
+        ejeXName = []
+        ejeXValor = []
+        duracionOptimaX = []
+        duracion_sprint = sprint.duracion
+
+        for us in user_stories:
+            ejeXName.append(us.nombre)
+            dec = Decimal(us.tiempotrabajado) / Decimal(6)
+            ejeXValor.append(format(dec, '.2f'))
+            duracionOptimaX.append(us.tiempoestimado)
+
+        lst = [{'US_nombre': t[0], 'US_tt': t[1], 'US_opt':t[2]} for t in zip(ejeXName, ejeXValor, duracionOptimaX)]
+
+
+        template_name = './Proyecto/hla.html'
+        return render(request, template_name,
+                                { 'id_proyecto': id_proyecto, 'ejeXName': ejeXName, 'lst':lst})

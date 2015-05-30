@@ -34,18 +34,23 @@
 	<div class="panel-group" id="accordion">
 
 	<br>
-		{% if flujosProyecto %}
-			{% for flujoProyecto in flujosProyecto %}
+		{% if lst %}
+			{% for x in lst %}
 	<div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
 				          <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ user.id }}">
-				          	{{ flujoProyecto }}
+				          	{{ x.flujoproyecto }}
 				          </a>
                           {% if perm_asignar_sprint == 1 %}
-                            <a href="asignar_sprints/{{ flujoProyecto.flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Sprint</button></a>
+                            <a href="asignar_sprints/{{ x.flujoproyecto.flujo.id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Sprint</button></a>
                           {% endif %}
-                          <a href="consultar_un_flujo_proyecto/{{ flujoProyecto.id }}/"><button type="button" class="btn btn-default btn-sm">Consultar</button></a>
+                          <a href="consultar_un_flujo_proyecto/{{ x.flujoproyecto.id }}/"><button  type="button" class="btn btn-default btn-sm">Consultar</button></a>
+                            {% if x.boton == 1 %}
+                          <a href="consultar_burndownchart/{{ x.flujoproyecto.id }}/"><button type="button" class="btn btn-default btn-sm">Burndownchart</button></a>
+                            {% else %}
+                            <button type="button" class="btn btn-default btn-sm" disabled=True>Burndownchart</button>
+                        {% endif %}
 				      </h4>
 				    </div>
 	</div>

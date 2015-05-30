@@ -56,7 +56,7 @@ class ProyectoModificadoForm(forms.Form):
         @author: Andrea Benitez
 
     """
-    Nombre_del_Proyecto = forms.CharField(widget=forms.TextInput(), max_length=30, min_length=2, required=True, error_messages={'required': 'Ingrese un nombre para el proyecto', 'max_length': 'Longitud maxima: 15', 'min_length': 'Longitud minima: 2 caracteres'})
+    Nombre = forms.CharField(widget=forms.TextInput(), max_length=30, min_length=2, required=True, error_messages={'required': 'Ingrese un nombre para el proyecto', 'max_length': 'Longitud maxima: 15', 'min_length': 'Longitud minima: 2 caracteres'})
     #Nuevo_Lider =  forms.ChoiceField(widget=forms.Select(), choices= (opcionLider()), required=False)
     Nuevo_Estado = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS_PROYECTO), required=False)
     Duracion = forms.IntegerField(required=True, help_text='En semanas', validators=[validate_duracion_proyecto], error_messages={'required': 'Ingrese la duracion del proyecto',})
@@ -94,7 +94,7 @@ class AsignarUsuariosForm(forms.Form):
             list_of_ids.append(usuario.pk)
         self.fields['usuarios'] = forms.ModelChoiceField(widget=forms.Select,
                                                         queryset=User.objects.filter(pk__in=list_of_ids),
-                                                        required=False)
+                                                        required=True)
         self.fields['roles'] = forms.ModelChoiceField(
                                 widget=forms.Select,
                                 queryset=Group.objects.all())

@@ -91,12 +91,12 @@ class UserstoryModificadoForm (forms.Form):
         self.estado_us = kwargs.pop('estado_us', None)
         super(UserstoryModificadoForm, self).__init__(*args, **kwargs)
 
-        self.fields['Nombre_de_Userstory'] = forms.CharField(widget=forms.TextInput(), max_length=50, required=False, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
-        self.fields['descripcion'] = forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=False, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
+        self.fields['Nombre'] = forms.CharField(widget=forms.TextInput(), max_length=50, required=False, error_messages={'required': 'Ingrese un nombre de User Story', 'max_length': 'Longitud maxima: 50', 'min_length': 'Longitud minima: 5 caracteres'})
+        self.fields['Descripcion'] = forms.CharField(widget=forms.Textarea, max_length=50, min_length=2, required=False, help_text='*', error_messages={'required': 'Ingrese una descripcion para el User Story', 'max_length': 'Longitud maxima: 200', 'min_length': 'Longitud minima: 2 caracteres'})
         #self.fields['usuarioasignado'] = forms.ModelChoiceField(required=False, blank=True, queryset= User.objects.filter(is_active=True))
         if(self.estado_us == 'Resuelta'):
-            self.fields['estado'] = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS_US), required=False)
-        self.fields['prioridad'] = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
+            self.fields['Estado'] = forms.ChoiceField(widget=forms.Select(), choices= (ESTADOS_US), required=False)
+        self.fields['Prioridad'] = forms.ChoiceField(widget=forms.Select(), choices= (PRIORIDAD), required=False)
 
 
 class AvanceUserStoryForm (forms.Form):

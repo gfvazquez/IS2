@@ -199,22 +199,14 @@ def modificarUserstory(request,id_proyecto, id_userstory):
             form = UserstoryModificadoForm(request.POST, estado_us=estado_us)
             if form.is_valid():
                 form.clean()
-                nombre = form.cleaned_data['Nombre_de_Userstory']
-                descripcion = form.cleaned_data['descripcion']
+                nombre = form.cleaned_data['Nombre']
+                descripcion = form.cleaned_data['Descripcion']
                 #usuarioasignado = form.cleaned_data['usuarioasignado']
                 if estado_us == 'Resuelta':
-                    estado = form.cleaned_data['estado']
-                prioridad = form.cleaned_data['prioridad']
+                    estado = form.cleaned_data['Estado']
+                prioridad = form.cleaned_data['Prioridad']
 
 
-                '''
-                    Filtar todos los us que posee el usuario asignado
-                '''
-                userStoriesUsuario = Userstory.objects.filter(usuarioasignado=us.usuarioasignado)
-                contadorEnCurso = 0
-                for usUsuario in userStoriesUsuario:
-                    if usUsuario.estado == 'EnCurso':
-                        contadorEnCurso += 1
 
                 '''
                             Procedimiento si se modifica la prioridad del us a 'Alta'
@@ -229,7 +221,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                         '''
                 modificaciones = ''
                 modificaciones = modificaciones + str(us.historial)
-                if us.nombre != nombre or us.estado != estado or us.prioridad != prioridad or us.porcentajerealizado != porcentajerealizado: #or us.sprint != sprint:
+                if us.nombre != nombre or us.estado != estado or us.prioridad != prioridad:
                     marca = 'True'
                     modificaciones = modificaciones + "\nActualizado por "
                     modificaciones = modificaciones + str(us.usuarioasignado)
@@ -249,10 +241,6 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                         us.descripcion = descripcion
 
 
-                    '''if us.usuarioasignado != usuarioasignado:
-                        modificaciones = modificaciones + " \n \t* USUARIO ASIGNADO -> Cambiado de " + str(
-                            us.usuarioasignado) + " por " + str(usuarioasignado)'''
-
                     if (us.estado != estado):
                         us.estado = estado
 
@@ -262,21 +250,22 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                             us.prioridad) + " por " + str(prioridad)
 
 
-                '''elif estado == 'Resuelta': #No se puedo cambiar
-                    warningPorcentaje = True'''
-                '''elif estado == 'EnCurso' and contadorEnCurso != 0: #No se puedo cambiar
-                    warningUS = True'''
 
 
-                if (us.prioridad == 'Alta' and (estado == 'Resuelta' or estado == 'Validado')):
+                '''if (us.prioridad == 'Alta' and (estado == 'Resuelta' or estado == 'Validado')):
                     userStories = Userstory.objects.filter(sprint_id=us.sprint.pk)
 
                     if (tieneUsuarioUSAlta(us) is not True):
                         for userStory in userStories:
                             if (userStory.usuarioasignado == us.usuarioasignado) and (userStory.estado == 'Comentario'):
-                                Userstory.objects.filter(id=userStory.pk).update(estado='InPlaning')
+                                Userstory.objects.filter(id=userStory.pk).update(estado='InPlaning')'''
 
-                us.prioridad = prioridad
+                mensajePrioridadAlta=False
+                if tieneUsuarioUSAlta(us):
+                   mensajePrioridadAlta = 'No puede asignar otro US con prioridad alta al usuario' + request.user.username
+                else:
+                    us.prioridad = prioridad
+
                 us.historial = modificaciones
                 #us.sprint = sprint
                 us.save()
@@ -285,9 +274,10 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                 '''
                 sprint = us.sprint
                 userstories_del_sprint = Userstory.objects.filter(sprint_id=sprint.pk)
-                userstories_del_sprint_done = Userstory.objects.filter(sprint_id=sprint.pk, estado='Validado')
-                if len(userstories_del_sprint) == len(userstories_del_sprint_done):
+                userstories_del_sprint_validado = Userstory.objects.filter(sprint_id=sprint.pk, estado='Validado')
+                if len(userstories_del_sprint) == len(userstories_del_sprint_validado):
                     FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=sprint.pk).update(estado='Done')
+                    Sprint.objects.filter(sprint=sprint.pk).update(estado='Finalizado')
 
                 #scrum_master = Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario
 
@@ -301,10 +291,13 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                 registered = True
                 template_name = './Userstories/userstory_modificado.html'
                 return render(request, template_name,
-                              {'mensaje': mensaje, 'warning': warning, 'mensajeCurso': mensajeCurso,'mensajePorcentaje': mensajePorcentaje, 'warningUS': warningUS, 'warningPorcentaje': warningPorcentaje,'registered': registered, })
+                              {'mensaje': mensaje, 'warning': warning, 'mensajeCurso': mensajeCurso,'mensajePorcentaje': mensajePorcentaje, 'warningUS': warningUS, 'warningPorcentaje': warningPorcentaje,'registered': registered,'mensajePrioridadAlta':mensajePrioridadAlta })
         else:
-
-            form = UserstoryModificadoForm(estado_us=estado_us)
+            data = {'Nombre': us.nombre, 'Estado': us.estado,
+                    'Prioridad': us.prioridad,
+                    'Descripcion': us.descripcion,
+            }
+            form = UserstoryModificadoForm(data, estado_us=estado_us)
         template_name = './Userstories/modificar_userstory.html'
         return render(request, template_name, {'form': form, 'id_userstory': id_userstory, 'id_proyecto': id_proyecto, 'us':us})
     else:
@@ -324,6 +317,7 @@ def userstory(request, id_proyecto):
 
 	"""
     id_proyecto = int(id_proyecto)
+    mi_user_story=[]
     userstoryproyecto=[]
     userstories = Userstory.objects.all()
     for us in userstories:
@@ -331,11 +325,18 @@ def userstory(request, id_proyecto):
 
         if (sprint.proyecto.pk == id_proyecto):
             userstoryproyecto.append(us)
+            if(us.usuarioasignado == request.user):
+                mi_user_story.append(1)
+            else:
+                mi_user_story.append(0)
+
+    lst = [{'userstory': t[0], 'mi_us': t[1]} for t in zip(userstoryproyecto, mi_user_story)]
 
     perm_add_us =0
     perm_delete_us =0
     perm_change_us=0
     perm_avance_userstory=0
+
 
     rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
 
@@ -354,7 +355,7 @@ def userstory(request, id_proyecto):
             elif (p.codename == 'registrar_avance_userstory'):
                 perm_avance_userstory = 1
 
-    return render_to_response('./Userstories/userstories.html', {'lista_userstories':userstoryproyecto, 'perm_add_us':perm_add_us, 'perm_change_us':perm_change_us, 'perm_delete_us':perm_delete_us, 'perm_avance_userstory':perm_avance_userstory}, context_instance=RequestContext(request))
+    return render_to_response('./Userstories/userstories.html', {'lst':lst, 'perm_add_us':perm_add_us, 'perm_change_us':perm_change_us, 'perm_delete_us':perm_delete_us, 'perm_avance_userstory':perm_avance_userstory}, context_instance=RequestContext(request))
 
 def verhistorial(request, id_proyecto, id_userstory):
      us = Userstory.objects.get(id=id_userstory)
@@ -382,13 +383,10 @@ def tieneUsuarioUSAlta(userStoryRecibido):
     usuario = userStoryRecibido.usuarioasignado
     sprint = userStoryRecibido.sprint
 
-    userStories = Userstory.objects.filter(sprint_id=sprint.pk)
+    us_alta_existe = Userstory.objects.filter(prioridad='Alta', usuarioasignado_id=userStoryRecibido.pk, sprint_id=sprint.pk).exists()
 
-    for userStory in userStories:
-        if ((userStory.prioridad == 'Alta') and (userStory.usuarioasignado == usuario) and (userStory != userStoryRecibido) and (userStory.estado == 'Resuleta' or userStory.estado == 'Validado')):
-            return True
 
-    return False
+    return us_alta_existe
 
 @login_required
 def modificarAvanceUserstory(request,id_proyecto, id_userstory):
@@ -419,9 +417,19 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
     registered = False
     marca = False
     listaFlujoProyectoActividad =False
+    mensajeEnCurso = False
     us = Userstory.objects.get(id=id_userstory)
-    usEstado = us.estado
+    sprint = us.sprint
+    user_stories_usuario_ensprint = Userstory.objects.filter(sprint_id=sprint.pk, usuarioasignado_id=request.user.pk, estado='EnCurso').exists()
+    if (us.estado == 'Validado' and us.estado=='Resuelta' and us.estado=='Comentario' and user_stories_usuario_ensprint==True ):
+        usEstado = False
+    else:
+        usEstado = True
 
+    if (user_stories_usuario_ensprint):
+        mensajeEnCurso='Usted posee otro US en Curso. Debe terminarlo primero para comenzar a trabajar en otro'
+
+    mensaje = False #para saber si el flujo esta activo o no
     #mirar esta consulta de vuelta
     existeActivoFlujoProyectoDoing = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing', sprint_id=us.sprint.pk).exists()
     existeActivoFlujoProyectoDone = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Done', sprint_id=us.sprint.pk).exists()
@@ -455,7 +463,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
 
 
     else:
-        mensaje = 'No existe ningun Flujo Activo'
+        mensaje = True
 
 
     if (band == True):
@@ -497,7 +505,10 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                     us.estado='EnCurso' #Userstory.objects.filter(id=us.pk).update(estado='EnCurso')
                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[0].pk).update(estado='Doing')
                 else:
-                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
+                    if (us.estado == 'Comentario'):
+                        us.estado='EnCurso'
+                    ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
+
 
                 us.save()
 
@@ -506,9 +517,9 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 '''
                    Enviar correo electronico al SCRUM MASTER
                 '''
-                send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
+                '''send_mail('Modificaciones del US', modificaciones, settings.EMAIL_HOST_USER,
                           ['gabyvazquez92@gmail.com',Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario.email],
-                          fail_silently=False)
+                          fail_silently=False)'''
 
                 registered = True
                 template_name = './Userstories/userstory_modificado.html'
@@ -519,7 +530,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
             form = AvanceUserStoryForm(data)
         template_name = './Userstories/modificar_avance_userstory.html'
 
-        return render(request, template_name, {'form': form, 'id_userstory': id_userstory, 'id_proyecto': id_proyecto, 'proyectoFlujoActividadConsulta':listaFlujoProyectoActividad, 'us':us, 'usEstado': usEstado})
+        return render(request, template_name, {'form': form, 'id_userstory': id_userstory, 'id_proyecto': id_proyecto, 'proyectoFlujoActividadConsulta':listaFlujoProyectoActividad, 'us':us, 'usEstado': usEstado, 'mensaje':mensaje, 'mensajeEnCurso':mensajeEnCurso})
     else:
         raise Http404("No cuenta con los permisos necesarios")
 

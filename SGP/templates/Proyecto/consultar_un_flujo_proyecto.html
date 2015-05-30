@@ -55,7 +55,7 @@
                 <td>{{ proyectoFlujo.flujo.nombre }}</td>
                 <td>{{ proyectoFlujo.sprint.nombre }}</td>
                 <td>{{ proyectoFlujo.estado }}</td>
-                <td><a href="/sprints/consultar/{{ proyectoFlujo.sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Sprint</button></a></td>
+                <td><a href="/proyectos/sprints/{{ proyectoFlujo.proyecto.auto_increment_id }}/consultar/{{ proyectoFlujo.sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Sprint</button></a></td>
                 <td><a href="/proyectos/sprint/{{ proyectoFlujo.sprint.id }}"><button type="button" class="btn btn-default btn-sm">User Stories</button></a></td>
               </tr>
             {% endfor %}
