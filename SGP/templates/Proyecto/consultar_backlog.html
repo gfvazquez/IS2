@@ -61,8 +61,11 @@
                 <td>{{ userStory.estado }}</td>
                 <td>{{ userStory.prioridad }}</td>
                 <!--<td>{{ userStory.porcentajerealizado }}</td>-->
+                     {% if reasignar %}
                 <td><a href="reasignar_sprint/{{ userStory.id }}/"><button type="button" class="btn btn-default btn-sm">Reasignar Sprint</button></a></td>
-
+                    {% else %}
+                <td><button type="button" class="btn btn-default btn-sm di" disabled=True>Reasignar Sprint</button></td>
+                     {% endif %}
 
                  {% endfor %}
             </tbody>

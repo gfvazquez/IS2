@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
-from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart
+from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
 from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory
 
@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^proyectos/sprint_activo/user_stories_current_user/(?P<id_proyecto>\d+)/consultar_kanban/(?P<id_userstory>\d+)/$', consultarKanban),
     url(r'^proyectos/backlog/(?P<id_proyecto>\d+)/$', consultarBacklog),
     url(r'^proyectos/backlog/(?P<id_proyecto>\d+)/reasignar_sprint/(?P<id_userstory>\d+)/$', reasignarSprint),
+    url(r'^proyectos/iniciar_sprint/(?P<id_sprint>\d+)/$', iniciarSprint),
 
     url(r'^proyectos/sprints/(?P<id_proyecto>\d+)/$', sprints),
     url(r'^proyectos/sprints/(?P<id_proyecto>\d+)/crearsprint/$', crear_sprint),

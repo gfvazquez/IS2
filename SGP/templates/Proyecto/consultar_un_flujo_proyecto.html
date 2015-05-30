@@ -32,7 +32,7 @@
 
 {% block contenido %}
     <div class="container">
-    {% if proyectosFlujo %}
+    {% if lst %}
 <div class="content-secondary">
 	<div class="row">
         <div class="col-md-6">
@@ -49,14 +49,19 @@
             </thead>
 
             <tbody>
-                 {% for proyectoFlujo in proyectosFlujo %}
+                 {% for x in lst %}
               <tr>
-                <td>{{ proyectoFlujo.proyecto.nombre }}</td>
-                <td>{{ proyectoFlujo.flujo.nombre }}</td>
-                <td>{{ proyectoFlujo.sprint.nombre }}</td>
-                <td>{{ proyectoFlujo.estado }}</td>
-                <td><a href="/proyectos/sprints/{{ proyectoFlujo.proyecto.auto_increment_id }}/consultar/{{ proyectoFlujo.sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Sprint</button></a></td>
-                <td><a href="/proyectos/sprint/{{ proyectoFlujo.sprint.id }}"><button type="button" class="btn btn-default btn-sm">User Stories</button></a></td>
+                <td>{{ x.proyectoFlujo.proyecto.nombre }}</td>
+                <td>{{ x.proyectoFlujo.flujo.nombre }}</td>
+                <td>{{ x.proyectoFlujo.sprint.nombre }}</td>
+                <td>{{ x.proyectoFlujo.estado }}</td>
+                <td><a href="/proyectos/sprints/{{ x.proyectoFlujo.proyecto.auto_increment_id }}/consultar/{{ x.proyectoFlujo.sprint.id }}/"><button type="button" class="btn btn-default btn-sm">Sprint</button></a></td>
+                <td><a href="/proyectos/sprint/{{ x.proyectoFlujo.sprint.id }}"><button type="button" class="btn btn-default btn-sm">User Stories</button></a></td>
+                  {% if x.iniciar == 1 %}
+                <td><a href="/proyectos/iniciar_sprint/{{ x.proyectoFlujo.sprint.id }}"><button type="button" class="btn btn-default btn-sm">Iniciar Sprint</button></a></td>
+              {% else %}
+                 <td><button type="button" class="btn btn-default btn-sm" disabled="True">Iniciar Sprint</button></td>
+              {% endif %}
               </tr>
             {% endfor %}
             </tbody>

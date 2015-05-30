@@ -571,10 +571,16 @@ def consultarUnFlujoProyecto (request, id_proyecto, id_flujo_proyecto):
     flujo_proyecto = FlujoProyecto.objects.get(pk=id_flujo_proyecto)
 
     proyectosFlujo = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto.proyecto.auto_increment_id, flujo_id=flujo_proyecto.flujo.id).exclude(sprint_id=1)
-
+    iniciar_sprint=[]
+    for x in proyectosFlujo:
+        if (x.sprint.estado == 'Creado'):
+            iniciar_sprint.append(1)
+        else:
+            iniciar_sprint.append(0)
+    lst = [{'proyectoFlujo': t[0], 'iniciar': t[1]} for t in zip(proyectosFlujo, iniciar_sprint)]
 
     return render(request, template_name,
-                  {'proyectosFlujo': proyectosFlujo})
+                  {'lst':lst})
 
 def consultarUserStoriesSprint(request, id_sprint):
     template_name = './Proyecto/consultar_user_stories_sprint.html'
@@ -694,8 +700,16 @@ def consultarBacklog(request, id_proyecto):
         for userStory in userStories:
             userStoriesIncompleto.append(userStory)
 
+    band=False
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+    for p in user_permissions_groups:
+        if (p.codename == 'reasignar_sprint'):
+            band = True
+
     return render(request, template_name,
-                  {'userstories':userStoriesIncompleto})
+                  {'userstories':userStoriesIncompleto, 'reasignar':band})
 
 def reasignarSprint(request, id_proyecto, id_userstory):
 
@@ -714,20 +728,22 @@ def reasignarSprint(request, id_proyecto, id_userstory):
         proyecto = Proyecto.objects.get(pk = id_proyecto)
         userstoryIncompleto=Userstory.objects.get(id=id_userstory)
         sprintFinalizado = Sprint.objects.get(id=userstoryIncompleto.sprint.pk)
-        flujoProyetoHalfDone=FlujoProyecto.objects.get(sprint_id=sprintFinalizado.pk, estado='HalfDone')
+        flujoProyetoHalfDone=FlujoProyecto.objects.get(sprint_id=sprintFinalizado.pk, proyecto_id=id_proyecto,estado='HalfDone')
         flujo = flujoProyetoHalfDone.flujo
-        flujoProyectos = FlujoProyecto.objects.all()
-        sprintsAsignados = []
+        flujoProyectos = FlujoProyecto.objects.filter(proyecto_id=id_proyecto)
+
+        '''sprintsAsignados = []
         for flujoProyecto in flujoProyectos:
             #si el estado del flujoProyecto es doing se puede todavia reasignar un US a la combinacion sprint-flujo-proyecto
             if (flujoProyecto.estado != 'Doing'):
-                sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))
+                sprintsAsignados.append(Sprint.objects.get(id=flujoProyecto.sprint.pk))'''
+
 
         sprints = Sprint.objects.filter(activo=True)
-        sprintsNoAsignados = []
-        for sprint in sprints:
+        sprintsNoAsignados = Sprint.objects.filter(proyecto_id=id_proyecto, estado='Creado')
+        '''for sprint in sprints:
             if sprint not in sprintsAsignados:
-                sprintsNoAsignados.append(sprint)
+                sprintsNoAsignados.append(sprint)'''
 
         if request.method == 'POST':
             form = AsignarSprintFlujoForm(request.POST, sprints_no_asignados=sprintsNoAsignados)
@@ -739,7 +755,7 @@ def reasignarSprint(request, id_proyecto, id_userstory):
                 #si el Sprint todavia no fue asignado a ningun flujo se crea un FlujoProyecto
                 if existeFlujoProyecto==False:
                     m1 = FlujoProyecto(proyecto=proyecto, flujo=flujo, sprint=sprint)
-                    sprint.estado = "Iniciado"
+                    #sprint.estado = "Iniciado"
                     m1.estado = "Doing"
                     sprint.save()
                     m1.save()
@@ -802,8 +818,9 @@ def burndownchart(request, id_proyecto, id_flujo_proyecto):
 
         for us in user_stories:
             ejeXName.append(us.nombre)
-            dec = Decimal(us.tiempotrabajado) / Decimal(6)
+            dec = Decimal(us.tiempotrabajado) / Decimal(5)
             ejeXValor.append(format(dec, '.2f'))
+            #dec2 = Decimal(us.tiempoestimado) / Decimal(6)
             duracionOptimaX.append(us.tiempoestimado)
 
         lst = [{'US_nombre': t[0], 'US_tt': t[1], 'US_opt':t[2]} for t in zip(ejeXName, ejeXValor, duracionOptimaX)]
@@ -812,3 +829,9 @@ def burndownchart(request, id_proyecto, id_flujo_proyecto):
         template_name = './Proyecto/hla.html'
         return render(request, template_name,
                                 { 'id_proyecto': id_proyecto, 'ejeXName': ejeXName, 'lst':lst})
+
+def iniciarSprint(request, id_sprint):
+    sprint = Sprint.objects.get(id=id_sprint)
+    sprint.estado='Iniciado'
+    sprint.save()
+    return HttpResponseRedirect('/proyectos/')

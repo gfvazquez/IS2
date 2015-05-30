@@ -277,7 +277,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                 userstories_del_sprint_validado = Userstory.objects.filter(sprint_id=sprint.pk, estado='Validado')
                 if len(userstories_del_sprint) == len(userstories_del_sprint_validado):
                     FlujoProyecto.objects.filter(proyecto_id=id_proyecto, sprint_id=sprint.pk).update(estado='Done')
-                    Sprint.objects.filter(sprint=sprint.pk).update(estado='Finalizado')
+                    Sprint.objects.filter(id=sprint.pk).update(estado='Finalizado')
 
                 #scrum_master = Equipo.objects.get(proyecto_id=FlujoProyecto.objects.get(sprint_id=us.sprint.pk).proyecto_id, rol_id = 2).usuario
 
@@ -420,8 +420,13 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
     mensajeEnCurso = False
     us = Userstory.objects.get(id=id_userstory)
     sprint = us.sprint
+    usEnCurso =False
     user_stories_usuario_ensprint = Userstory.objects.filter(sprint_id=sprint.pk, usuarioasignado_id=request.user.pk, estado='EnCurso').exists()
-    if (us.estado == 'Validado' and us.estado=='Resuelta' and us.estado=='Comentario' and user_stories_usuario_ensprint==True ):
+    if user_stories_usuario_ensprint:
+        user_stories_usuario_ensprint_list = Userstory.objects.filter(sprint_id=sprint.pk, usuarioasignado_id=request.user.pk, estado='EnCurso')
+        if user_stories_usuario_ensprint_list[0] != us:
+            usEnCurso =True
+    if (us.estado == 'Validado' or us.estado=='Resuelta' or us.estado=='Comentario' or usEnCurso==True ):
         usEstado = False
     else:
         usEstado = True
