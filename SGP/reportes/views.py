@@ -95,8 +95,8 @@ def descargar_reporte_us_usuario(request):
     '''
     Vista para descargar el reporte
     '''
-    if request.user.is_superuser!=True:
-        return render_to_response('extiende.html',context_instance=RequestContext(request))
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
     a=file(reporte_usUsuario())
 
     return StreamingHttpResponse(a,content_type='application/pdf')
@@ -186,8 +186,8 @@ def descargar_reporte_usXProyecto(request):
     '''
     Vista para descargar el reporte
     '''
-    if request.user.is_superuser!=True:
-        return render_to_response('extiende.html',context_instance=RequestContext(request))
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
     a=file(reporte_usXProyecto())
 
     return StreamingHttpResponse(a,content_type='application/pdf')
@@ -285,8 +285,8 @@ def descargar_reporte_actividadesXProyecto(request):
     '''
     Vista para descargar el reporte
     '''
-    if request.user.is_superuser!=True:
-        return render_to_response('extiende.html',context_instance=RequestContext(request))
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
     a=file(reporte_actividadesXProyecto())
 
     return StreamingHttpResponse(a,content_type='application/pdf')
@@ -427,8 +427,8 @@ def descargar_reporte_usOrdenadoXProyecto(request):
     '''
     Vista para descargar el reporte
     '''
-    if request.user.is_superuser!=True:
-        return render_to_response('extiende.html',context_instance=RequestContext(request))
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
     a=file(reporte_usOrdenadoXProyecto())
 
     return StreamingHttpResponse(a,content_type='application/pdf')
@@ -525,8 +525,8 @@ def descargar_reporte_usSprintActualXProyecto(request):
     '''
     Vista para descargar el reporte
     '''
-    if request.user.is_superuser!=True:
-        return render_to_response('extiende.html',context_instance=RequestContext(request))
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
     a=file(reporte_usSprintActualXProyecto())
 
     return StreamingHttpResponse(a,content_type='application/pdf')
@@ -585,20 +585,22 @@ def reporte():
     lc.height = 125
     lc.width = 350
     #lc.data = [[0.5,1.5]]
-    data_values = []
-    c = ""
-    data_row = -1
-    countries = []
-    for row in ejeXValor:
-        '''if c != unicode(row[0]):
-            c = unicode(row[0])
-            countries.append(c)
-            data_row += 1
-            data_values.append([])'''
-        data_row += 1
-        data_values[data_row].append(float(str(row[data_row])))
+    #Definicion de la matriz
+    matriz = []
+    matriz = []
+    for i in range(1):
+        matriz.append([])
+        for j in range(len(ejeXValor)):
+            matriz[i].append(None)
 
-    lc.data = data_values
+    for i in range(1):
+        matriz.append([])
+        for j in ejeXValor:
+            dec = Decimal(j)
+            matriz[i].append(format(dec, '.2f'))
+
+
+    lc.data = matriz
     #lc.categoryAxis.categoryNames = ['Suspenso', 'Aprobado', 'Notable',
                                     #'Sobresaliente']
     lc.categoryAxis.categoryNames = ejeXName
@@ -618,8 +620,427 @@ def descargar_reporte_(request):
     '''
     Vista para descargar el reporte
     '''
-    if request.user.is_superuser!=True:
-        return render_to_response('extiende.html',context_instance=RequestContext(request))
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
     a=file(reporte())
+
+    return StreamingHttpResponse(a,content_type='application/pdf')
+
+
+##################################################################################################################
+'''
+    Metodos de reportes con el id de proyecto
+'''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+            Cantidad de trabajos en curso por proyecto especificando su id
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+def reporte_usEnCursoIdProyecto(id_proyecto):
+    '''
+    Funcion que genera el reporte de cantidad de trabajos en curso por equipo
+    '''
+
+
+    doc = SimpleDocTemplate(str(settings.BASE_DIR)+"/reporte_usEnCursoIdProyecto.pdf",pagesize=letter,
+                            rightMargin=72,leftMargin=72,
+                            topMargin=30,bottomMargin=18)
+
+    Story=[]
+    logo = str(settings.BASE_DIR)+"/static/img/sgp.png"
+    styles=getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Principal',alignment=1,spaceAfter=20, fontSize=24))
+    styles.add(ParagraphStyle(name='Justify',fontName='Courier-Oblique', alignment=TA_JUSTIFY, fontSize=14,spaceAfter=5))
+    styles.add(ParagraphStyle(name='Titulo', fontName='Helvetica', fontSize=18, alignment=0, spaceAfter=25, spaceBefore=15))
+    styles.add(ParagraphStyle(name='Header',fontName='Helvetica',fontSize=20))
+    styles.add(ParagraphStyle(name='SubItems',fontName='Helvetica',fontSize=10,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Items',fontName='Helvetica',fontSize=12,spaceAfter=10, spaceBefore=10))
+    styles.add(ParagraphStyle(name='Subtitulos',fontSize=12,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Encabezado',fontSize=10,spaceAfter=10, left=1, bottom=1))
+    im = Image(logo, width=100,height=50)
+    Story.append(im)
+    contador_act=1
+    titulo="<b>UserStories en Curso<br/>"
+    Story.append(Paragraph(titulo,styles['Principal']))
+    Story.append(Spacer(1, 12))
+    date=datetime.now()
+    dateFormat = date.strftime("%d-%m-%Y")
+    Story.append(Paragraph('Fecha: ' + str(dateFormat),styles['Subtitulos']))
+    '''
+        Obtenemos el proyecto ingresado
+    '''
+
+    proyecto= Proyecto.objects.get(auto_increment_id=id_proyecto)
+
+    Story.append(Indenter(25))
+    text ="__________________________________________________________<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Spacer(1, 12))
+    Story.append(Indenter(-25))
+
+    #lista de us del proyecto
+    lista_flujo_actividad = ProyectoFlujoActividad.objects.filter(proyecto_id=id_proyecto)
+    #escribir el contador
+    Story.append(Indenter(25))
+    #escribir el nombre del Proyecto
+    text ="<strong>Proyecto: </strong>" + str(proyecto.nombre) +"<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Indenter(-25))
+    #si el proyecto tiene users
+    if lista_flujo_actividad:
+         for fa in lista_flujo_actividad:
+             if fa.userstory.estado == 'EnCurso':
+                #listar us de proyecto con estado en curso
+                Story.append(Indenter(42))
+                Story.append(Spacer(1, 10))
+                text ="<strong> * </strong>" + fa.userstory.nombre +"<br>"
+                Story.append(Paragraph(text, styles["SubItems"]))
+                Story.append(Indenter(-42))
+                contador_act+=1
+    else:
+        Story.append(Indenter(42))
+        Story.append(Spacer(1, 10))
+        text ="<strong> NO POSEE US EN CURSO </strong>" + "<br>"
+        Story.append(Paragraph(text, styles["SubItems"]))
+        Story.append(Indenter(-42))
+
+    doc.build(Story)
+    return str(settings.BASE_DIR)+"/reporte_usEnCursoIdProyecto.pdf"
+
+def descargar_reporte_usEnCursoIdProyecto(request,id_proyecto):
+    '''
+    Vista para descargar el reporte
+    '''
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
+    a=file(reporte_usEnCursoIdProyecto(id_proyecto))
+
+    return StreamingHttpResponse(a,content_type='application/pdf')
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+#Lista clasificada por orden de prioridad de todas las actividades  para completar ID proyecto.
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+def reporte_actividadesXIDProyecto(id_proyecto):
+    '''
+    Funcion que genera el reporte de todas las actividades  para completar un proyecto.
+    '''
+
+
+    doc = SimpleDocTemplate(str(settings.BASE_DIR)+"/reporte_actividadesXIDProyecto.pdf",pagesize=letter,
+                            rightMargin=72,leftMargin=72,
+                            topMargin=30,bottomMargin=18)
+
+    Story=[]
+    logo = str(settings.BASE_DIR)+"/static/img/sgp.png"
+    styles=getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Principal',alignment=1,spaceAfter=20, fontSize=24))
+    styles.add(ParagraphStyle(name='Justify',fontName='Courier-Oblique', alignment=TA_JUSTIFY, fontSize=14,spaceAfter=5))
+    styles.add(ParagraphStyle(name='Titulo', fontName='Helvetica', fontSize=18, alignment=0, spaceAfter=25, spaceBefore=15))
+    styles.add(ParagraphStyle(name='Header',fontName='Helvetica',fontSize=20))
+    styles.add(ParagraphStyle(name='SubItems',fontName='Helvetica',fontSize=10,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Items',fontName='Helvetica',fontSize=12,spaceAfter=10, spaceBefore=10))
+    styles.add(ParagraphStyle(name='Subtitulos',fontSize=12,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Encabezado',fontSize=10,spaceAfter=10, left=1, bottom=1))
+    im = Image(logo, width=100,height=50)
+    Story.append(im)
+    contador_act=1
+    titulo="<b>Actividades Ordenadas por Proyecto<br/>"
+    Story.append(Paragraph(titulo,styles['Principal']))
+    Story.append(Spacer(1, 12))
+    date=datetime.now()
+    dateFormat = date.strftime("%d-%m-%Y")
+    Story.append(Paragraph('Fecha: ' + str(dateFormat),styles['Subtitulos']))
+    '''
+        Obtenemos los proyectos activos del sistema
+    '''
+    proyecto= Proyecto.objects.get(auto_increment_id=id_proyecto)
+
+    Story.append(Indenter(25))
+    text ="__________________________________________________________<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Spacer(1, 12))
+    Story.append(Indenter(-25))
+
+    #lista de proyecto_flujo_actividad del proyecto
+    lista_flujo_actividad = ProyectoFlujoActividad.objects.filter(proyecto_id=id_proyecto)
+    #escribir el contador
+    Story.append(Indenter(25))
+    text="<strong>"+str(contador_act)+".</strong>"
+    Story.append(Paragraph(text, styles["Subtitulos"]))
+    #escribir el nombre del Proyecto
+    text ="<strong>Proyecto: </strong>" + str(proyecto.nombre) +"<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Indenter(-25))
+    #si el proyecto tiene users
+    if lista_flujo_actividad:
+          nombreus= ''
+          for fa in lista_flujo_actividad:
+             #listar us de proyecto con sus actividades
+             if nombreus!= fa.userstory.nombre:
+                 Story.append(Indenter(42))
+                 Story.append(Spacer(1, 10))
+                 text ="<strong> " + fa.userstory.nombre +" </strong>"+ "<br>"
+                 Story.append(Paragraph(text, styles["SubItems"]))
+                 Story.append(Indenter(-42))
+                 nombreus = fa.userstory.nombre
+                 #actividades
+                 Story.append(Indenter(42))
+                 Story.append(Spacer(1, 10))
+                 text ="<strong> * </strong>"+ str(fa.flujoActividad.orden)+ "&nbsp;&nbsp;&nbsp;&nbsp;"+  fa.flujoActividad.actividad.nombre + "<br>"
+                 Story.append(Paragraph(text, styles["SubItems"]))
+                 Story.append(Indenter(-42))
+    else:
+        Story.append(Indenter(42))
+        Story.append(Spacer(1, 10))
+        text ="<strong> NO POSEE US </strong>" + "<br>"
+        Story.append(Paragraph(text, styles["SubItems"]))
+        Story.append(Indenter(-42))
+
+    doc.build(Story)
+    return str(settings.BASE_DIR)+"/reporte_actividadesXIDProyecto.pdf"
+
+def descargar_reporte_actividadesXIDProyecto(request,id_proyecto):
+    '''
+    Vista para descargar el reporte
+    '''
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
+    a=file(reporte_actividadesXIDProyecto(id_proyecto))
+
+    return StreamingHttpResponse(a,content_type='application/pdf')
+
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+# El Backlog del Producto, lista ordenada de HU, en el orden que esperamos deban terminarse
+# Ingresando el ID de proyecto
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+def reporte_usOrdenadoXIDProyecto(id_proyecto):
+    '''
+    Funcion que genera el reporte de todos los US ordenados por prioridad de cada US
+    '''
+
+
+    doc = SimpleDocTemplate(str(settings.BASE_DIR)+"/reporte_usOrdenadoXIDProyecto.pdf",pagesize=letter,
+                            rightMargin=72,leftMargin=72,
+                            topMargin=30,bottomMargin=18)
+
+    Story=[]
+    logo = str(settings.BASE_DIR)+"/static/img/sgp.png"
+    styles=getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Principal',alignment=1,spaceAfter=20, fontSize=24))
+    styles.add(ParagraphStyle(name='Justify',fontName='Courier-Oblique', alignment=TA_JUSTIFY, fontSize=14,spaceAfter=5))
+    styles.add(ParagraphStyle(name='Titulo', fontName='Helvetica', fontSize=18, alignment=0, spaceAfter=25, spaceBefore=15))
+    styles.add(ParagraphStyle(name='Header',fontName='Helvetica',fontSize=20))
+    styles.add(ParagraphStyle(name='SubItems',fontName='Helvetica',fontSize=10,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Items',fontName='Helvetica',fontSize=12,spaceAfter=10, spaceBefore=10))
+    styles.add(ParagraphStyle(name='Subtitulos',fontSize=12,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Encabezado',fontSize=10,spaceAfter=10, left=1, bottom=1))
+    im = Image(logo, width=100,height=50)
+    Story.append(im)
+    contador_act=1
+    titulo="<b>User Stories ordenados por prioridad<br/>"
+    Story.append(Paragraph(titulo,styles['Principal']))
+    Story.append(Spacer(1, 12))
+    date=datetime.now()
+    dateFormat = date.strftime("%d-%m-%Y")
+    Story.append(Paragraph('Fecha: ' + str(dateFormat),styles['Subtitulos']))
+    '''
+        Obtenemos los proyectos activos del sistema
+    '''
+    proyecto= Proyecto.objects.get(auto_increment_id=id_proyecto)
+
+    Story.append(Indenter(25))
+    text ="__________________________________________________________<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Spacer(1, 12))
+    Story.append(Indenter(-25))
+    #escribir el contador
+    Story.append(Indenter(25))
+    text="<strong>"+str(contador_act)+".</strong>"
+    Story.append(Paragraph(text, styles["Subtitulos"]))
+    #escribir el nombre del Proyecto
+    text ="<strong>Proyecto: </strong>" + str(proyecto.nombre) +"<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Indenter(-25))
+
+    #lista de proyecto_flujo_actividad del proyecto
+    lista_flujo_actividad = ProyectoFlujoActividad.objects.filter(proyecto_id=id_proyecto)
+    #si el proyecto tiene users
+    if lista_flujo_actividad:
+
+                prioridadAlta= []
+                prioridadNormal= []
+                prioridadBaja= []
+                #Separar userstories por Prioridad
+                nombreus= ''
+                for fa in lista_flujo_actividad:
+                    if fa.userstory.prioridad == 'Alta':
+                        if nombreus != fa.userstory.nombre:
+                            prioridadAlta.append(fa.userstory.nombre)
+                            nombreus = fa.userstory.nombre
+                    elif fa.userstory.prioridad == 'Normal':
+                         if nombreus != fa.userstory.nombre:
+                            prioridadNormal.append(fa.userstory.nombre)
+                            nombreus = fa.userstory.nombre
+                    elif fa.userstory.prioridad == 'Baja':
+                         if nombreus != fa.userstory.nombre:
+                            prioridadBaja.append(fa.userstory.nombre)
+                            nombreus = fa.userstory.nombre
+                if prioridadAlta:
+                    #listar us de prioridad Alta
+                     Story.append(Indenter(42))
+                     Story.append(Spacer(1, 10))
+                     text ="<strong> US con prioridad Alta </strong>"+ "<br>"
+                     Story.append(Paragraph(text, styles["SubItems"]))
+                     Story.append(Indenter(-42))
+                     for alta in prioridadAlta:
+                        #userstories
+                        Story.append(Indenter(42))
+                        Story.append(Spacer(1, 10))
+                        text ="<strong> -- </strong>"+ str(alta)+ "<br>"
+                        Story.append(Paragraph(text, styles["SubItems"]))
+                        Story.append(Indenter(-42))
+                if prioridadNormal:
+                    #listar us de prioridad Normal
+                     Story.append(Indenter(42))
+                     Story.append(Spacer(1, 10))
+                     text ="<strong> US con prioridad Normal </strong>"+ "<br>"
+                     Story.append(Paragraph(text, styles["SubItems"]))
+                     Story.append(Indenter(-42))
+                     for normal in prioridadNormal:
+                        #userstories
+                        Story.append(Indenter(42))
+                        Story.append(Spacer(1, 10))
+                        text ="<strong> -- </strong>"+ str(normal)+ "<br>"
+                        Story.append(Paragraph(text, styles["SubItems"]))
+                        Story.append(Indenter(-42))
+                if prioridadBaja:
+                    #listar us de prioridad Baja
+                     Story.append(Indenter(42))
+                     Story.append(Spacer(1, 10))
+                     text ="<strong> US con prioridad Baja </strong>"+ "<br>"
+                     Story.append(Paragraph(text, styles["SubItems"]))
+                     Story.append(Indenter(-42))
+                     for baja in prioridadBaja:
+                        #userstories
+                        Story.append(Indenter(42))
+                        Story.append(Spacer(1, 10))
+                        text ="<strong> -- </strong>"+ str(baja)+ "<br>"
+                        Story.append(Paragraph(text, styles["SubItems"]))
+                        Story.append(Indenter(-42))
+                Story.append(Indenter(25))
+
+    else:
+        Story.append(Indenter(42))
+        Story.append(Spacer(1, 10))
+        text ="<strong> NO POSEE US </strong>" + "<br>"
+        Story.append(Paragraph(text, styles["SubItems"]))
+        Story.append(Indenter(-42))
+    doc.build(Story)
+    return str(settings.BASE_DIR)+"/reporte_usOrdenadoXIDProyecto.pdf"
+
+def descargar_reporte_usOrdenadoXIDProyecto(request,id_proyecto):
+    '''
+    Vista para descargar el reporte
+    '''
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
+    a=file(reporte_usOrdenadoXIDProyecto(id_proyecto))
+
+    return StreamingHttpResponse(a,content_type='application/pdf')
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+#El Backlog del Sprin, lista de los elementos del Backlog del Producto, elegidos para
+# ser desarrollador en el Sprint actual
+#ID Proyecto
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+def reporte_usSprintActualXIDProyecto(id_proyecto):
+    '''
+    Funcion que genera el reporte de todos los US del sprint actual por proyecto
+    '''
+
+
+    doc = SimpleDocTemplate(str(settings.BASE_DIR)+"/reporte_usSprintActualXIDProyecto.pdf",pagesize=letter,
+                            rightMargin=72,leftMargin=72,
+                            topMargin=30,bottomMargin=18)
+
+    Story=[]
+    logo = str(settings.BASE_DIR)+"/static/img/sgp.png"
+    styles=getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Principal',alignment=1,spaceAfter=20, fontSize=24))
+    styles.add(ParagraphStyle(name='Justify',fontName='Courier-Oblique', alignment=TA_JUSTIFY, fontSize=14,spaceAfter=5))
+    styles.add(ParagraphStyle(name='Titulo', fontName='Helvetica', fontSize=18, alignment=0, spaceAfter=25, spaceBefore=15))
+    styles.add(ParagraphStyle(name='Header',fontName='Helvetica',fontSize=20))
+    styles.add(ParagraphStyle(name='SubItems',fontName='Helvetica',fontSize=10,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Items',fontName='Helvetica',fontSize=12,spaceAfter=10, spaceBefore=10))
+    styles.add(ParagraphStyle(name='Subtitulos',fontSize=12,spaceAfter=3))
+    styles.add(ParagraphStyle(name='Encabezado',fontSize=10,spaceAfter=10, left=1, bottom=1))
+    im = Image(logo, width=100,height=50)
+    Story.append(im)
+    contador_act=1
+    titulo="<b>User Stories del Sprint Activo<br/>"
+    Story.append(Paragraph(titulo,styles['Principal']))
+    Story.append(Spacer(1, 12))
+    date=datetime.now()
+    dateFormat = date.strftime("%d-%m-%Y")
+    Story.append(Paragraph('Fecha: ' + str(dateFormat),styles['Subtitulos']))
+    '''
+        Obtenemos los proyectos activos del sistema
+    '''
+    proyecto= Proyecto.objects.get(auto_increment_id=id_proyecto)
+
+    Story.append(Indenter(25))
+    text ="__________________________________________________________<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Spacer(1, 12))
+    Story.append(Indenter(-25))
+    Story.append(Indenter(25))
+    text="<strong>"+str(contador_act)+".</strong>"
+    Story.append(Paragraph(text, styles["Subtitulos"]))
+    #escribir el nombre del Proyecto
+    text ="<strong>Proyecto: </strong>" + str(proyecto.nombre) +"<br>"
+    Story.append(Paragraph(text, styles["Items"]))
+    Story.append(Indenter(-25))
+    existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
+    if existeActivoFlujoProyecto:
+                activoFlujoProyecto = FlujoProyecto.objects.get(proyecto_id=id_proyecto, estado='Doing')
+                sprintActivo = Sprint.objects.get(id=activoFlujoProyecto.sprint.pk)
+                userStories = Userstory.objects.filter(sprint_id=sprintActivo.id)
+                #escribir el contador
+
+
+                #escribir el nombre del sprint activo
+                Story.append(Indenter(42))
+                Story.append(Spacer(1, 10))
+                text ="<strong> Sprint Activo: " + sprintActivo.nombre +" </strong>"+ "<br>"
+                Story.append(Paragraph(text, styles["SubItems"]))
+
+
+                for us in userStories:
+                    #userstories del sprint activo
+                    Story.append(Indenter(42))
+                    Story.append(Spacer(1, 10))
+                    text ="<strong> * User Story: </strong>"+ us.nombre+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +"<strong> Estado: </strong>" + us.estado+ "<br>"
+                    Story.append(Paragraph(text, styles["SubItems"]))
+                    Story.append(Indenter(-42))
+    else:
+        Story.append(Indenter(42))
+        Story.append(Spacer(1, 10))
+        text ="<strong> NO POSEE US </strong>" + "<br>"
+        Story.append(Paragraph(text, styles["SubItems"]))
+        Story.append(Indenter(-42))
+
+    doc.build(Story)
+    return str(settings.BASE_DIR)+"/reporte_usSprintActualXIDProyecto.pdf"
+
+def descargar_reporte_usSprintActualXIDProyecto(request,id_proyecto):
+    '''
+    Vista para descargar el reporte
+    '''
+    '''if request.user.is_superuser!=True:
+        return render_to_response('extiende.html',context_instance=RequestContext(request))'''
+    a=file(reporte_usSprintActualXIDProyecto(id_proyecto))
 
     return StreamingHttpResponse(a,content_type='application/pdf')
