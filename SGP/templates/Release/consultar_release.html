@@ -1,0 +1,82 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+    <div class="container">
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/release/{{ id_proyecto }}/">Release</a></li>
+			<li class="active"><a href="/proyectos/release/{{ id_proyecto }}/consultar_release/{{ id_release }}/">Consulta de release</a></li>
+        </ul>
+
+	</div>
+</nav>
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div class="container">
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">{{ release.nombre}}</a>
+	</ul>
+</div>
+    </div>
+{% endblock %}
+
+{% block contenido %}
+       <div class="container">
+    {% if user_stories %}
+<div class="content-secondary">
+	<div class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Tiempo Estimado</th>
+                  <th>Comentarios</th>
+                  <th>Usuario Asignado</th>
+                  <th>Estado</th>
+                  <th>Prioridad</th>
+
+              </tr>
+            </thead>
+
+            <tbody>
+                 {% for userStory in user_stories %}
+              <tr>
+                <td>{{ userStory.nombre }}</td>
+                <td>{{ userStory.descripcion }}</td>
+                <td>{{ userStory.tiempoestimado }}</td>
+                <td>{{ userStory.comentarios }}</td>
+                <td>{{ userStory.usuarioasignado.username }}</td>
+                <td>{{ userStory.estado }}</td>
+                <td>{{ userStory.prioridad }}</td>
+
+
+            {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+    </div>
+{% endif %}
+</div>
+</div>
+
+<br>
+<div align="center">
+		<a href="/proyectos/"><button type="button" class="btn btn-default">Volver</button></a>
+</div>
+    </div>
+
+{% endblock %}
+
+

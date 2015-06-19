@@ -9,5 +9,5 @@ urlpatterns = patterns('',
     url(r'^roles', include('roles.urls')),
     #url(r'^', include('userstory.urls')),
     url(r'^', include('actividades.urls')),
-
+    url(r'^', include('reportes.urls')),
 )

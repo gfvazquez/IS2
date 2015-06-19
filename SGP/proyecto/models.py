@@ -60,7 +60,19 @@ class Proyecto(models.Model):
     is_active = models.BooleanField(default=True)
     cliente = models.ForeignKey(Cliente)
     scrum_master = models.ForeignKey(User)
+    fecha_final = models.DateField(default= datetime.date.today)
     #flujo
+
+    def save(self):
+        from datetime import timedelta
+        d = timedelta(days=self.duracion_estimada*7)
+        if self.fecha_inicio:
+         self.fecha_final = self.fecha_inicio + d
+         super(Proyecto, self).save()
+        else:
+         self.fecha_final = self.fecha_final
+         super(Proyecto, self).save()
+
 
     def __unicode__(self):
         return self.nombre
@@ -73,6 +85,7 @@ class Proyecto(models.Model):
                           ("asignar_sprint", "Puede asignar un Sprint a un Flujo-Proyecto"),
                           ("reasignar_sprint", "puede reasignar un Sprint a un Flujo-Proyecto"),
                           ("registrar_avance_userstory", "Se logea las horas trabajadas y un comentario"),
+                          ("reportes_generales", "Se puede observar los reportes generales"),
                       )
 
 class Equipo(models.Model):
@@ -157,3 +170,14 @@ class ProyectoFlujoActividad(models.Model):
     def __unicode__(self):
         return self.proyecto.nombre
 
+class Release(models.Model):
+    nombre = models.CharField(max_length=50, verbose_name='Nombre', unique=True)
+    proyecto = models.ForeignKey(Proyecto)
+    def __unicode__(self):
+        return self.nombre
+
+class ReleaseUsValidados(models.Model):
+    release = models.ForeignKey(Release)
+    userstory = models.ForeignKey(Userstory)
+    def __unicode__(self):
+        return self.nombre
