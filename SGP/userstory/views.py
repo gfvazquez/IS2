@@ -475,9 +475,9 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                     nom = request.POST.get("archivo")
                     nombre = "/home/mauricio/" + nom
                     f = open(nombre, "rb+")
-                    archivo = Files(nombre=f.name, dato=f.read())
+                    archivo = Files(nombre=f.name, dato=f.read(), userstory=us)
                     archivo.save()
-                    us.archivo=archivo
+                    #us.archivo=archivo
                 ahora = datetime.date.today()
                 tiempotrabajado = form.cleaned_data['tiempotrabajado']
                 comentarios = form.cleaned_data['comentarios']
@@ -559,8 +559,8 @@ def descargar(request, archivo_id):
     return response
 
 def descargar_view(request, id_proyecto,id_userstory):
-    userstories = Userstory.objects.all().filter(id=id_userstory).exclude(archivo=None)
+    userstories = Files.objects.all().filter(userstory_id=id_userstory)
     #userstories = Userstory.objects.all().filter(id=us_id).exclude(archivo=None)
-    return render_to_response('./Userstories/descarga.html',{'userstories':userstories,'id_userstory': id_userstory, 'id_proyecto':id_proyecto},context_instance=RequestContext(request))
+    return render_to_response('./Userstories/descarga.html',{'userstories':userstories,'id_files': id_userstory, 'id_proyecto':id_proyecto},context_instance=RequestContext(request))
 
 
