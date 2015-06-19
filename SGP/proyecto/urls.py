@@ -2,13 +2,14 @@ from django.conf.urls import patterns, include, url
 from proyecto import views
 from reportes.views import irSeccionReporteGeneral,irSeccionReporte,descargar_reporte_usEnCursoIdProyecto, descargar_reporte_actividadesXIDProyecto,descargar_reporte_usOrdenadoXIDProyecto,descargar_reporte_usSprintActualXIDProyecto
 from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint
+from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint, releases, crear_release, consultar_us_release, proyectos, crear_proyecto
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
 from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory, descargar_view, \
     descargar
 
 urlpatterns = patterns('',
-    url(r'^proyectos/$', views.proyectos, name='proyectos'),
-    url(r'^proyectos/crear_proyecto/$', views.crear_proyecto, name='crear_proyecto'), # ADD NEW PATTERN!
+    url(r'^proyectos/$', proyectos),
+    url(r'^proyectos/crear_proyecto/$', crear_proyecto), # ADD NEW PATTERN!
     url(r'^proyectos/modificar/(?P<id_proyecto>\d+)/$', modificarProyecto),
     url(r'^proyectos/consultar/(?P<id_proyecto>\d+)/$', consultarProyecto),
     url(r'^proyectos/asignar_usuarios_proyecto/(?P<id_proyecto>\d+)/$', asignarEquipo),
@@ -56,5 +57,8 @@ urlpatterns = patterns('',
     url(r'^reportes/$', irSeccionReporteGeneral, name='reportes'),
 
 
+    url(r'^proyectos/release/(?P<id_proyecto>\d+)/$', releases),
+    url(r'^proyectos/release/(?P<id_proyecto>\d+)/crearrelease/$', crear_release),
+    url(r'^proyectos/release/(?P<id_proyecto>\d+)/consultar_release/(?P<id_release>\d+)/$', consultar_us_release),
 
 )

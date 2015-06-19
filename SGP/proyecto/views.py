@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from models import Proyecto, Equipo, FlujoProyecto, ProyectoFlujoActividad, Sprint, Userstory
+from models import Proyecto, Equipo, FlujoProyecto, ProyectoFlujoActividad, Sprint, Userstory, Release, ReleaseUsValidados
 from flujo.models import Flujo, FlujoActividad
 from userstory.views import modificarAvanceUserstory
 from django.db import models
@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm, consultarKanbanForm
+from forms import ProyectoForm, ProyectoModificadoForm, AsignarUsuariosForm, AsignarFlujoForm, AsignarSprintFlujoForm, consultarKanbanForm, AsignarUSValidadoReleaseForm
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.models import Group, Permission, User
 from decimal import *
@@ -835,3 +835,105 @@ def iniciarSprint(request, id_sprint):
     sprint.estado='Iniciado'
     sprint.save()
     return HttpResponseRedirect('/proyectos/')
+
+
+@login_required
+def releases(request, id_proyecto):
+
+    perm_add_release=0
+
+    releases = Release.objects.filter(proyecto_id = id_proyecto)
+    rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
+
+    if rol_en_proyecto_existe:
+        rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+        rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+        user_permissions_groups = list(rol.permissions.all())
+
+        for p in user_permissions_groups:
+            if (p.codename == 'add_release'):
+                perm_add_release = 1
+
+
+    return render_to_response('./Release/release.html', {'lista_releases':releases, 'perm_add_release':perm_add_release}, context_instance=RequestContext(request))
+
+
+
+
+def crear_release(request, id_proyecto):
+
+    band=False
+
+    rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
+    rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
+    user_permissions_groups = list(rol.permissions.all())
+
+    for p in user_permissions_groups:
+        if (p.codename == 'add_release'):
+            band = True
+
+    if (band == True):
+            context = RequestContext(request)
+            proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+            #valor booleano para llamar al template cuando el registro fue correcto
+            registered = False
+            #myform = Sprint(initial = {'estado': requested_status})
+            #myform.fields['estado'].editable = False
+            if request.method == 'POST':
+                asignar_release_form = AsignarUSValidadoReleaseForm(data=request.POST, id_proyecto =id_proyecto )
+                #sprint_form.fields['estado'].widget.attrs['readonly'] = True
+
+                # If the two forms are valid...
+                if asignar_release_form.is_valid():
+                    # Guarda el Usuarios en la bd
+                    asignar_release_form.clean()
+
+                    user_stories =asignar_release_form.cleaned_data['user_stories']
+                    nombre = asignar_release_form.cleaned_data['nombre']
+
+                    release = Release(nombre=nombre, proyecto=proyecto)
+                    release.save()
+
+                    for us in user_stories:
+                        u = ReleaseUsValidados(release=release, userstory=us)
+                        u.save()
+                        Userstory.objects.filter(id=u.pk).update(estado='Release')
+
+                    #Actualiza la variable para llamar al template cuando el registro fue correcto
+                    registered = True
+                    pass
+
+                # Invalid form or forms - mistakes or something else?
+                # Print problems to the terminal.
+                # They'll also be shown to the user.
+                else:
+                    print asignar_release_form.errors
+
+            # Not a HTTP POST, so we render our form using two ModelForm instances.
+            # These forms will be blank, ready for user input.
+            else:
+                asignar_release_form = AsignarUSValidadoReleaseForm(id_proyecto =id_proyecto )
+
+
+            # Render the template depending on the context.
+            return render_to_response('./Release/crearRelease.html', {'user_form': asignar_release_form, 'registered': registered,
+                                                                     'id_proyecto': id_proyecto}, context)
+    else:
+        raise Http404("No cuenta con los permisos necesarios")
+
+
+@login_required
+def consultar_us_release(request, id_proyecto, id_release):
+
+     release = Release.objects.get(id = id_release)
+     template_name = './Release/consultar_release.html'
+     us_release = ReleaseUsValidados.objects.filter(release_id=id_release)
+
+     user_stories = []
+     for u in us_release:
+         us = Userstory.objects.get(id=u.userstory.pk)
+         user_stories.append(us)
+
+     return render(request, template_name, {'user_stories': user_stories, 'id_release': id_release, 'id_proyecto': id_proyecto, 'release': release})
+
+#releases, crear_release, consultar_us_release

@@ -1,7 +1,7 @@
 from django import forms
 from flujo.models import Flujo
 from cliente.models import Cliente
-from models import Sprint
+from models import Sprint, Userstory
 from models import Proyecto, FlujoProyecto
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
@@ -152,3 +152,20 @@ class consultarKanbanForm(forms.Form):
         self.fields['estado'] = forms.ChoiceField(widget=forms.Select(),
                                     choices=(ESTADOS),
                                     required=False)
+
+class AsignarUSValidadoReleaseForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.id_proyecto = kwargs.pop('id_proyecto', None)
+        super(AsignarUSValidadoReleaseForm, self).__init__(*args, **kwargs)
+        sprints = Sprint.objects.filter(proyecto_id=self.id_proyecto)
+        list_of_ids = []
+        for sprint in sprints:
+            user_stories = Userstory.objects.filter(sprint_id = sprint.pk)
+            for us in user_stories:
+                if us.estado == 'Validado' and (us.sprint.estado == 'Finalizado' or us.sprint.estado == 'Incompleto'):
+                    list_of_ids.append(us.pk)
+
+        self.fields['nombre'] = forms.CharField(widget=forms.TextInput(), max_length=30, min_length=2, required=True, error_messages={'required': 'Ingrese un nombre para el release', 'max_length': 'Longitud maxima: 15', 'min_length': 'Longitud minima: 2 caracteres'})
+        self.fields['user_stories'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                                        queryset=Userstory.objects.filter(pk__in=list_of_ids),
+                                                        required=True)

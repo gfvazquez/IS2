@@ -452,6 +452,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 perm_boton_done.append(1)
 
             elif(x.estado == 'Done'):
+                #auxDone representa que actividad es la que actualmente se esta realizando por el desarrollador
                 auxDone=aux
                 perm_boton_done.append(0)
 
@@ -511,6 +512,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 else:
                     if (us.estado == 'Comentario'):
                         us.estado='EnCurso'
+
                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
 
                 f.close()
