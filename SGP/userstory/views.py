@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response, render
-from proyecto.models import Proyecto, FlujoProyecto,Equipo, Userstory, Sprint, ProyectoFlujoActividad
+from proyecto.models import Proyecto, FlujoProyecto,Equipo, Userstory, Sprint, ProyectoFlujoActividad,Files
 from forms import UserstoryForm, UserstoryModificadoForm,verHistorialForm, AvanceUserStoryForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, Http404,HttpResponse
@@ -390,20 +390,7 @@ def tieneUsuarioUSAlta(userStoryRecibido):
 
 @login_required
 def modificarAvanceUserstory(request,id_proyecto, id_userstory):
-    """ Recibe un request y un id, luego busca en la base de datos al us
-    cuyos datos se quieren modificar. Se muestra un formulario con estos
-    campos y luego se guardan los cambios realizados.
 
-	@type request: django.http.HttpRequest
-	@param request: Contiene informacion sobre la solicitud web actual que llamo a esta vista
-
-	@type id_usuario: Integer
-	@param id_usuario: identificador unico del US
-
-	@rtype: django.HttpResponse
-	@return: userstory_modificado.html, formulario donde se muestran los datos que el usuario puede modificar
-
-	@author: Gabriela Vazquez """
     band = False
 
     rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
@@ -422,6 +409,9 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
     sprint = us.sprint
     usEnCurso =False
     user_stories_usuario_ensprint = Userstory.objects.filter(sprint_id=sprint.pk, usuarioasignado_id=request.user.pk, estado='EnCurso').exists()
+    f=False
+    archivo=False
+
     if user_stories_usuario_ensprint:
         user_stories_usuario_ensprint_list = Userstory.objects.filter(sprint_id=sprint.pk, usuarioasignado_id=request.user.pk, estado='EnCurso')
         if user_stories_usuario_ensprint_list[0] != us:
@@ -452,6 +442,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
         boton_done=0
 
         aux=0
+        auxDone=False
         for x in proyectoFlujoActividadConsultaLista:
             aux=aux+1
             if(x.estado == 'ToDo'):
@@ -475,10 +466,18 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
 
         if request.method == 'POST':
 
-            form = AvanceUserStoryForm(request.POST)
+            form = AvanceUserStoryForm(request.POST, request.FILES)
             if form.is_valid():
-                ahora = datetime.date.today()
                 form.clean()
+                #archivo = form.cleaned_data['archivo']
+                if request.POST.get("archivo") != None:
+                    nom = request.POST.get("archivo")
+                    nombre = "/home/mauricio/" + nom
+                    f = open(nombre, "rb+")
+                    archivo = Files(nombre=f.name, dato=f.read())
+                    archivo.save()
+                    us.archivo=archivo
+                ahora = datetime.date.today()
                 tiempotrabajado = form.cleaned_data['tiempotrabajado']
                 comentarios = form.cleaned_data['comentarios']
 
@@ -514,7 +513,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                         us.estado='EnCurso'
                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
 
-
+                f.close()
                 us.save()
 
 
@@ -549,3 +548,17 @@ def swap( a, x, y ):
   tmp = a[x]
   a[x] = a[y]
   a[y] = tmp
+
+def descargar(request, archivo_id):
+    archivo = Files.objects.get(pk=archivo_id)
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename="SGP-Download"'
+    response.write(archivo.dato)
+    return response
+
+def descargar_view(request, id_proyecto,id_userstory):
+    userstories = Userstory.objects.all().filter(id=id_userstory).exclude(archivo=None)
+    #userstories = Userstory.objects.all().filter(id=us_id).exclude(archivo=None)
+    return render_to_response('./Userstories/descarga.html',{'userstories':userstories,'id_userstory': id_userstory, 'id_proyecto':id_proyecto},context_instance=RequestContext(request))
+
+

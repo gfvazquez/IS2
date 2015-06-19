@@ -42,6 +42,10 @@
 	    <form action="" method="post">
             <table>
                 {{ form.as_table }}
+                <tr>
+                    <th>Archivo Adjunto</th>
+                    <td><input id="archivo" type="file" name="archivo"></td>
+                </tr>
             </table>
             <br>
             {% csrf_token %}
