@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group, Permission, User
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer, Indenter
 from datetime import *
 from django.http import StreamingHttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from SGP import settings
 from proyecto.models import Userstory, ProyectoFlujoActividad, Proyecto, FlujoProyecto, Sprint
@@ -1044,3 +1044,13 @@ def descargar_reporte_usSprintActualXIDProyecto(request,id_proyecto):
     a=file(reporte_usSprintActualXIDProyecto(id_proyecto))
 
     return StreamingHttpResponse(a,content_type='application/pdf')
+
+
+def irSeccionReporte(request,id_proyecto):
+    template_name = './Proyecto/reportes.html'
+    return render(request,template_name,{'id_proyecto':id_proyecto})
+
+
+def irSeccionReporteGeneral(request):
+    template_name = './Proyecto/reportesGenerales.html'
+    return render(request,template_name)

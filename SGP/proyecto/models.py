@@ -73,6 +73,7 @@ class Proyecto(models.Model):
                           ("asignar_sprint", "Puede asignar un Sprint a un Flujo-Proyecto"),
                           ("reasignar_sprint", "puede reasignar un Sprint a un Flujo-Proyecto"),
                           ("registrar_avance_userstory", "Se logea las horas trabajadas y un comentario"),
+                          ("reportes_generales", "Se puede observar los reportes generales"),
                       )
 
 class Equipo(models.Model):

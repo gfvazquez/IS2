@@ -34,6 +34,7 @@ def user_login(request):
                     actividad = False
                     usuario = False
                     cliente = False
+                    reporte = False
                     user_permissions_groups = request.user.get_group_permissions(obj=None)
                     for p in user_permissions_groups:
                         if (p == 'flujo.add_fujo'):
@@ -46,8 +47,10 @@ def user_login(request):
                             usuario = True
                         if (p == 'cliente.add_cliente'):
                             cliente = True
+                        if (p == 'proyecto.reportes_generales'):
+                            reporte = True
 
-                    return render(request, template_name, {'flujo':flujo, 'rol':rol, 'actividad':actividad, 'usuario':usuario, 'cliente':cliente })
+                    return render(request, template_name, {'flujo':flujo, 'rol':rol, 'actividad':actividad, 'usuario':usuario, 'cliente':cliente, 'reporte':reporte })
 
                 else:
                     return HttpResponse("El usuario no esta activo")
@@ -68,6 +71,7 @@ def irprincipal(request):
     actividad = False
     usuario = False
     cliente = False
+    reporte = False
     for p in user_permissions_groups:
         if (p == 'flujo.add_flujo'):
             flujo = True
@@ -79,6 +83,8 @@ def irprincipal(request):
             usuario = True
         if (p == 'cliente.add_cliente'):
             cliente = True
+        if (p == 'proyecto.reportes_generales'):
+            reporte = True
 
-    return render(request, template_name, {'flujo':flujo, 'rol':rol, 'actividad':actividad, 'usuario':usuario, 'cliente':cliente })
+    return render(request, template_name, {'flujo':flujo, 'rol':rol, 'actividad':actividad, 'usuario':usuario, 'cliente':cliente, 'reporte':reporte })
 

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
+from reportes.views import irSeccionReporteGeneral,irSeccionReporte,descargar_reporte_usEnCursoIdProyecto, descargar_reporte_actividadesXIDProyecto,descargar_reporte_usOrdenadoXIDProyecto,descargar_reporte_usSprintActualXIDProyecto
 from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
 from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory
@@ -39,6 +40,18 @@ urlpatterns = patterns('',
     url(r'^proyectos/userstories/(?P<id_proyecto>\d+)/verHistorial/(?P<id_userstory>\d+)/$', verhistorial),
     url(r'^proyectos/userstories/(?P<id_proyecto>\d+)/modificar_avance_userstory/(?P<id_userstory>\d+)', modificarAvanceUserstory),
     url(r'^proyectos/userstories/modificar_avance_userstory/(?P<id_userstory>\d+)/confirmar_done/(?P<id_proyectoActividad>\d+)', confirmarDoneActividad),
+
+
+    #ID de proyecto
+    url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/$', irSeccionReporte, name='usIdCurso'),
+    url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reporteIdProyecto/$', descargar_reporte_usEnCursoIdProyecto, name='usIdCurso'),
+    url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesActividadesIDProyecto/$', descargar_reporte_actividadesXIDProyecto, name='usId'),
+    url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesPrioridadUSIDProyecto/$', descargar_reporte_usOrdenadoXIDProyecto, name='actividadesId'),
+    url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesUSSprintIDActivo/$', descargar_reporte_usSprintActualXIDProyecto, name='usSprintActivoID'),
+
+    #Reportes Generales
+    url(r'^reportes/$', irSeccionReporteGeneral, name='reportes'),
+
 
 
 )

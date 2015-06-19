@@ -1,0 +1,55 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+    <div class="container">
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="/reportes/">Reportes Generales</a></li>
+        </ul>
+	</div>
+</nav>
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div class="container">
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Reportes Generales del Sistema</a>
+		</li>
+	</ul>
+</div>
+    </div>
+{% endblock %}
+
+
+{% block contenido %}
+    <div class="container">
+<div class="content-secondary">
+<!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
+	<div class="panel-group" id="accordion">
+
+	<br>
+
+	<div class="panel panel-default">
+				    <div class="panel-heading">
+                        <a href="reportesUsUsuario/"><button type="button" class="btn btn-default btn-sm">UserStories por Usuario</button></a>
+                        <a href="reportesUsProyecto/"><button type="button" class="btn btn-default btn-sm">UserStories en curso</button></a>
+                        <a href="reportesActividadesProyecto/"><button type="button" class="btn btn-default btn-sm">Lista de las actividades en Orden</button></a>
+                        <a href="reportesPrioridadUSProyecto/"><button type="button" class="btn btn-default btn-sm">Lista de US ordenada</button></a>
+                        <a href="reportesUSSprintActivo/"><button type="button" class="btn btn-default btn-sm">Lista de US del Sprint Actual</button></a>
+				    </div>
+	</div>
+
+
+
+	</div>
+	</div>
+    </div>
+{% endblock %}
