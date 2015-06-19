@@ -110,6 +110,9 @@ class AvanceUserStoryForm (forms.Form):
     """
     tiempotrabajado = forms.IntegerField(required=False, help_text='En Horas', error_messages={'required': 'Ingrese el tiempo trabajado del User Story',})
     comentarios = forms.CharField(widget=forms.Textarea, max_length=50, required=False, error_messages={'required': 'Ingrese un comentario para el User Story', 'max_length': 'Longitud maxima: 200'})
+    class Meta:
+        models=Userstory
+        fields = ('tiempotrabajado','comentarios','archivo')
 
 
 
