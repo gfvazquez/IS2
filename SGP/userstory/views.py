@@ -242,7 +242,13 @@ def modificarUserstory(request,id_proyecto, id_userstory):
 
 
                     if (us.estado != estado):
-                        us.estado = estado
+                        if estado == 'Resuelta':
+                            us.estado = estado
+                        elif estado == 'Rechazado':
+                            us.estado = 'InPlanning'
+                            proyecto_flujo_actividades = ProyectoFlujoActividad.objects.filter(userstory_id=us.pk)
+                            for pfa in proyecto_flujo_actividades:
+                                ProyectoFlujoActividad.objects.filter(id=pfa.pk).update(estado='ToDo')
 
 
                     if us.prioridad != prioridad:
@@ -268,6 +274,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
 
                 us.historial = modificaciones
                 #us.sprint = sprint
+
                 us.save()
                 '''
                     Obtener Lider, scrum master del proyecto al que se corresponde este US
@@ -473,7 +480,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 #archivo = form.cleaned_data['archivo']
                 if request.POST.get("archivo") != None:
                     nom = request.POST.get("archivo")
-                    nombre = "/home/mauricio/" + nom
+                    nombre = "/home/andrea/" + nom
                     f = open(nombre, "rb+")
                     archivo = Files(nombre=f.name, dato=f.read(), userstory=us)
                     archivo.save()
