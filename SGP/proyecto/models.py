@@ -134,11 +134,7 @@ class FlujoProyecto(models.Model):
     def __unicode__(self):
         return self.flujo.nombre
 
-class Files (models.Model):
-    nombre = models.CharField(max_length=60)
-    dato   =models.BinaryField()
-    def __unicode__(self):
-        return self.nombre
+
 
 class Userstory(models.Model):
     nombre= models.CharField(max_length=50, verbose_name='Nombre', unique=True)
@@ -154,12 +150,18 @@ class Userstory(models.Model):
     historial=models.CharField(max_length=1000,blank=True, editable=False,verbose_name='Historico')# poner en otro lado, no es algo que el usuario crea
     activo = models.BooleanField(default=True, editable=False) #para la eliminacion
     sprint = models.ForeignKey(Sprint)
-    archivo = models.OneToOneField(Files, related_name="archivo", null=True)
+    #archivo = models.OneToOneField(Files, related_name="archivo", null=True)
 
 
     def __unicode__(self):
         return self.nombre
 
+class Files (models.Model):
+    nombre = models.CharField(max_length=60)
+    dato   =models.BinaryField()
+    userstory = models.ForeignKey(Userstory)
+    def __unicode__(self):
+        return self.nombre
 
 class ProyectoFlujoActividad(models.Model):
     proyecto = models.ForeignKey(Proyecto)

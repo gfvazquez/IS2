@@ -9,7 +9,7 @@
 
 	<div  class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="/userstories/">User Stories</a></li>
+			<li><a href="#">User Stories</a></li>
 			<li class="active"><a href="/proyectos/userstories/{{ id_proyecto }}/descargar_view/{{ id_userstory }}/">Descarga del Adjunto</a></li>
         </ul>
 	</div>
@@ -20,7 +20,9 @@
 
 {%block titulo%}Descargas{%endblock%}
 {% block contenido %}
+    <div class="container">
 <nav class="detalle">
+
     <h1>Descargar Archivo</h1>
     <table class="max">
         <tr>
@@ -30,11 +32,12 @@
          {% for us in userstories %}
         <tr>
 
-            <td><a href="/proyectos/userstories/descargar/{{us.archivo.id}}"><font color="#3D9A13">{{us.archivo.nombre}}</font></a></td>
+            <td><a href="/proyectos/userstories/descargar/{{us.id}}"><font color="#3D9A13">{{us.nombre}}</font></a></td>
         </tr>
 
         {% endfor %}
     </table>
    <a href="/proyectos/"><button type="button" class="btn btn-default">Volver</button></a>
 </nav>
+    </div>
 {% endblock %}

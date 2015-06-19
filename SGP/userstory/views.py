@@ -242,7 +242,13 @@ def modificarUserstory(request,id_proyecto, id_userstory):
 
 
                     if (us.estado != estado):
-                        us.estado = estado
+                        if estado == 'Resuelta':
+                            us.estado = estado
+                        elif estado == 'Rechazado':
+                            us.estado = 'InPlanning'
+                            proyecto_flujo_actividades = ProyectoFlujoActividad.objects.filter(userstory_id=us.pk)
+                            for pfa in proyecto_flujo_actividades:
+                                ProyectoFlujoActividad.objects.filter(id=pfa.pk).update(estado='ToDo')
 
 
                     if us.prioridad != prioridad:
@@ -268,6 +274,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
 
                 us.historial = modificaciones
                 #us.sprint = sprint
+
                 us.save()
                 '''
                     Obtener Lider, scrum master del proyecto al que se corresponde este US
@@ -474,10 +481,14 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 if request.POST.get("archivo") != None:
                     nom = request.POST.get("archivo")
                     nombre = "/home/mauricio/" + nom
-                    f = open(nombre, "rb+")
-                    archivo = Files(nombre=f.name, dato=f.read())
-                    archivo.save()
-                    us.archivo=archivo
+
+                    if (nom):
+                        f = open(nombre, "rb+")
+                        archivo = Files(nombre=f.name, dato=f.read(), userstory=us)
+                        archivo.save()
+                        f.close()
+
+                    #us.archivo=archivo
                 ahora = datetime.date.today()
                 tiempotrabajado = form.cleaned_data['tiempotrabajado']
                 comentarios = form.cleaned_data['comentarios']
@@ -515,7 +526,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
 
                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
 
-                f.close()
+
                 us.save()
 
 
@@ -559,8 +570,8 @@ def descargar(request, archivo_id):
     return response
 
 def descargar_view(request, id_proyecto,id_userstory):
-    userstories = Userstory.objects.all().filter(id=id_userstory).exclude(archivo=None)
+    userstories = Files.objects.all().filter(userstory_id=id_userstory)
     #userstories = Userstory.objects.all().filter(id=us_id).exclude(archivo=None)
-    return render_to_response('./Userstories/descarga.html',{'userstories':userstories,'id_userstory': id_userstory, 'id_proyecto':id_proyecto},context_instance=RequestContext(request))
+    return render_to_response('./Userstories/descarga.html',{'userstories':userstories,'id_files': id_userstory, 'id_proyecto':id_proyecto},context_instance=RequestContext(request))
 
 
