@@ -480,10 +480,14 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 #archivo = form.cleaned_data['archivo']
                 if request.POST.get("archivo") != None:
                     nom = request.POST.get("archivo")
-                    nombre = "/home/andrea/" + nom
-                    f = open(nombre, "rb+")
-                    archivo = Files(nombre=f.name, dato=f.read(), userstory=us)
-                    archivo.save()
+                    nombre = "/home/mauricio/" + nom
+
+                    if (nom):
+                        f = open(nombre, "rb+")
+                        archivo = Files(nombre=f.name, dato=f.read(), userstory=us)
+                        archivo.save()
+                        f.close()
+
                     #us.archivo=archivo
                 ahora = datetime.date.today()
                 tiempotrabajado = form.cleaned_data['tiempotrabajado']
@@ -522,7 +526,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
 
                     ProyectoFlujoActividad.objects.filter(id=proyectoFlujoActividadConsultaLista[auxDone].pk).update(estado='Doing')
 
-                f.close()
+
                 us.save()
 
 
