@@ -1,0 +1,61 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+    <div class="container">
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/release/{{ id_proyecto }}/crearrelease">Crear Release</a></li>
+        </ul>
+
+	</div>
+</nav>
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div class="container">
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Release</a>
+		</li>
+	</ul>
+</div>
+    </div>
+{% endblock %}
+
+
+{% block contenido %}
+    <div class="container">
+<h1>Crear Release</h1>
+<div class="content-secondary">
+ {% if registered %}
+                <h2>Release Creado Exitosamente</h2>
+                <a href="/proyectos/">Volver a la lista de Proyectos.</a><br />
+                    <hr />
+    {% else %}
+     <h2>Complete los campos</h2><br />
+          <form id="release_form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Display each form. The as_p method wraps each element in a paragraph
+                         (<p>) element. This ensures each element appears on a new line,
+                         making everything look neater. -->
+                    {{ user_form.as_p }}
+
+                    <!-- Provide a button to click to submit the form. -->
+                    <div align="center">
+		                <input class="btn btn-default" type="submit" value="Crear"/>
+		                <a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
+	                </div>
+                </form>
+    {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

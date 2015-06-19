@@ -151,3 +151,14 @@ class ProyectoFlujoActividad(models.Model):
     def __unicode__(self):
         return self.proyecto.nombre
 
+class Release(models.Model):
+    nombre = models.CharField(max_length=50, verbose_name='Nombre', unique=True)
+    proyecto = models.ForeignKey(Proyecto)
+    def __unicode__(self):
+        return self.nombre
+
+class ReleaseUsValidados(models.Model):
+    release = models.ForeignKey(Release)
+    userstory = models.ForeignKey(Userstory)
+    def __unicode__(self):
+        return self.nombre
