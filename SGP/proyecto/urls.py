@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
-from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint
+from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint, \
+    burndownchart2
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
 from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory, descargar_view, \
     descargar
@@ -18,6 +19,8 @@ urlpatterns = patterns('',
     url(r'^proyectos/burndownchart/(?P<id_proyecto>\d+)/$', burndownchart),
     url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/consultar_un_flujo_proyecto/(?P<id_flujo_proyecto>\d+)/$', consultarUnFlujoProyecto),
     url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/consultar_burndownchart/(?P<id_flujo_proyecto>\d+)/$', burndownchart),
+    url(r'^proyectos/consultar_burndownchart2/(?P<id_proyecto>\d+)/$', burndownchart2),
+
     url(r'^proyectos/sprint/(?P<id_sprint>\d+)/$', consultarUserStoriesSprint),
     #url(r'^proyectos/sprints/(?P<id_proyecto>\d+)/$', consultarSprintProyecto),
     url(r'^proyectos/sprint_activo/user_stories_current_user/(?P<id_proyecto>\d+)/$', consultarUSdelSprintActivoDelUsuario),

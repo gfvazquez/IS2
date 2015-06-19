@@ -1,0 +1,110 @@
+{% extends "base_general.html" %}
+
+{% block navegacion %}
+
+<div class="container">
+<nav class="navbar navbar-default">
+	<div class="navbar-header">
+		<a href="/principal/" class="navbar-brand">SGP</a>
+	</div>
+
+	<div  class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav">
+			<li><a href="/proyectos/">Proyectos</a></li>
+        </ul>
+
+	</div>
+</nav>
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div class="container">
+<div class="menu">
+	<ul>
+		<li id="option1" class="active">
+			<a href="#">Proyecto</a>
+		</li>
+	</ul>
+</div>
+    </div>
+{% endblock %}
+
+
+{% block contenido %}
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Tráfico mensual</title>
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script type="text/javascript">
+$(function () {
+    $('#linea').highcharts({
+        chart: {
+            type: 'line',  // tipo de gráfica
+            borderWidth: 5 // ancho del borde de la gráfica
+        },
+        title: {
+            text: 'BURN DOWN CHART SPRINT POR PROYECTO', // título
+            x: -20
+        },
+        subtitle: {
+            text: 'SGP 2015', // subtítulo
+            x: -20
+        },
+        xAxis: {
+             title: {
+                text: 'DÍAS TRABAJADOS POR SPRINT' //nombre del eje de X
+            },
+
+            categories: [{% for x in lst %} '{{ x.SP_nombre }}', {% endfor %}] // categorías
+        },
+        yAxis: {
+            title: {
+                text: 'PROYECTOS' //nombre del eje de Y
+            },
+            plotLines: [{
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ' Dias' // el sufijo de la información presente en el "tooltip"
+        },
+        legend: { // configuración de la leyenda
+            layout: 'horizontal',
+            align: 'center',
+            verticalAlign: 'bottom',
+            borderWidth: 3
+        },
+        series: [{ // configuración de las series6
+
+            name: 'optimo',
+            data: [{% for x in lst %} {{ x.SP_opt }}, {% endfor %}]
+        },
+            {
+            name: 'real',
+            data: [{% for x in lst %} {{ x.SP_tt }}, {% endfor %}]
+        }]
+    });
+    });
+
+
+        </script>
+    </head>
+    <body>
+    <div class="container">
+        <!-- div que contendrá la gráfica lineal -->
+        <div id="linea" style="width: 100%; height: 350px; margin: 0 auto;float:left;"></div>
+        <!-- div que contendrá la gráfica circular -->
+        <div id="pie" style="width: 50%; height: 350px; margin: 0 auto;float:left;"></div>
+
+        <div style="border-top:1px solid #CDCDCD;margin:10px;padding:0;clear:both;"></div>
+
+        <!-- div que contendrá la gráfica a tiempo real -->
+        <div id="tiempoReal" style="height: 400px; margin: 0 auto;"></div>
+        </div>
+    </body>
+
+{% endblock %}
+

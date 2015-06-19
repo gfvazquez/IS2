@@ -189,7 +189,7 @@ def modificarProyecto(request, id_proyecto):
                 proyecto.duracion_estimada = duracion
                 proyecto.descripcion = descripcion
                 proyecto.estado = estado
-                proyecto.save();
+                proyecto.save()
 
 
 
@@ -827,6 +827,33 @@ def burndownchart(request, id_proyecto, id_flujo_proyecto):
 
 
         template_name = './Proyecto/hla.html'
+        return render(request, template_name,
+                                { 'id_proyecto': id_proyecto, 'ejeXName': ejeXName, 'lst':lst})
+
+
+def burndownchart2(request, id_proyecto):
+
+        #id_flujo_proyecto = FlujoProyecto.objects.filter(proyecto_id = id_proyecto, estado = 'Doing')
+        #flujo_proyecto_sprint = FlujoProyecto.objects.get(id=id_flujo_proyecto)
+        #flujo_proyecto = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto_sprint.proyecto.pk, flujo_id=flujo_proyecto_sprint.flujo.pk).exclude(sprint_id=1)
+        sprint = Sprint.objects.filter(proyecto_id=id_proyecto)
+        #user_stories = Userstory.objects.filter(sprint_id = sprint.pk)
+        ejeXName = []
+        ejeXValor = []
+        duracionOptimaX = []
+        #duracion_sprint = sprint.duracion
+
+        for sp in sprint:
+            ejeXName.append(sp.nombre)
+            dec = Decimal(sp.tiempoacumulado)
+            ejeXValor.append(format(dec, '.2f'))
+            duracionOptimaX.append(sp.duracion)
+
+
+        lst = [{'SP_nombre': t[0], 'SP_tt': t[1], 'SP_opt':t[2]} for t in zip(ejeXName, ejeXValor, duracionOptimaX)]
+
+
+        template_name = './Proyecto/hla2.html'
         return render(request, template_name,
                                 { 'id_proyecto': id_proyecto, 'ejeXName': ejeXName, 'lst':lst})
 
