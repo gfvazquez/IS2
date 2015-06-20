@@ -534,7 +534,8 @@ def descargar_reporte_usSprintActualXProyecto(request):
 '''
 Prueba
 '''
-def reporte():
+
+def reporte(id_proyecto):
     doc = SimpleDocTemplate(str(settings.BASE_DIR)+"/test.pdf",pagesize=letter,
                             rightMargin=72,leftMargin=72,
                             topMargin=30,bottomMargin=18)
@@ -562,22 +563,19 @@ def reporte():
     '''
         Codigo de Sprint por US
     '''
-    id_flujo_proyecto=5
-    flujo_proyecto_sprint = FlujoProyecto.objects.get(id=id_flujo_proyecto)
-    flujo_proyecto = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto_sprint.proyecto.pk, flujo_id=flujo_proyecto_sprint.flujo.pk).exclude(sprint_id=1)
-    sprint = Sprint.objects.get(id=flujo_proyecto[0].sprint.pk)
-    user_stories = Userstory.objects.filter(sprint_id = sprint.pk)
+    sprint = Sprint.objects.filter(proyecto_id=id_proyecto)
     ejeXName = []
     ejeXValor = []
     duracionOptimaX = []
-    duracion_sprint = sprint.duracion
+    for sp in sprint:
+       ejeXName.append(sp.nombre)
+       dec = Decimal(sp.tiempoacumulado)
+       #ejeXValor.append(lista)
+       ejeXValor.append(int(dec))
+       duracionOptimaX.append(sp.duracion)
 
-    for us in user_stories:
-       ejeXName.append(us.nombre)
-       dec = Decimal(us.tiempotrabajado) / Decimal(5)
-       ejeXValor.append(format(dec, '.2f'))
-       duracionOptimaX.append(us.tiempoestimado)
-
+    valores=[]
+    valores.append(ejeXValor)
     d = Drawing(400, 200)
     lc = HorizontalLineChart()
     lc.x = 30
@@ -585,28 +583,16 @@ def reporte():
     lc.height = 125
     lc.width = 350
     #lc.data = [[0.5,1.5]]
-    #Definicion de la matriz
-    matriz = []
-    matriz = []
-    for i in range(1):
-        matriz.append([])
-        for j in range(len(ejeXValor)):
-            matriz[i].append(None)
-
-    for i in range(1):
-        matriz.append([])
-        for j in ejeXValor:
-            dec = Decimal(j)
-            matriz[i].append(format(dec, '.2f'))
+    lc.data =valores
 
 
-    lc.data = matriz
+
     #lc.categoryAxis.categoryNames = ['Suspenso', 'Aprobado', 'Notable',
                                     #'Sobresaliente']
     lc.categoryAxis.categoryNames = ejeXName
     lc.categoryAxis.labels.boxAnchor = 'n'
     lc.valueAxis.valueMin = 0
-    lc.valueAxis.valueMax = 2.5
+    #lc.valueAxis.valueMax = 2.5
     lc.valueAxis.valueStep = 0.5
     lc.lines[0].strokeWidth = 2
     lc.lines[0].symbol = makeMarker('FilledCircle')
@@ -616,13 +602,13 @@ def reporte():
     doc.build(story)
     return str(settings.BASE_DIR)+"/test.pdf"
 
-def descargar_reporte_(request):
+def descargar_reporte_(request,id_proyecto):
     '''
     Vista para descargar el reporte
     '''
     '''if request.user.is_superuser!=True:
         return render_to_response('extiende.html',context_instance=RequestContext(request))'''
-    a=file(reporte())
+    a=file(reporte(id_proyecto))
 
     return StreamingHttpResponse(a,content_type='application/pdf')
 

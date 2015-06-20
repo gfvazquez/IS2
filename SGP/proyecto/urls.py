@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
-from reportes.views import irSeccionReporteGeneral,irSeccionReporte,descargar_reporte_usEnCursoIdProyecto, descargar_reporte_actividadesXIDProyecto,descargar_reporte_usOrdenadoXIDProyecto,descargar_reporte_usSprintActualXIDProyecto
+from reportes.views import irSeccionReporteGeneral,irSeccionReporte,descargar_reporte_usEnCursoIdProyecto, descargar_reporte_actividadesXIDProyecto,descargar_reporte_usOrdenadoXIDProyecto,descargar_reporte_usSprintActualXIDProyecto,descargar_reporte_
 from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint, releases, crear_release, consultar_us_release, proyectos, crear_proyecto,burndownchart2, finalizar_proyecto
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
 from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory, descargar_view, \
@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     url(r'^proyectos/asignar_usuarios_proyecto/(?P<id_proyecto>\d+)/$', asignarEquipo),
     url(r'^proyectos/asignar_flujos_proyecto/(?P<id_proyecto>\d+)/$', asignarFlujo),
     #url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/$', consultarFlujoProyecto),
-     url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/$', consultarFlujoProyecto),
+    url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/$', consultarFlujoProyecto),
     url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/asignar_sprints/(?P<id_flujo>\d+)/$', asignarSprint),
     url(r'^proyectos/burndownchart/(?P<id_proyecto>\d+)/$', burndownchart),
     url(r'^proyectos/consultar_flujo_proyecto/(?P<id_proyecto>\d+)/consultar_un_flujo_proyecto/(?P<id_flujo_proyecto>\d+)/$', consultarUnFlujoProyecto),
@@ -54,6 +54,8 @@ urlpatterns = patterns('',
     url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesActividadesIDProyecto/$', descargar_reporte_actividadesXIDProyecto, name='usId'),
     url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesPrioridadUSIDProyecto/$', descargar_reporte_usOrdenadoXIDProyecto, name='actividadesId'),
     url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesUSSprintIDActivo/$', descargar_reporte_usSprintActualXIDProyecto, name='usSprintActivoID'),
+    url(r'^proyectos/reportes/(?P<id_proyecto>\d+)/reportesGrafico/$', descargar_reporte_, name='grafico'),
+
 
     #Reportes Generales
     url(r'^reportes/$', irSeccionReporteGeneral, name='reportes'),

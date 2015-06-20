@@ -481,7 +481,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 #archivo = form.cleaned_data['archivo']
                 if request.POST.get("archivo") != None:
                     nom = request.POST.get("archivo")
-                    nombre = "/home/mauricio/" + nom
+                    nombre = "/home/gabriela/" + nom
 
                     if (nom):
                         f = open(nombre, "rb+")
