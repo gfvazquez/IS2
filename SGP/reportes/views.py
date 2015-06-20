@@ -563,7 +563,7 @@ def reporte(id_proyecto):
     '''
         Codigo de Sprint por US
     '''
-    sprint = Sprint.objects.filter(proyecto_id=id_proyecto)
+    sprint = Sprint.objects.filter(proyecto_id=id_proyecto).exclude(id=1)
     ejeXName = []
     ejeXValor = []
     duracionOptimaX = []
@@ -593,7 +593,7 @@ def reporte(id_proyecto):
     lc.categoryAxis.labels.boxAnchor = 'n'
     lc.valueAxis.valueMin = 0
     #lc.valueAxis.valueMax = 2.5
-    lc.valueAxis.valueStep = 0.5
+    #lc.valueAxis.valueStep = 0.5
     lc.lines[0].strokeWidth = 2
     lc.lines[0].symbol = makeMarker('FilledCircle')
     lc.lines[1].strokeWidth = 1.5

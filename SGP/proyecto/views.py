@@ -838,7 +838,7 @@ def burndownchart2(request, id_proyecto):
         #id_flujo_proyecto = FlujoProyecto.objects.filter(proyecto_id = id_proyecto, estado = 'Doing')
         #flujo_proyecto_sprint = FlujoProyecto.objects.get(id=id_flujo_proyecto)
         #flujo_proyecto = FlujoProyecto.objects.filter(proyecto_id=flujo_proyecto_sprint.proyecto.pk, flujo_id=flujo_proyecto_sprint.flujo.pk).exclude(sprint_id=1)
-        sprint = Sprint.objects.filter(proyecto_id=id_proyecto)
+        sprint = Sprint.objects.filter(proyecto_id=id_proyecto).exclude(id=1)
         #user_stories = Userstory.objects.filter(sprint_id = sprint.pk)
         ejeXName = []
         ejeXValor = []
