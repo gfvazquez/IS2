@@ -40,7 +40,7 @@
      </div>
 {% endblock %}
 {% block contenido %}
-<div class="container">
+<div class="container" style="row-span:9">
 <!-- Aca van la  lista de Proyectos.. o de Solicitudes.. o de credenciales -->
 	<div class="panel-group" id="accordion">
 
@@ -68,13 +68,13 @@
                           {% if x.flujoproyecto == 1 %}
                           <a href="asignar_flujos_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Asignar Flujo</button></a>
                           {% endif %}
-                          <a href="consultar_flujo_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Flujos asignados a Sprints</button></a>
+                          <a href="consultar_flujo_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Flujos-Sprints</button></a>
                           <!--<a href="visualizar_panorama/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Secuencializaion</button></a>-->
 
                           <!--<a href="burndownchart/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Burndownchart</button></a>-->
 
                           <!--<a href="sprint_activo/user_stories_current_user/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar MIS US del Sprint actual</button></a>-->
-                          <a href="backlog/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Consultar Backlog</button></a>
+                          <a href="backlog/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Backlog</button></a>
 
                           <a href="consultar_burndownchart2/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Burndownchart</button></a>
 
