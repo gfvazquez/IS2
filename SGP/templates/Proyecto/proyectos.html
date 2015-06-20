@@ -82,6 +82,12 @@
 
                           <a href="release/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Release</button></a>
 
+                          {% if x.equipo == 1 %}
+                          <a href="finalizar_proyecto/{{ x.proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Finalizar</button></a>
+                          {% else %}
+                          <button type="button" class="btn btn-default btn-sm" disabled=True>Finalizar</button>
+                          {% endif %}
+
 
                           <!--<a href="eliminar/{{ proyecto.auto_increment_id }}/"><button type="button" class="btn btn-default btn-sm">Eliminar</button></a>!-->
 				      </h4>
