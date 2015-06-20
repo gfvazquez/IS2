@@ -16,7 +16,6 @@ from reportlab.graphics.shapes import Drawing, Rect, String, Group, Line
 from reportlab.graphics.widgets.markers import makeMarker
 from reportlab.lib.units import inch
 import decimal
-import  json
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Cantidad de trabajos por usuario pendiente, en curso, finalizados
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -568,13 +567,15 @@ def reporte(id_proyecto):
     ejeXName = []
     ejeXValor = []
     duracionOptimaX = []
-
     for sp in sprint:
        ejeXName.append(sp.nombre)
        dec = Decimal(sp.tiempoacumulado)
-       ejeXValor.append(format(dec, '.2f'))
+       #ejeXValor.append(lista)
+       ejeXValor.append(int(dec))
        duracionOptimaX.append(sp.duracion)
 
+    valores=[]
+    valores.append(ejeXValor)
     d = Drawing(400, 200)
     lc = HorizontalLineChart()
     lc.x = 30
@@ -582,8 +583,7 @@ def reporte(id_proyecto):
     lc.height = 125
     lc.width = 350
     #lc.data = [[0.5,1.5]]
-    #lc.data = ejeXValor
-
+    lc.data =valores
 
 
 
@@ -592,7 +592,7 @@ def reporte(id_proyecto):
     lc.categoryAxis.categoryNames = ejeXName
     lc.categoryAxis.labels.boxAnchor = 'n'
     lc.valueAxis.valueMin = 0
-    lc.valueAxis.valueMax = 2.5
+    #lc.valueAxis.valueMax = 2.5
     lc.valueAxis.valueStep = 0.5
     lc.lines[0].strokeWidth = 2
     lc.lines[0].symbol = makeMarker('FilledCircle')
