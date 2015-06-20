@@ -36,6 +36,7 @@ def proyectos(request):
         perm_add_flujo_proyecto = 0
         perm_change_proyecto = 0
 
+
         rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=proy_usu.pk).exists()
         if rol_en_proyecto_existe:
             rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=proy_usu.pk)
@@ -43,11 +44,11 @@ def proyectos(request):
             user_permissions_groups = list(rol.permissions.all())
 
             for p in user_permissions_groups:
-                if (p.codename == 'add_equipo'):
+                if (p.codename == 'add_equipo' and proy_usu.estado != 'Finalizado'):
                     perm_add_equipo = 1
-                elif(p.codename == 'add_flujoproyecto'):
+                elif(p.codename == 'add_flujoproyecto' and proy_usu.estado != 'Finalizado'):
                     perm_add_flujo_proyecto = 1
-                elif(p.codename == 'change_proyecto'):
+                elif(p.codename == 'change_proyecto' and proy_usu.estado != 'Finalizado'):
                     perm_change_proyecto = 1
 
         asignarEquipo.append(perm_add_equipo)
@@ -394,7 +395,7 @@ def consultarFlujoProyecto(request, id_proyecto):
     template_name = './Proyecto/consultar_flujo_proyecto.html'
     activoFlujoProyecto = False
     mensaje = False
-    proyecto = Proyecto.objects.get(pk=id_proyecto)
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
     existeActivoFlujoProyecto = FlujoProyecto.objects.filter(proyecto_id=id_proyecto, estado='Doing').exists()
     perm_asignar_sprint = 0
 
@@ -405,7 +406,7 @@ def consultarFlujoProyecto(request, id_proyecto):
         user_permissions_groups = list(rol.permissions.all())
 
         for p in user_permissions_groups:
-            if (p.codename == 'asignar_sprint'):
+            if (p.codename == 'asignar_sprint' and proyecto.estado != 'Finalizado'):
                 perm_asignar_sprint = 1
 
     if existeActivoFlujoProyecto:
@@ -701,11 +702,12 @@ def consultarBacklog(request, id_proyecto):
             userStoriesIncompleto.append(userStory)
 
     band=False
+
     rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
     rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
     user_permissions_groups = list(rol.permissions.all())
     for p in user_permissions_groups:
-        if (p.codename == 'reasignar_sprint'):
+        if (p.codename == 'reasignar_sprint' ):
             band = True
 
     return render(request, template_name,
@@ -872,13 +874,14 @@ def releases(request, id_proyecto):
     releases = Release.objects.filter(proyecto_id = id_proyecto)
     rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
 
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
     if rol_en_proyecto_existe:
         rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
         rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
         user_permissions_groups = list(rol.permissions.all())
 
         for p in user_permissions_groups:
-            if (p.codename == 'add_release'):
+            if (p.codename == 'add_release' and proyecto.estado != 'Finalizado'):
                 perm_add_release = 1
 
 

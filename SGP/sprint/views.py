@@ -30,6 +30,7 @@ def crear_sprint(request, id_proyecto):
     rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
     user_permissions_groups = list(rol.permissions.all())
 
+
     for p in user_permissions_groups:
         if (p.codename == 'add_sprint'):
             band = True
@@ -228,17 +229,20 @@ def sprints(request, id_proyecto):
     sprints = Sprint.objects.filter(proyecto_id = id_proyecto).exclude(id=1)
     rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
 
+
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+
     if rol_en_proyecto_existe:
         rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
         rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
         user_permissions_groups = list(rol.permissions.all())
 
         for p in user_permissions_groups:
-            if (p.codename == 'add_sprint'):
+            if (p.codename == 'add_sprint' and proyecto.estado != 'Finalizado'):
                 perm_add_sprint = 1
-            elif (p.codename == 'change_sprint'):
+            elif (p.codename == 'change_sprint' and proyecto.estado != 'Finalizado'):
                 perm_change_sprint = 1
-            elif (p.codename == 'delete_sprint'):
+            elif (p.codename == 'delete_sprint' and proyecto.estado != 'Finalizado'):
                 perm_delete_sprint = 1
 
     return render_to_response('./Sprints/sprints.html', {'lista_sprints':sprints, 'perm_add_sprint':perm_add_sprint, 'perm_change_sprint':perm_change_sprint, 'perm_delete_sprint':perm_delete_sprint}, context_instance=RequestContext(request))

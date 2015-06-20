@@ -29,6 +29,7 @@ def crear_userstory(request, id_proyecto):
     band=False
     context = RequestContext(request)
 
+
     rol_en_proyecto=Equipo.objects.get(usuario_id=request.user.pk, proyecto_id=id_proyecto)
     rol = Group.objects.get(id=rol_en_proyecto.rol.pk)
     user_permissions_groups = list(rol.permissions.all())
@@ -242,7 +243,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
 
 
                     if (us.estado != estado):
-                        if estado == 'Resuelta':
+                        if estado == 'Validado':
                             us.estado = estado
                         elif estado == 'Rechazado':
                             us.estado = 'InPlanning'
@@ -272,7 +273,7 @@ def modificarUserstory(request,id_proyecto, id_userstory):
                 else:
                     us.prioridad = prioridad
 
-                us.historial = modificaciones
+                us.historial = us.historial + modificaciones
                 #us.sprint = sprint
 
                 us.save()
@@ -344,7 +345,7 @@ def userstory(request, id_proyecto):
     perm_change_us=0
     perm_avance_userstory=0
 
-
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
     rol_en_proyecto_existe=Equipo.objects.filter(usuario_id=request.user.pk, proyecto_id=id_proyecto).exists()
 
     if rol_en_proyecto_existe:
@@ -353,11 +354,11 @@ def userstory(request, id_proyecto):
         user_permissions_groups = list(rol.permissions.all())
 
         for p in user_permissions_groups:
-            if (p.codename == 'add_userstory'):
+            if (p.codename == 'add_userstory' and proyecto.estado != 'Finalizado'):
                 perm_add_us = 1
             elif (p.codename == 'change_userstory'):
                 perm_change_us = 1
-            elif (p.codename == 'delete_userstory'):
+            elif (p.codename == 'delete_userstory' and proyecto.estado != 'Finalizado'):
                 perm_delete_us = 1
             elif (p.codename == 'registrar_avance_userstory'):
                 perm_avance_userstory = 1
@@ -515,7 +516,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
 
                 us.tiempotrabajado = us.tiempotrabajado + tiempotrabajado
                 us.comentarios = us.comentarios + '\n' +str(ahora)+ '\n' + comentarios
-                us.historial = modificaciones
+                us.historial = us.historial +  modificaciones
 
                 if(us.estado == 'InPlanning'):
                     us.estado='EnCurso' #Userstory.objects.filter(id=us.pk).update(estado='EnCurso')
