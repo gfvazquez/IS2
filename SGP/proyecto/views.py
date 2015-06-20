@@ -966,4 +966,10 @@ def consultar_us_release(request, id_proyecto, id_release):
 
      return render(request, template_name, {'user_stories': user_stories, 'id_release': id_release, 'id_proyecto': id_proyecto, 'release': release})
 
+
+def finalizar_proyecto(request, id_proyecto):
+    proyecto = Proyecto.objects.get(auto_increment_id=id_proyecto)
+    proyecto.estado='Finalizado'
+    proyecto.save()
+    return HttpResponseRedirect('/proyectos/')
 #releases, crear_release, consultar_us_release

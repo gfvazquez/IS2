@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from proyecto import views
 from reportes.views import irSeccionReporteGeneral,irSeccionReporte,descargar_reporte_usEnCursoIdProyecto, descargar_reporte_actividadesXIDProyecto,descargar_reporte_usOrdenadoXIDProyecto,descargar_reporte_usSprintActualXIDProyecto
-from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint, releases, crear_release, consultar_us_release, proyectos, crear_proyecto,burndownchart2
+from .views import modificarProyecto, consultarProyecto, asignarEquipo, asignarFlujo, consultarFlujoProyecto, asignarSprint, visualizarProcesos, consultarUnFlujoProyecto, consultarUserStoriesSprint, consultarUSdelSprintActivoDelUsuario, consultarKanban, consultarBacklog, reasignarSprint, confirmarDoneActividad, burndownchart, iniciarSprint, releases, crear_release, consultar_us_release, proyectos, crear_proyecto,burndownchart2, finalizar_proyecto
 from sprint.views import crear_sprint, modificarSprint, sprint_eliminar, consultarSprint, sprints
 from userstory.views import crear_userstory, modificarUserstory, userstory_eliminar, consultarUserstory,verhistorial, userstory, modificarAvanceUserstory, descargar_view, \
     descargar
@@ -9,6 +9,7 @@ from userstory.views import crear_userstory, modificarUserstory, userstory_elimi
 urlpatterns = patterns('',
     url(r'^proyectos/$', proyectos),
     url(r'^proyectos/crear_proyecto/$', crear_proyecto), # ADD NEW PATTERN!
+    url(r'^proyectos/finalizar_proyecto/(?P<id_proyecto>\d+)/$', finalizar_proyecto), # ADD NEW PATTERN!
     url(r'^proyectos/modificar/(?P<id_proyecto>\d+)/$', modificarProyecto),
     url(r'^proyectos/consultar/(?P<id_proyecto>\d+)/$', consultarProyecto),
     url(r'^proyectos/asignar_usuarios_proyecto/(?P<id_proyecto>\d+)/$', asignarEquipo),
