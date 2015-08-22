@@ -926,8 +926,10 @@ def crear_release(request, id_proyecto):
 
                     for us in user_stories:
                         u = ReleaseUsValidados(release=release, userstory=us)
+                        us.estado='Release'
                         u.save()
-                        Userstory.objects.filter(id=u.pk).update(estado='Release')
+                        us.save()
+                        #Userstory.objects.filter(id=u.pk).update(estado='Release')
 
                     #Actualiza la variable para llamar al template cuando el registro fue correcto
                     registered = True

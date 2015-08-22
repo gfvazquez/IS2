@@ -172,6 +172,7 @@ def reporte_usXProyecto():
                     text ="<strong> * </strong>" + fa.userstory.nombre +"<br>"
                     Story.append(Paragraph(text, styles["SubItems"]))
                     Story.append(Indenter(-42))
+                  
 
                 Story.append(Indenter(25))
                 text ="__________________________________________________________<br>"
@@ -179,6 +180,8 @@ def reporte_usXProyecto():
                 Story.append(Spacer(1, 12))
                 Story.append(Indenter(-25))
                 contador_act+=1
+
+
     doc.build(Story)
     return str(settings.BASE_DIR)+"/reporte_usXProyecto.pdf"
 

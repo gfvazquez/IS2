@@ -42,6 +42,7 @@
         <br>
 	<form action="" method="post">
         {% if us.estado != 'Validado' %}
+            {% if us.estado != 'Release' %}
 		<table>
 			{{ form.as_table }}
 		</table>
@@ -50,6 +51,7 @@
 		{% csrf_token %}
 	<div align="center">
 		<input class="btn btn-default" type="submit" value="Guardar"/>
+                {% endif %}
         {% endif %}
 		<a href="/proyectos/"><button type="button" class="btn btn-default">Cancelar</button></a>
 	</div>

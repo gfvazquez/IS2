@@ -424,7 +424,7 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
         user_stories_usuario_ensprint_list = Userstory.objects.filter(sprint_id=sprint.pk, usuarioasignado_id=request.user.pk, estado='EnCurso')
         if user_stories_usuario_ensprint_list[0] != us:
             usEnCurso =True
-    if (us.estado == 'Validado' or us.estado=='Resuelta' or us.estado=='Comentario' or usEnCurso==True ):
+    if (us.estado == 'Validado' or us.estado=='Resuelta' or us.estado=='Release' or us.estado=='Comentario' or usEnCurso==True ):
         usEstado = False
     else:
         usEstado = True
@@ -517,6 +517,11 @@ def modificarAvanceUserstory(request,id_proyecto, id_userstory):
                 us.tiempotrabajado = us.tiempotrabajado + tiempotrabajado
                 us.comentarios = us.comentarios + '\n' +str(ahora)+ '\n' + comentarios
                 us.historial = us.historial +  modificaciones
+
+                if (proyectoFlujoActividadConsultaLista[0].estado != 'ToDo' and us.estado=='InPlaning'):
+                    us_aux = Userstory.objects.get(id=id_userstory)
+                    us_aux.estado = 'EnCurso'
+                    us_aux.save()
 
                 if(us.estado == 'InPlanning'):
                     us.estado='EnCurso' #Userstory.objects.filter(id=us.pk).update(estado='EnCurso')
