@@ -1,0 +1,12 @@
+---------------------------------------------
+COMANDO PARA EJECUTAR Y LEVANTAR EL PROYECTO
+---------------------------------------------
+
+- Crear las tablas en la base de datos: python manage.py syncdb
+
+- Crear modelos, Donde polls es el modelo que lanza el anterior comando
+
+  python manage.py makemigrations polls
+  python manage.py sqlmigrate polls 0001
+  python manage.py migrate
+  python manage.py syncdb

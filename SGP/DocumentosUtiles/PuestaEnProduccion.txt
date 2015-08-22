@@ -1,0 +1,19 @@
+*Se debe tener instalado 
+	bootstrap: sudo pip install django-bootstrap-form
+
+**CORRER EN PRODUCCION**
+
+-- El archivo "sgp.conf"
+	copiar en la direccion: /etc/apache2/sites-available
+
+-- El archivo "sgp.wsgi"
+	copiar en la direccion: /var/www/
+
+-- Copiar en: /var/www/html
+   la carpeta SGP para la puesta en produccion
+   
+-- sudo chgrp -R www-data /var/www/html/
+   sudo chown -R www-data /var/www/html/ 
+   sudo service apache2 reload
+
+-- correr en la direccion: SGP.com 
